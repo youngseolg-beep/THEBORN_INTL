@@ -46,15 +46,32 @@ export default function Contact({ lang }: { lang: 'ko' | 'en' }) {
           className="mt-10 bg-muted/60 border rounded-2xl shadow-sm px-6 py-5"
         >
           <p className="text-base md:text-lg font-semibold text-foreground leading-relaxed text-center">
-            미국, 중국, 일본 국가 외의 모든 가맹 문의는
-            <br />
-            <a
-              href="mailto:international@theborn.co.kr"
-              className="text-primary underline underline-offset-4 font-bold"
-            >
-              international@theborn.co.kr
-            </a>
-            로 문의 주시기 바랍니다.
+            {lang === 'ko' ? (
+              <>
+                미국, 중국, 일본 국가 외의 모든 가맹 문의는
+                <br />
+                <a
+                  href="mailto:international@theborn.co.kr"
+                  className="text-primary underline underline-offset-4 font-bold"
+                >
+                  international@theborn.co.kr
+                </a>
+                로 문의 주시기 바랍니다.
+              </>
+            ) : (
+              <>
+                For franchise inquiries outside of USA, China, and Japan,
+                <br />
+                please contact{" "}
+                <a
+                  href="mailto:international@theborn.co.kr"
+                  className="text-primary underline underline-offset-4 font-bold"
+                >
+                  international@theborn.co.kr
+                </a>
+                .
+              </>
+            )}
           </p>
         </motion.div>
       </div>
