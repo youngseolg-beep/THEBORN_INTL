@@ -29,7 +29,17 @@ export default function Process({ lang }: { lang: 'ko' | 'en' }) {
         { title: "STEP 06", desc: "비밀유지 협약서(NDA) 체결", icon: Handshake },
         { title: "STEP 07", desc: "사업정보 공유 및 사업계획 수립", icon: FileText },
         { title: "STEP 08", desc: "가맹계약서 체결", icon: TrendingUp },
-        { title: "STEP 09", desc: "사업개시(시장조사/교육/오픈 등)", icon: MapPin },
+        {
+          title: "STEP 09",
+          desc: (
+            <>
+              사업개시
+              <br />
+              (시장조사/교육/오픈 등)
+            </>
+          ),
+          icon: MapPin
+        },
       ]
     : [
         { title: "STEP 01", desc: "Application Submission", icon: Mail },
