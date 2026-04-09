@@ -14,14 +14,14 @@ export default function Navbar({ lang, setLang }: { lang: 'ko' | 'en', setLang: 
         </a>
 
         <div className="hidden md:flex items-center gap-8 font-medium text-foreground">
+          <a href="#status" className="hover:text-primary transition-colors">
+            {lang === 'ko' ? '해외 가맹현황' : 'Overseas Status'}
+          </a>
           <a href="#brands" className="hover:text-primary transition-colors">
             {lang === 'ko' ? '브랜드 소개' : 'Brands'}
           </a>
           <a href="#brand-gallery" className="hover:text-primary transition-colors">
             {lang === 'ko' ? '브랜드 이미지' : 'Brand Gallery'}
-          </a>
-          <a href="#status" className="hover:text-primary transition-colors">
-            {lang === 'ko' ? '해외 가맹현황' : 'Overseas Status'}
           </a>
           <a href="#process" className="hover:text-primary transition-colors">
             {lang === 'ko' ? '출점 프로세스' : 'Process'}
