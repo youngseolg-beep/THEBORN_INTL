@@ -43,7 +43,9 @@ export default function OverseasStatus({ lang }: { lang: 'ko' | 'en' }) {
     <section id="status" className="py-24 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center tracking-tight">
-          {lang === 'ko' ? '대한민국을 대표하는 외식 프랜차이즈 그룹, 더본코리아' : 'Korea\'s Leading Restaurant Franchise Group, THE BORN'}
+          {lang === 'ko'
+            ? '대한민국을 대표하는 외식 프랜차이즈 그룹, 더본코리아'
+            : "Korea's Leading Restaurant Franchise Group, THE BORN"}
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
@@ -52,13 +54,31 @@ export default function OverseasStatus({ lang }: { lang: 'ko' | 'en' }) {
           <Counter from={0} to={20} label={lang === 'ko' ? "진출 브랜드 갯수" : "Brands"} />
         </div>
 
-        <div className="max-w-4xl mx-auto space-y-4 text-muted-foreground leading-relaxed">
+        <div className="max-w-4xl mx-auto space-y-4 text-muted-foreground leading-relaxed mb-16">
           {descriptions.map((desc, index) => (
             <div key={index} className="flex items-start gap-3">
               <Check className="h-6 w-6 text-primary shrink-0 mt-0.5" />
               <p className="text-lg">{desc}</p>
             </div>
           ))}
+        </div>
+
+        <div className="max-w-5xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-6">
+            {lang === 'ko' ? '출점 현황' : 'Store Locations'}
+          </h3>
+
+          <div className="rounded-2xl overflow-hidden border bg-background shadow-sm">
+            <iframe
+              src="https://www.google.com/maps/d/embed?mid=1HdX8p5EDmdluDHb_1JD7a8DFu0a1bMg"
+              width="100%"
+              height="520"
+              className="w-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={lang === 'ko' ? '더본코리아 출점 현황 지도' : 'THE BORN store location map'}
+            />
+          </div>
         </div>
       </div>
     </section>
