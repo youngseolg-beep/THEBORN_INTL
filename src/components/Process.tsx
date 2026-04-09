@@ -1,12 +1,29 @@
-import { Mail, MapPin, Phone, FileText, ClipboardCheck, FileSignature, FileUp, Search, Handshake, TrendingUp } from "lucide-react";
+import { Mail, MapPin, FileText, ClipboardCheck, FileSignature, FileUp, Search, Handshake, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import type { ReactNode } from "react";
+
+type Step = {
+  title: string;
+  desc: ReactNode;
+  icon: React.ElementType;
+};
 
 export default function Process({ lang }: { lang: 'ko' | 'en' }) {
-  const steps = lang === 'ko'
+  const steps: Step[] = lang === 'ko'
     ? [
         { title: "STEP 01", desc: "사업신청서 접수", icon: Mail },
         { title: "STEP 02", desc: "적격성 평가를 위한 수권 서류 제출", icon: ClipboardCheck },
-        { title: "STEP 03", desc: "사업 관련 비대면 미팅(화상미팅)", icon: FileSignature },
+        {
+          title: "STEP 03",
+          desc: (
+            <>
+              사업 관련 비대면 미팅
+              <br />
+              (화상미팅)
+            </>
+          ),
+          icon: FileSignature
+        },
         { title: "STEP 04", desc: "사업성 검토 및 적격성 평가 진행", icon: FileUp },
         { title: "STEP 05", desc: "가맹사업 진행 여부 확정", icon: Search },
         { title: "STEP 06", desc: "비밀유지 협약서(NDA) 체결", icon: Handshake },
