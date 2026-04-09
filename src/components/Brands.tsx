@@ -84,7 +84,11 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
               <AccordionTrigger className="text-xl font-bold tracking-tight">
                 <div className="flex items-center gap-4">
                   {brand.name}
-                  <img src={brand.logo} alt={`${brand.name} logo`} className="h-12" />
+                  <img 
+  src={brand.logo} 
+  alt={`${brand.name} logo`} 
+  className={`w-auto object-contain ${index === 1 ? 'h-12' : 'h-8'}`}
+/>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="space-y-6 text-muted-foreground">
