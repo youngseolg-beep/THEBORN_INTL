@@ -53,8 +53,8 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
     },
     {
       name: lang === 'ko' ? "홍콩반점 0410" : "PAIK'S NOODLE",
-      logo: "https://i.ibb.co/6cWrnWvc/2.png",
-      imageUrl: "https://i.ibb.co/9927sbhv/png-01.png",
+      logo: "https://i.ibb.co/9927sbhv/png-01.png",
+      imageUrl: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
       videoUrl: "https://www.youtube.com/embed/2OHtdE98h8I",
       details: lang === 'ko'
         ? [
