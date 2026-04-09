@@ -19,6 +19,7 @@ export default function App() {
         <OverseasStatus lang={lang} />
         <Brands lang={lang} />
         <BrandGallery lang={lang} />
+        <Requirements lang={lang} />
         <Process lang={lang} />
         <Contact lang={lang} />
       </main>
