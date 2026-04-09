@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 
-import { motion } from "framer-motion";
-
 export default function Contact({ lang }: { lang: 'ko' | 'en' }) {
   const contacts = [
     { title: lang === 'ko' ? "마스터프랜차이즈 문의" : "Master Franchise Inquiry", email: "international@theborn.co.kr" },
@@ -13,7 +11,10 @@ export default function Contact({ lang }: { lang: 'ko' | 'en' }) {
   return (
     <section id="contact" className="py-24 bg-muted/30">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 tracking-tight">{lang === 'ko' ? '문의' : 'Contact'}</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 tracking-tight">
+          {lang === 'ko' ? '문의' : 'Contact'}
+        </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {contacts.map((contact, index) => (
             <motion.div
@@ -24,7 +25,9 @@ export default function Contact({ lang }: { lang: 'ko' | 'en' }) {
               viewport={{ once: true }}
               className="bg-background p-6 rounded-2xl border shadow-sm"
             >
-              <h3 className="text-lg font-semibold text-foreground mb-2">{contact.title}</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {contact.title}
+              </h3>
               <a
                 href={`mailto:${contact.email}`}
                 className="text-primary hover:underline font-medium text-lg"
@@ -34,7 +37,22 @@ export default function Contact({ lang }: { lang: 'ko' | 'en' }) {
             </motion.div>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          viewport={{ once: true }}
+          className="mt-10 bg-background border rounded-2xl shadow-sm px-6 py-5"
+        >
+          <p className="text-base md:text-lg font-semibold text-foreground leading-relaxed">
+            {lang === 'ko' ? (
+              <>
+                <span className="text-primary font-bold">미국, 중국, 일본</span> 국가 외의 모든 가맹 문의는{" "}
+                <a
+                  href="mailto:international@theborn.co.kr"
+                  className="text-primary underline underline-offset-4 font-bold"
+                >
+                  international@theborn.co.kr
+                </a>
+                로 문의 주시기 
