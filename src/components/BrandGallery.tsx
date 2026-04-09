@@ -1,18 +1,18 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 
+type BrandType = "BORNGA" | "SAEMAEUL" | "PAIK'S NOODLE";
+
 type GalleryItem = {
   id: number;
-  brand: "BORNGA" | "SAEMAEUL" | "PAIK'S NOODLE";
+  brand: BrandType;
   src: string;
   alt: string;
 };
 
 export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
-  const [selectedBrand, setSelectedBrand] = useState<"ALL" | "BORNGA" | "SAEMAEUL" | "PAIK'S NOODLE">("ALL");
+  const [selectedBrand, setSelectedBrand] = useState<"ALL" | BrandType>("ALL");
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
 
   const items: GalleryItem[] = [
@@ -54,17 +54,17 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
     },
   ];
 
-  const brandLabels = {
+  const brandLabels: Record<"ALL" | BrandType, string> = {
     ALL: lang === "ko" ? "전체" : "All",
-    BORNGA: "BORNGA",
-    SAEMAEUL: "SAEMAEUL",
-    "PAIK'S NOODLE": "PAIK'S NOODLE",
+    BORNGA: lang === "ko" ? "본가" : "BORNGA",
+    SAEMAEUL: lang === "ko" ? "새마을식당" : "SAEMAEUL",
+    "PAIK'S NOODLE": lang === "ko" ? "홍콩반점 0410" : "PAIK'S NOODLE",
   };
 
   const filteredItems = useMemo(() => {
     if (selectedBrand === "ALL") return items;
     return items.filter((item) => item.brand === selectedBrand);
-  }, [items, selectedBrand]);
+  }, [selectedBrand]);
 
   return (
     <section id="brand-gallery" className="py-24 bg-muted/30">
@@ -110,7 +110,7 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
               <div className="absolute left-3 bottom-3 rounded-full bg-black/60 text-white text-xs md:text-sm px-3 py-1">
-                {item.brand}
+                {brandLabels[item.brand]}
               </div>
             </motion.button>
           ))}
