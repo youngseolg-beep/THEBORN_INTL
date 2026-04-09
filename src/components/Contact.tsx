@@ -55,4 +55,26 @@ export default function Contact({ lang }: { lang: 'ko' | 'en' }) {
                 >
                   international@theborn.co.kr
                 </a>
-                로 문의 주시기 
+                로 문의 주시기 바랍니다.
+              </>
+            ) : (
+              <>
+                For franchise inquiries outside of{" "}
+                <span className="text-primary font-bold">the USA, China, and Japan</span>, please contact{" "}
+                <a
+                  href="mailto:international@theborn.co.kr"
+                  className="text-primary underline underline-offset-4 font-bold"
+                >
+                  international@theborn.co.kr
+                </a>
+                .
+              </>
+            )}
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+
