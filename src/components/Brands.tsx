@@ -81,13 +81,19 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
         <Accordion type="single" collapsible className="w-full">
           {brands.map((brand, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
-             <AccordionTrigger className="text-xl font-bold tracking-tight">
+            <AccordionTrigger className="text-xl font-bold tracking-tight">
   <div className="flex items-center gap-4">
     {brand.name}
     <img 
       src={brand.logo} 
       alt={`${brand.name} logo`} 
-      className="w-auto h-10 min-w-[85px] max-h-12 object-contain"  // ← 이걸로 교체
+      className={
+        brand.name.includes('본가') 
+          ? "w-auto h-11"  // 본가: 높이 44px (세로 길음)
+          : brand.name.includes('새마을식당') 
+          ? "w-auto h-10"  // 새마을: 높이 40px
+          : "w-[110px] h-9" // 홍콩반점: 너비 고정 110px (가로 길음)
+      }
     />
   </div>
 </AccordionTrigger>
