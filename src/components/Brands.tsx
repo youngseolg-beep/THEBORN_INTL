@@ -87,7 +87,7 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
                   <img 
   src={brand.logo} 
   alt={`${brand.name} logo`} 
-  className={`w-auto object-contain ${index === 1 ? 'h-10' : 'h-8'}`}
+  className="w-auto h-10 sm:h-12 md:h-14 object-contain" 
 />
                 </div>
               </AccordionTrigger>
