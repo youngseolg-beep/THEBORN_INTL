@@ -89,10 +89,10 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
       alt={`${brand.name} logo`} 
       className={
         brand.name.includes('본가') 
-          ? "w-auto h-11"  // 본가: 높이 44px (세로 길음)
+          ? "w-auto h-11"      // 44px 높이
           : brand.name.includes('새마을식당') 
-          ? "w-auto h-10"  // 새마을: 높이 40px
-          : "w-[110px] h-9" // 홍콩반점: 너비 고정 110px (가로 길음)
+          ? "w-auto h-10"      // 40px 높이
+          : "w-[105px] h-auto" // 105px 너비, 높이 자동 (약 38px)
       }
     />
   </div>
