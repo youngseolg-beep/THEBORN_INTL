@@ -84,7 +84,7 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
               <AccordionTrigger className="text-xl font-bold tracking-tight">
                 <div className="flex items-center gap-4">
                   {brand.name}
-                  <img src={brand.logo} alt={`${brand.name} logo`} className="h-8" />
+                  <img src={brand.logo} alt={`${brand.name} logo`} className="h-12" />
                 </div>
               </AccordionTrigger>
               <AccordionContent className="space-y-6 text-muted-foreground">
