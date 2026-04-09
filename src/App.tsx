@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import OverseasStatus from "./components/OverseasStatus";
 import Brands from "./components/Brands";
-import BrandGallery from "./components/BrandGallery"; // ← 추가
+import BrandGallery from "./components/BrandGallery";
 import Requirements from "./components/Requirements";
 import Process from "./components/Process";
 import Contact from "./components/Contact";
@@ -18,8 +18,7 @@ export default function App() {
         <Hero lang={lang} />
         <OverseasStatus lang={lang} />
         <Brands lang={lang} />
-        <BrandGallery lang={lang} />  {/* ← 추가 */}
-        <Requirements lang={lang} />
+        <BrandGallery lang={lang} />
         <Process lang={lang} />
         <Contact lang={lang} />
       </main>
