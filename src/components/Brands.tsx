@@ -119,19 +119,20 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
                     ></iframe>
                   </div>
                 </motion.div>
-                {brand.name.includes("본가") && (
-  <div className="mt-6">
-    <div className="bg-white rounded-xl shadow overflow-hidden max-w-sm">
-      <img
-        src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
-        className="w-full h-48 object-cover"
-      />
-      <div className="p-4">
-        <p className="font-semibold text-lg">우삼겹</p>
-        <p className="text-sm text-gray-500">대표 인기 메뉴</p>
-        <p className="mt-2 font-bold text-lg">18,000원</p>
-      </div>
+               {brand.name.includes("본가") && (
+  <div className="mt-6 flex items-center gap-4 bg-muted/50 rounded-xl p-4">
+    
+    <img
+      src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
+      className="w-28 h-28 object-cover rounded-lg"
+    />
+
+    <div>
+      <p className="text-sm text-gray-500">대표 메뉴</p>
+      <p className="font-semibold text-lg">우삼겹</p>
+      <p className="mt-1 font-bold text-lg">18,000원</p>
     </div>
+
   </div>
 )}
 
