@@ -86,13 +86,13 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
     <img
       src={brand.logo}
       alt={`${brand.name} logo`}
-      className={
-        brand.name.includes("본가")
-          ? "w-auto h-14 object-contain"
-          : brand.name.includes("새마을식당")
-          ? "w-auto h-12 object-contain"
-          : "w-[200px] h-auto object-contain"
-      }
+     className={
+  brand.name.includes("본가")
+    ? "w-auto h-14 object-contain"
+    : brand.name.includes("새마을식당")
+    ? "w-auto h-12 object-contain"
+    : "w-[200px] h-auto object-contain -mt-2"
+}
     />
   </div>
 </AccordionTrigger>
