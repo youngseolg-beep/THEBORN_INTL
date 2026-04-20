@@ -75,19 +75,7 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
                   viewport={{ once: true }}
                   className="mb-6 flex flex-col items-center text-center"
                 >
-                  {brand.logo && (
-                    <img
-                      src={brand.logo}
-                      alt={brand.label}
-                      className={
-                        brand.key === "BORNGA"
-                          ? "h-12 md:h-14 w-auto object-contain mb-3"
-                          : brand.key === "SAEMAEUL"
-                          ? "h-10 md:h-12 w-auto object-contain mb-3"
-                          : "h-9 md:h-10 w-auto object-contain mb-3"
-                      }
-                    />
-                  )}
+                 
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight">
                     {brand.label}
                   </h3>
