@@ -212,6 +212,52 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
     </div>
   </div>
 )}
+{brand.name.includes("홍콩반점") && (
+  <div className="mt-6">
+    <p className="text-sm text-gray-500 mb-3">대표 메뉴</p>
+
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/PGk7YdYZ/paiksnoodle.png"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">짜장면</p>
+        <p className="text-sm font-bold">6,000원</p>
+      </div>
+
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/PGk7YdYZ/paiksnoodle.png"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">짬뽕</p>
+        <p className="text-sm font-bold">7,000원</p>
+      </div>
+
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/PGk7YdYZ/paiksnoodle.png"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">탕수육</p>
+        <p className="text-sm font-bold">12,000원</p>
+      </div>
+
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/PGk7YdYZ/paiksnoodle.png"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">볶음밥</p>
+        <p className="text-sm font-bold">7,000원</p>
+      </div>
+
+    </div>
+  </div>
+)}
+              
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
