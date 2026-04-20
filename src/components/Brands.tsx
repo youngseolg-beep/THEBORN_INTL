@@ -264,7 +264,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
               {
                 name: "볶음밥",
                 price: "9,500원",
-                image: "https://i.ibb.co/j9Bqs6yK/2.jpg",
+                image: "https://i.ibb.co/Mx7VbFfb/ok-DSC09337.png",
               },
             ]
           : [
@@ -286,7 +286,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
               {
                 name: "Fried Rice",
                 price: "$5",
-                image: "https://i.ibb.co/j9Bqs6yK/2.jpg",
+                image: "https://i.ibb.co/Mx7VbFfb/ok-DSC09337.png",
               },
             ],
     },
