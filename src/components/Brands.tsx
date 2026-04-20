@@ -359,7 +359,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
                         <img
                           src={menu.image}
                           alt={menu.name}
-                          className="w-full h-24 object-cover rounded-md mb-2"
+                          className="w-full h-24 object-contain rounded-md mb-2 bg-white"
                         />
                         <p
                           className={
