@@ -83,17 +83,17 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
             <AccordionItem key={index} value={`item-${index}`}>
            <AccordionTrigger className="text-xl font-bold tracking-tight">
   <div className="flex items-center">
-    <img
-      src={brand.logo}
-      alt={`${brand.name} logo`}
-      className={
-        brand.name.includes("본가")
-          ? "w-auto h-11"
-          : brand.name.includes("새마을식당")
-          ? "w-auto h-10"
-          : "w-[140px] h-auto"
-      }
-    />
+  <img
+  src={brand.logo}
+  alt={`${brand.name} logo`}
+  className={
+    brand.name.includes("본가")
+      ? "w-auto h-11"
+      : brand.name.includes("새마을식당")
+      ? "w-auto h-10"
+      : "w-[170px] h-auto -mt-1"
+  }
+/>
   </div>
 </AccordionTrigger>
               <AccordionContent className="space-y-6 text-muted-foreground">
