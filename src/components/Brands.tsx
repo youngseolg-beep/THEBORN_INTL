@@ -108,20 +108,7 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
                   <div className="aspect-video bg-muted rounded-xl overflow-hidden border">
                     <img src={brand.imageUrl} alt={brand.name} className="w-full h-full object-cover" />
                   </div>
-                  {/* 대표 메뉴 테스트 (본가만 노출) */}
-{brand.name.includes("본가") && (
-  <div className="mt-4 bg-white rounded-xl shadow overflow-hidden max-w-xs">
-    <img
-      src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
-      className="w-full h-40 object-cover"
-    />
-    <div className="p-3">
-      <p className="font-semibold">우삼겹</p>
-      <p className="text-sm text-gray-500">대표 인기 메뉴</p>
-      <p className="mt-1 font-bold">18,000원</p>
-    </div>
-  </div>
-)}
+                  
                   <div className="aspect-video rounded-xl overflow-hidden border">
                     <iframe
                       className="w-full h-full"
@@ -132,6 +119,21 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
                     ></iframe>
                   </div>
                 </motion.div>
+                {brand.name.includes("본가") && (
+  <div className="mt-6">
+    <div className="bg-white rounded-xl shadow overflow-hidden max-w-sm">
+      <img
+        src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
+        className="w-full h-48 object-cover"
+      />
+      <div className="p-4">
+        <p className="font-semibold text-lg">우삼겹</p>
+        <p className="text-sm text-gray-500">대표 인기 메뉴</p>
+        <p className="mt-2 font-bold text-lg">18,000원</p>
+      </div>
+    </div>
+  </div>
+)}
 
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
