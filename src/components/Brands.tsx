@@ -81,7 +81,7 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
         <Accordion type="single" collapsible className="w-full">
           {brands.map((brand, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
-         <AccordionTrigger className="text-xl font-bold tracking-tight">
+       <AccordionTrigger className="text-xl font-bold tracking-tight">
   <div className="flex justify-center items-center w-full py-4">
     <img
       src={brand.logo}
