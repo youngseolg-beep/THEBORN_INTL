@@ -12,7 +12,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
     {
       name: lang === "ko" ? "본가" : "BORNGA",
       logo: "https://i.ibb.co/6q7JGsB/image.png",
-      imageUrl: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+      imageUrl: "https://i.ibb.co/jkrTJ0xK/2.jpg",
       videoUrl: "https://www.youtube.com/embed/L4JR9SuM8hQ",
       details:
         lang === "ko"
@@ -62,22 +62,22 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
               {
                 name: "우삼겹",
                 price: "12,000원",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/KcF4B9pG/image.png",
               },
               {
                 name: "꽃살",
                 price: "28,000원",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/FbpXtq1z/image.png",
               },
               {
                 name: "된장찌개",
                 price: "8,000원",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/3mkqZtSy/image.png",
               },
               {
                 name: "돌솥비빔밥",
                 price: "9,000원",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/Hfqgw9q5/image.png",
               },
             ]
           : [
