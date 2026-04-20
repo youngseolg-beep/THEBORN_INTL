@@ -200,7 +200,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
     {
       name: lang === "ko" ? "홍콩반점 0410" : "PAIK'S NOODLE",
       logo: "https://i.ibb.co/9927sbhv/png-01.png",
-      imageUrl: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+      imageUrl: "https://i.ibb.co/j9Bqs6yK/2.jpg",
       videoUrl: "https://www.youtube.com/embed/2OHtdE98h8I",
       details:
         lang === "ko"
@@ -249,44 +249,44 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
               {
                 name: "짜장면",
                 price: "7,000원",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/Dg64WRQC/ok-DSC09391.png",
               },
               {
                 name: "짬뽕",
                 price: "9,000원",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/Y73jGrz9/7467.png",
               },
               {
                 name: "탕수육",
                 price: "16,800원",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/4ZHPx2XT/7516.png",
               },
               {
                 name: "볶음밥",
                 price: "9,500원",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/j9Bqs6yK/2.jpg",
               },
             ]
           : [
               {
                 name: "Jjajangmyeon",
                 price: "$5",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/Dg64WRQC/ok-DSC09391.png",
               },
               {
                 name: "Jjamppong",
                 price: "$7",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/Y73jGrz9/7467.png",
               },
               {
                 name: "Tangsuyuk",
                 price: "$11",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/4ZHPx2XT/7516.png",
               },
               {
                 name: "Fried Rice",
                 price: "$5",
-                image: "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
+                image: "https://i.ibb.co/j9Bqs6yK/2.jpg",
               },
             ],
     },
