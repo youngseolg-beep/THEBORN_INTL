@@ -120,22 +120,54 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
                   </div>
                 </motion.div>
                {brand.name.includes("본가") && (
-  <div className="mt-6 flex items-center gap-4 bg-muted/50 rounded-xl p-4">
-    
-    <img
-      src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
-      className="w-28 h-28 object-cover rounded-lg"
-    />
+  <div className="mt-6">
+    <p className="text-sm text-gray-500 mb-3">대표 메뉴</p>
 
-    <div>
-      <p className="text-sm text-gray-500">대표 메뉴</p>
-      <p className="font-semibold text-lg">우삼겹</p>
-      <p className="mt-1 font-bold text-lg">18,000원</p>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      
+      {/* 메뉴 1 */}
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">우삼겹</p>
+        <p className="text-sm font-bold">18,000원</p>
+      </div>
+
+      {/* 메뉴 2 */}
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">꽃살</p>
+        <p className="text-sm font-bold">22,000원</p>
+      </div>
+
+      {/* 메뉴 3 */}
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">된장찌개</p>
+        <p className="text-sm font-bold">9,000원</p>
+      </div>
+
+      {/* 메뉴 4 */}
+      <div className="bg-muted/50 rounded-xl p-3 text-center">
+        <img
+          src="https://i.ibb.co/WWnFZmP8/bornga.jpg"
+          className="w-full h-24 object-cover rounded-md mb-2"
+        />
+        <p className="font-semibold text-sm">돌솥비빔밥</p>
+        <p className="text-sm font-bold">12,000원</p>
+      </div>
+
     </div>
-
   </div>
 )}
-
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
