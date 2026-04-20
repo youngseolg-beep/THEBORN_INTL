@@ -192,3 +192,4 @@ export default function Brands({ lang }: { lang: 'ko' | 'en' }) {
     </section>
   );
 }
+
