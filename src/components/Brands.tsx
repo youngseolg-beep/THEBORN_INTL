@@ -84,29 +84,29 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
               {
                 name: "Woosamgyeop",
                 price: "$8",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/KcF4B9pG/image.png",
               },
               {
                 name: "Kkotsal",
                 price: "$20",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/FbpXtq1z/image.png",
               },
               {
                 name: "Doenjang-jjigae",
                 price: "$6",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/3mkqZtSy/image.png",
               },
               {
                 name: "Dolsot Bibimbap",
                 price: "$7",
-                image: "https://i.ibb.co/WWnFZmP8/bornga.jpg",
+                image: "https://i.ibb.co/Hfqgw9q5/image.png",
               },
             ],
     },
     {
       name: lang === "ko" ? "새마을식당" : "SAEMAEUL",
       logo: "https://i.ibb.co/7tN67FZd/2.png",
-      imageUrl: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+      imageUrl: "https://i.ibb.co/xK5ybB0Y/image.jpg",
       videoUrl: "https://www.youtube.com/embed/80X0DF6MTKA",
       details:
         lang === "ko"
@@ -156,44 +156,44 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
               {
                 name: "열탄불고기",
                 price: "10,900원",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/RTWh1vm9/3777.png",
               },
               {
                 name: "7분돼지김치",
                 price: "8,000원",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/WWWQ6LTy/ok-7-IMG-3890.jpg",
               },
               {
                 name: "삼겹살",
                 price: "15,000원",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/hRd7WMTV/2136.png",
               },
               {
                 name: "옛날도시락",
                 price: "4,000원",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/fdwL6Tz2/S.png",
               },
             ]
           : [
               {
                 name: "Yeoltan Bulgogi",
                 price: "$7",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/RTWh1vm9/3777.png",
               },
               {
                 name: "7-Minute Pork Kimchi Stew",
                 price: "$6",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/WWWQ6LTy/ok-7-IMG-3890.jpg",
               },
               {
                 name: "Samgyeopsal",
                 price: "$10",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/hRd7WMTV/2136.png",
               },
               {
                 name: "Yetnal Dosirak",
                 price: "$3",
-                image: "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
+                image: "https://i.ibb.co/fdwL6Tz2/S.png",
               },
             ],
     },
