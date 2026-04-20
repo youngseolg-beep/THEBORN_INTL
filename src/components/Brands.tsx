@@ -346,9 +346,9 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
                 </motion.div>
 
                 <div className="mt-6">
-                  <p className="text-sm text-gray-500 mb-3">
-                    {lang === "ko" ? "대표 메뉴" : "Signature Menu"}
-                  </p>
+                  <p className="mb-3 text-gray-500 font-semibold tracking-wide text-sm md:text-2xl">
+  {lang === "ko" ? "대표 메뉴" : "SIGNATURE MENU"}
+</p>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {brand.menus.map((menu, menuIndex) => (
@@ -361,7 +361,15 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
                           alt={menu.name}
                           className="w-full h-24 object-cover rounded-md mb-2"
                         />
-                        <p className="font-semibold text-sm">{menu.name}</p>
+                        <p
+  className={
+    lang === "en" && menu.name === "7-Minute Pork Kimchi Stew"
+      ? "font-semibold text-[13px] leading-tight min-h-[40px] flex items-center justify-center"
+      : "font-semibold text-sm min-h-[40px] flex items-center justify-center"
+  }
+>
+  {menu.name}
+</p>
                         <p className="text-sm font-bold">{menu.price}</p>
                       </div>
                     ))}
