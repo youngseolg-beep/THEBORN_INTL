@@ -353,9 +353,9 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {brand.menus.map((menu, menuIndex) => (
                       <div
-                        key={menuIndex}
-                        className="bg-muted/50 rounded-xl p-3 text-center"
-                      >
+  key={menuIndex}
+  className="bg-muted/50 rounded-xl p-3 text-center transition transform hover:-translate-y-1 hover:shadow-lg duration-200"
+>
                         <img
                           src={menu.image}
                           alt={menu.name}
