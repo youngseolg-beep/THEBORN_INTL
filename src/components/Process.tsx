@@ -190,4 +190,3 @@ export default function Process({ lang }: { lang: "ko" | "en" }) {
     </section>
   );
 }
-
