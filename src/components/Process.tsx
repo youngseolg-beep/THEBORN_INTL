@@ -87,12 +87,12 @@ export default function Process({ lang }: { lang: "ko" | "en" }) {
   const downloadItems: DownloadItem[] =
     lang === "ko"
       ? [
-          {
-            title: "사업신청서",
-            desc: "출점 검토를 위한 기본 신청 서류 다운로드",
-            href: "/downloads/application-form.pdf",
-            fileName: "사업신청서.pdf",
-          },
+         {
+  title: "사업신청서",
+  desc: "출점 검토를 위한 기본 신청 서류 다운로드",
+  href: "/downloads/theborn-global-application.docx",
+  fileName: "더본코리아 글로벌사업 신청서.docx",
+},
           {
             title: "브랜드 브로슈어",
             desc: "브랜드 소개 및 가맹 정보 브로슈어 다운로드",
