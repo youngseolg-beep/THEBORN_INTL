@@ -47,7 +47,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
       ],
     },
     {
-      brand: lang === "ko" ? "홍콩반점 0410" : "PAIK'S NOODLE",
+      brand: lang === "ko" ? "홍콩반점" : "PAIK'S NOODLE",
       country: lang === "ko" ? "캄보디아" : "Cambodia",
       location: lang === "ko" ? "프놈펜 매장" : "Phnom Penh Store",
       flag: "🇰🇭",
