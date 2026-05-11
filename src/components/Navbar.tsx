@@ -25,12 +25,15 @@ export default function Navbar({
           />
         </a>
 
-        <div className="hidden md:flex items-center gap-8 font-medium text-foreground">
+        <div className="hidden md:flex items-center gap-7 font-medium text-foreground">
           <a href="#status" className="hover:text-primary transition-colors">
             {lang === "ko" ? "해외 가맹현황" : "Overseas Status"}
           </a>
           <a href="#brands" className="hover:text-primary transition-colors">
             {lang === "ko" ? "브랜드 소개" : "Brands"}
+          </a>
+          <a href="#success-story" className="hover:text-primary transition-colors">
+            {lang === "ko" ? "성공 사례" : "SUCCESS STORY"}
           </a>
           <a href="#brand-gallery" className="hover:text-primary transition-colors">
             {lang === "ko" ? "브랜드 이미지" : "Brand Gallery"}
@@ -67,6 +70,9 @@ export default function Navbar({
             </a>
             <a href="#brands" onClick={closeMobileMenu} className="hover:text-primary transition-colors">
               {lang === "ko" ? "브랜드 소개" : "Brands"}
+            </a>
+            <a href="#success-story" onClick={closeMobileMenu} className="hover:text-primary transition-colors">
+              {lang === "ko" ? "성공 사례" : "SUCCESS STORY"}
             </a>
             <a href="#brand-gallery" onClick={closeMobileMenu} className="hover:text-primary transition-colors">
               {lang === "ko" ? "브랜드 이미지" : "Brand Gallery"}
