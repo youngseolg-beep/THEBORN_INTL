@@ -39,10 +39,10 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
       country: lang === "ko" ? "태국" : "Thailand",
       location:
         lang === "ko"
-          ? "새마을식당 원 방콕점"
-          : "SAEMAEUL One Bangkok",
+          ? "새마을식당 메가 방나점"
+          : "SAEMAEUL Mega bangna",
       flag: "🇹🇭",
-      mainImage: "https://i.ibb.co/2Gz729L/image.png",
+      mainImage: "https://i.ibb.co/fd9Mt9hp/image.png",
       description:
         lang === "ko"
           ? "태국 방콕에서 성공적으로 운영 중인 한국식 캐주얼 다이닝 브랜드입니다. 새마을식당은 Korean BBQ, 캐주얼 다이닝, 늦은 시간까지 이어지는 소셜 다이닝 경험을 원하는 젊은 고객층에게 높은 반응을 얻고 있습니다."
