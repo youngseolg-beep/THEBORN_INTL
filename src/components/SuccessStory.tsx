@@ -4,19 +4,27 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
   const stories = [
     {
       brand: lang === "ko" ? "본가" : "BORNGA",
-      country: lang === "ko" ? "인도네시아" : "Indonesia",
-      location: lang === "ko" ? "자카르타 플래그십" : "Jakarta Flagship",
-      flag: "🇮🇩",
+      country: lang === "ko" ? "호주" : "Australia",
+      location: lang === "ko" ? "시드니 매장" : "Sydney Store",
+      flag: "🇦🇺",
       mainImage:
         "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200&auto=format&fit=crop",
       description:
         lang === "ko"
-          ? "인도네시아 자카르타에서 성공적으로 운영 중인 프리미엄 한식 BBQ 다이닝 브랜드입니다. 현지의 높은 한식 다이닝 수요와 가족·단체 외식 문화가 결합되어, 본가는 현지 시장에서 프리미엄 Korean BBQ 브랜드로 자리 잡고 있습니다."
-          : "Premium Korean BBQ dining brand successfully operating in Jakarta, Indonesia. Strong local demand for Korean dining culture and family-style gatherings has positioned BORNGA as a premium Korean BBQ destination in the local market.",
+          ? "호주 시드니에서 성공적으로 운영 중인 프리미엄 한식 BBQ 다이닝 브랜드입니다. 현지의 높은 Korean BBQ 수요와 가족·단체 외식 문화가 결합되어, 본가는 글로벌 시장에서도 프리미엄 한식 다이닝 브랜드로 자리 잡고 있습니다."
+          : "Premium Korean BBQ dining brand successfully operating in Sydney, Australia. Strong local demand for Korean BBQ culture and family-style gatherings has positioned BORNGA as a premium Korean dining destination in the global market.",
       points:
         lang === "ko"
-          ? ["프리미엄 Korean BBQ 수요", "가족 외식 문화와의 높은 적합성", "저녁 중심의 안정적인 고객 유입"]
-          : ["Premium Korean BBQ demand", "Family dining culture fit", "Strong dinner-focused traffic"],
+          ? [
+              "프리미엄 Korean BBQ 수요",
+              "가족·단체 외식 문화와의 높은 적합성",
+              "저녁 중심의 안정적인 고객 유입",
+            ]
+          : [
+              "Premium Korean BBQ demand",
+              "Family & group dining culture fit",
+              "Strong dinner-focused traffic",
+            ],
       images: [
         "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?q=80&w=800&auto=format&fit=crop",
@@ -37,8 +45,16 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
           : "A Korean casual dining brand successfully operating in Bangkok, Thailand. SAEMAEUL has gained strong popularity among young customers seeking Korean BBQ, casual dining, and late-night social dining experiences.",
       points:
         lang === "ko"
-          ? ["강한 야간 외식 수요", "캐주얼 한식 트렌드와의 적합성", "주류 페어링에 강한 메뉴 구성"]
-          : ["Strong late-night dining demand", "Casual Korean dining trend", "Alcohol pairing friendly menu"],
+          ? [
+              "강한 야간 외식 수요",
+              "캐주얼 한식 트렌드와의 적합성",
+              "주류 페어링에 강한 메뉴 구성",
+            ]
+          : [
+              "Strong late-night dining demand",
+              "Casual Korean dining trend",
+              "Alcohol pairing friendly menu",
+            ],
       images: [
         "https://images.unsplash.com/photo-1529042410759-befb1204b468?q=80&w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1514516345957-556ca7e814a4?q=80&w=800&auto=format&fit=crop",
@@ -48,19 +64,27 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
     },
     {
       brand: lang === "ko" ? "홍콩반점" : "PAIK'S NOODLE",
-      country: lang === "ko" ? "캄보디아" : "Cambodia",
-      location: lang === "ko" ? "프놈펜 매장" : "Phnom Penh Store",
-      flag: "🇰🇭",
+      country: lang === "ko" ? "싱가포르" : "Singapore",
+      location: lang === "ko" ? "싱가포르 매장" : "Singapore Store",
+      flag: "🇸🇬",
       mainImage:
         "https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1200&auto=format&fit=crop",
       description:
         lang === "ko"
-          ? "캄보디아에서 성공적으로 운영 중인 한국식 중식 캐주얼 다이닝 브랜드입니다. 홍콩반점 0410은 합리적인 가격, 빠른 서비스, 일상 식사에 최적화된 메뉴 구조를 바탕으로 현지 고객의 꾸준한 수요를 이끌어내고 있습니다."
-          : "A Korean-Chinese casual dining brand successfully operating in Cambodia. PAIK'S NOODLE continues to attract strong demand through affordable pricing, fast service, and a menu structure optimized for everyday dining.",
+          ? "싱가포르에서 성공적으로 운영 중인 한국식 중식 캐주얼 다이닝 브랜드입니다. 홍콩반점은 합리적인 가격, 빠른 서비스, 일상 식사에 최적화된 메뉴 구조를 바탕으로 도심 상권에서 꾸준한 수요를 이끌어내고 있습니다."
+          : "A Korean-Chinese casual dining brand successfully operating in Singapore. PAIK'S NOODLE continues to attract strong demand through affordable pricing, fast service, and a menu structure optimized for everyday urban dining.",
       points:
         lang === "ko"
-          ? ["합리적인 일상 외식 수요", "빠르고 효율적인 운영 구조", "높은 현지 접근성"]
-          : ["Affordable everyday dining", "Fast and efficient operation", "Strong local accessibility"],
+          ? [
+              "합리적인 일상 외식 수요",
+              "빠르고 효율적인 운영 구조",
+              "도심 상권에 적합한 높은 접근성",
+            ]
+          : [
+              "Affordable everyday dining",
+              "Fast and efficient operation",
+              "Strong urban accessibility",
+            ],
       images: [
         "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1552611052-33e04de081de?q=80&w=800&auto=format&fit=crop",
