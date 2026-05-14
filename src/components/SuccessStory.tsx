@@ -33,13 +33,13 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
     {
       brand: lang === "ko" ? "새마을식당" : "SAEMAEUL",
       country: lang === "ko" ? "태국" : "Thailand",
-      location: lang === "ko" ? "방콕 매장" : "Bangkok Store",
+      location: lang === "ko" ? "원 방콕 매장" : "One Bangkok Store",
       flag: "🇹🇭",
       mainImage: "https://i.ibb.co/2Gz729L/image.png",
       description:
         lang === "ko"
-          ? "태국 방콕에서 성공적으로 운영 중인 한국식 캐주얼 다이닝 브랜드입니다. 새마을식당은 Korean BBQ, 캐주얼 다이닝, 늦은 시간까지 이어지는 소셜 다이닝 경험을 원하는 젊은 고객층에게 높은 반응을 얻고 있습니다."
-          : "A Korean casual dining brand successfully operating in Bangkok, Thailand. SAEMAEUL has gained strong popularity among young customers seeking Korean BBQ, casual dining, and late-night social dining experiences.",
+          ? "태국 원 방콕에서 성공적으로 운영 중인 한국식 캐주얼 다이닝 브랜드입니다. 새마을식당은 Korean BBQ, 캐주얼 다이닝, 늦은 시간까지 이어지는 소셜 다이닝 경험을 원하는 젊은 고객층에게 높은 반응을 얻고 있습니다."
+          : "A Korean casual dining brand successfully operating in One Bangkok, Thailand. SAEMAEUL has gained strong popularity among young customers seeking Korean BBQ, casual dining, and late-night social dining experiences.",
       points:
         lang === "ko"
           ? [
@@ -95,9 +95,11 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
           <p className="text-sm font-bold tracking-[0.3em] text-primary mb-3">
             SUCCESS STORY
           </p>
+
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
             {lang === "ko" ? "글로벌 성공 사례" : "Global Success Stories"}
           </h2>
+
           <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             {lang === "ko"
               ? "해외 시장에서 실제 운영 중인 더본코리아 브랜드의 대표 사례를 소개합니다."
@@ -120,7 +122,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
                   <img
                     src={story.mainImage}
                     alt={`${story.brand} ${story.location}`}
-                    className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 hover:scale-105"
+                    className="w-full h-full object-cover object-center absolute inset-0 transition-transform duration-700 hover:scale-105"
                   />
                 </div>
 
@@ -129,9 +131,11 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
                     <p className="text-sm font-bold text-primary tracking-wide mb-2">
                       {story.flag} {story.country}
                     </p>
+
                     <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
                       {story.brand}
                     </h3>
+
                     <p className="mt-1 text-lg font-semibold text-muted-foreground">
                       {story.location}
                     </p>
@@ -145,6 +149,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
                     <p className="text-sm font-bold tracking-[0.2em] text-foreground mb-3">
                       WHY IT WORKS
                     </p>
+
                     <div className="flex flex-wrap gap-2">
                       {story.points.map((point) => (
                         <span
@@ -168,7 +173,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
                     <img
                       src={image}
                       alt={`${story.brand} sub image ${imageIndex + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
                     />
                   </div>
                 ))}
