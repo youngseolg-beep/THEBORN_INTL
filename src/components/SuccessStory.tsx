@@ -7,8 +7,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
       country: lang === "ko" ? "호주" : "Australia",
       location: lang === "ko" ? "시드니 매장" : "Sydney Store",
       flag: "🇦🇺",
-      mainImage:
-        "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200&auto=format&fit=crop",
+      mainImage: "https://i.ibb.co/7tdsSvvf/image.png",
       description:
         lang === "ko"
           ? "호주 시드니에서 성공적으로 운영 중인 프리미엄 한식 BBQ 다이닝 브랜드입니다. 현지의 높은 Korean BBQ 수요와 가족·단체 외식 문화가 결합되어, 본가는 글로벌 시장에서도 프리미엄 한식 다이닝 브랜드로 자리 잡고 있습니다."
@@ -26,10 +25,9 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
               "Strong dinner-focused traffic",
             ],
       images: [
-        "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop",
+        "https://i.ibb.co/qF5WpcqW/2.png",
+        "https://i.ibb.co/Ng8FMTr2/4.png",
+        "https://i.ibb.co/HfzrdDjF/3.png",
       ],
     },
     {
@@ -37,8 +35,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
       country: lang === "ko" ? "태국" : "Thailand",
       location: lang === "ko" ? "방콕 매장" : "Bangkok Store",
       flag: "🇹🇭",
-      mainImage:
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1200&auto=format&fit=crop",
+      mainImage: "https://i.ibb.co/2Gz729L/image.png",
       description:
         lang === "ko"
           ? "태국 방콕에서 성공적으로 운영 중인 한국식 캐주얼 다이닝 브랜드입니다. 새마을식당은 Korean BBQ, 캐주얼 다이닝, 늦은 시간까지 이어지는 소셜 다이닝 경험을 원하는 젊은 고객층에게 높은 반응을 얻고 있습니다."
@@ -56,10 +53,9 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
               "Alcohol pairing friendly menu",
             ],
       images: [
-        "https://images.unsplash.com/photo-1529042410759-befb1204b468?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1514516345957-556ca7e814a4?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1567521464027-f127ff144326?q=80&w=800&auto=format&fit=crop",
+        "https://i.ibb.co/DPbNsQYB/646842642-1329227085921089-8121237019140067164-n.jpg",
+        "https://i.ibb.co/Mx8f498Y/573050647-1227771012733364-1291417205488963522-n.jpg",
+        "https://i.ibb.co/zT9h7xWj/557814221-1203147295195736-8563570105913234358-n.jpg",
       ],
     },
     {
@@ -67,8 +63,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
       country: lang === "ko" ? "싱가포르" : "Singapore",
       location: lang === "ko" ? "싱가포르 매장" : "Singapore Store",
       flag: "🇸🇬",
-      mainImage:
-        "https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1200&auto=format&fit=crop",
+      mainImage: "https://i.ibb.co/pCrSgwK/3.png",
       description:
         lang === "ko"
           ? "싱가포르에서 성공적으로 운영 중인 한국식 중식 캐주얼 다이닝 브랜드입니다. 홍콩반점은 합리적인 가격, 빠른 서비스, 일상 식사에 최적화된 메뉴 구조를 바탕으로 도심 상권에서 꾸준한 수요를 이끌어내고 있습니다."
@@ -86,10 +81,9 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
               "Strong urban accessibility",
             ],
       images: [
-        "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1552611052-33e04de081de?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1565299507177-b0ac66763828?q=80&w=800&auto=format&fit=crop",
+        "https://i.ibb.co/gFZM9dp9/4.png",
+        "https://i.ibb.co/PGZ9QddS/image.jpg",
+        "https://i.ibb.co/fzhzgh3R/2.jpg",
       ],
     },
   ];
@@ -165,7 +159,7 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 md:p-5 bg-muted/30">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 md:p-5 bg-muted/30">
                 {story.images.map((image, imageIndex) => (
                   <div
                     key={`${story.brand}-${imageIndex}`}
