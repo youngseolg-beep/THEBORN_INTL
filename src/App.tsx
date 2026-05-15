@@ -13,10 +13,10 @@ export default function App() {
   const [lang, setLang] = useState<"ko" | "en">("ko");
 
   return (
-    <div className="min-h-screen bg-[#0F0F10] text-zinc-100">
+    <div className="min-h-screen bg-[#18181B] text-zinc-100">
       <Navbar lang={lang} setLang={setLang} />
 
-      <main className="bg-[#0F0F10]">
+      <main className="bg-[#18181B]">
         <Hero lang={lang} />
         <OverseasStatus lang={lang} />
         <Brands lang={lang} />
