@@ -20,7 +20,7 @@ export default function Hero({ lang }: { lang: "ko" | "en" }) {
   }, [backgrounds.length]);
 
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-[#0F0F10]">
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
           <motion.img
@@ -35,7 +35,8 @@ export default function Hero({ lang }: { lang: "ko" | "en" }) {
           />
         </AnimatePresence>
 
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#0F0F10]" />
       </div>
 
       <div className="relative z-10 text-center px-4">
@@ -43,7 +44,7 @@ export default function Hero({ lang }: { lang: "ko" | "en" }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-lg md:text-2xl text-white/90 mb-4"
+          className="text-lg md:text-2xl text-zinc-200 mb-4"
         >
           {lang === "ko"
             ? "대한민국을 대표하는 외식 프랜차이즈 그룹"
@@ -63,7 +64,7 @@ export default function Hero({ lang }: { lang: "ko" | "en" }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed px-4"
+          className="text-lg md:text-xl text-zinc-300 max-w-3xl mx-auto leading-relaxed px-4"
         >
           {lang === "ko"
             ? "더본코리아는 1993년 백종원 대표가 창립한 이후 30년 이상의 외식 운영 노하우를 축적한 글로벌 외식 기업입니다."
