@@ -8,187 +8,247 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
   const stories = [
     {
       brand: lang === "ko" ? "본가" : "BORNGA",
-      country: lang === "ko" ? "호주" : "Australia",
-      location: lang === "ko" ? "시드니 매장" : "Sydney Store",
-      flag: "🇦🇺",
+
+      type:
+        lang === "ko"
+          ? "프리미엄 Korean BBQ 다이닝"
+          : "Korean Premium BBQ Dining",
+
+      mainCopy:
+        lang === "ko"
+          ? `뜨겁게 구워지는 고기,
+함께 둘러앉은 테이블,
+프리미엄 Korean BBQ가 만드는 따뜻한 식사 경험.
+
+본가는 함께 굽고, 나누고, 즐기는 한국식 BBQ 문화를 담아냅니다.`
+          : `Sizzling grills.
+Shared tables.
+Warm conversations over premium Korean BBQ.
+
+BORNGA delivers a Korean dining experience built around gathering, grilling, and sharing together.`,
+
+      mood:
+        lang === "ko"
+          ? "불맛 • 모임 • 프리미엄 BBQ • 따뜻한 분위기 • 한국식 외식 문화"
+          : "Fire • Gathering • Premium BBQ • Warmth • Korean Dining Culture",
+
+      memory:
+        lang === "ko"
+          ? "불판을 중심으로 사람들이 모이고, 함께 식사를 즐기는 프리미엄 Korean BBQ 경험."
+          : "A premium Korean BBQ experience where people gather around the grill and share moments together.",
+
       mainImage: "https://i.ibb.co/7tdsSvvf/image.png",
-      description:
-        lang === "ko"
-          ? "호주 시드니에서 성공적으로 운영 중인 프리미엄 한식 BBQ 다이닝 브랜드입니다. 현지의 높은 Korean BBQ 수요와 가족·단체 외식 문화가 결합되어, 본가는 글로벌 시장에서도 프리미엄 한식 다이닝 브랜드로 자리 잡고 있습니다."
-          : "Premium Korean BBQ dining brand successfully operating in Sydney, Australia. Strong local demand for Korean BBQ culture and family-style gatherings has positioned BORNGA as a premium Korean dining destination in the global market.",
-      points:
-        lang === "ko"
-          ? [
-              "프리미엄 Korean BBQ 수요",
-              "가족·단체 외식 문화와의 높은 적합성",
-              "저녁 중심의 안정적인 고객 유입",
-            ]
-          : [
-              "Premium Korean BBQ demand",
-              "Family & group dining culture fit",
-              "Strong dinner-focused traffic",
-            ],
+
       images: [
-        "https://i.ibb.co/qF5WpcqW/2.png",
-        "https://i.ibb.co/Ng8FMTr2/4.png",
-        "https://i.ibb.co/HfzrdDjF/3.png",
+        "https://i.ibb.co/DP6jQFqP/1.png",
+        "https://i.ibb.co/XxYqyXSR/2.png",
+        "https://i.ibb.co/TBxs8hNQ/3.png",
+        "https://i.ibb.co/whN5w6yQ/4.png",
+        "https://i.ibb.co/xZTZsg4/5.png",
+        "https://i.ibb.co/BHxNWNnb/6.png",
+        "https://i.ibb.co/TxSHn9pf/7.png",
+        "https://i.ibb.co/1Y7XXVdC/8.png",
+        "https://i.ibb.co/3yhMmQ04/9.png",
+        "https://i.ibb.co/Ld4gqLwf/10.png",
+        "https://i.ibb.co/cKB5S1VQ/11.png",
+        "https://i.ibb.co/LDVfKzDj/12.png",
       ],
     },
+
     {
-      brand: lang === "ko" ? "새마을식당" : "SAEMAEUL",
-      country: lang === "ko" ? "태국" : "Thailand",
-      location:
+      brand: lang === "ko" ? "새마을식당" : "SAEMAEULSIKDANG",
+
+      type:
         lang === "ko"
-          ? "새마을식당 메가 방나점"
-          : "SAEMAEUL Mega bangna",
-      flag: "🇹🇭",
+          ? "한국식 캐주얼 BBQ & 소셜 다이닝"
+          : "Korean Casual BBQ & Social Dining",
+
+      mainCopy:
+        lang === "ko"
+          ? `늦은 밤까지 이어지는 활기,
+연탄불 위의 불맛,
+술잔과 웃음이 오가는 한국식 외식 문화.
+
+새마을식당은 한국 특유의 활기 있는 소셜 다이닝 분위기를 담아냅니다.`
+          : `Late-night energy.
+Smoky grills.
+Shared drinks and vibrant tables.
+
+SAEMAEULSIKDANG captures the lively atmosphere of Korean social dining culture.`,
+
+      mood:
+        lang === "ko"
+          ? "야간 외식 • 불맛 • 소셜 다이닝 • 활기 • 한국 길거리 감성"
+          : "Late Night • Smoky BBQ • Social Dining • Energy • Korean Street Vibes",
+
+      memory:
+        lang === "ko"
+          ? "불맛과 술잔, 늦은 밤의 활기가 어우러진 한국식 외식 경험."
+          : "A lively Korean dining experience filled with smoky flavors, shared drinks, and late-night energy.",
+
       mainImage: "https://i.ibb.co/fd9Mt9hp/image.png",
-      description:
-        lang === "ko"
-          ? "태국 방콕에서 성공적으로 운영 중인 한국식 캐주얼 다이닝 브랜드입니다. 새마을식당은 Korean BBQ, 캐주얼 다이닝, 늦은 시간까지 이어지는 소셜 다이닝 경험을 원하는 젊은 고객층에게 높은 반응을 얻고 있습니다."
-          : "A Korean casual dining brand successfully operating in Bangkok, Thailand. SAEMAEUL has gained strong popularity among young customers seeking Korean BBQ, casual dining, and late-night social dining experiences.",
-      points:
-        lang === "ko"
-          ? [
-              "강한 야간 외식 수요",
-              "캐주얼 한식 트렌드와의 적합성",
-              "주류 페어링에 강한 메뉴 구성",
-            ]
-          : [
-              "Strong late-night dining demand",
-              "Casual Korean dining trend",
-              "Alcohol pairing friendly menu",
-            ],
+
       images: [
-        "https://i.ibb.co/DPbNsQYB/646842642-1329227085921089-8121237019140067164-n.jpg",
-        "https://i.ibb.co/Mx8f498Y/573050647-1227771012733364-1291417205488963522-n.jpg",
-        "https://i.ibb.co/zT9h7xWj/557814221-1203147295195736-8563570105913234358-n.jpg",
+        "https://i.ibb.co/RTdh5TL5/1.png",
+        "https://i.ibb.co/j96NCkDp/2.png",
+        "https://i.ibb.co/HDT3K3rP/3.png",
+        "https://i.ibb.co/VWvVqMBm/4.png",
+        "https://i.ibb.co/DDc6CnWM/5.png",
+        "https://i.ibb.co/hRYQX0NM/6.png",
+        "https://i.ibb.co/8L33YQ23/7.png",
+        "https://i.ibb.co/kgB22N81/8.png",
+        "https://i.ibb.co/YF8n3gkX/9.png",
+        "https://i.ibb.co/20zDL7ft/10.png",
       ],
     },
+
     {
       brand: lang === "ko" ? "홍콩반점" : "PAIK'S NOODLE",
-      country: lang === "ko" ? "싱가포르" : "Singapore",
-      location: lang === "ko" ? "싱가포르 매장" : "Singapore Store",
-      flag: "🇸🇬",
+
+      type:
+        lang === "ko"
+          ? "한국식 중화요리 브랜드"
+          : "Korean Chinese Cuisine",
+
+      mainCopy:
+        lang === "ko"
+          ? `강한 불맛,
+빠르게 완성되는 한 그릇,
+일상 속에서 즐기는 한국식 중화요리.
+
+홍콩반점은 웍의 화력과 빠른 주방의 에너지를 그대로 담아냅니다.`
+          : `Hot flames.
+Bold wok flavors.
+Fast and comforting meals made for everyday dining.
+
+PAIK'S NOODLE brings the fast-paced energy of Korean-Chinese cuisine to the table.`,
+
+      mood:
+        lang === "ko"
+          ? "웍 불맛 • 강한 풍미 • 든든한 한끼 • 빠른 식사 • 도심의 에너지"
+          : "Wok Fire • Bold Flavor • Comfort Food • Fast Dining • Urban Energy",
+
+      memory:
+        lang === "ko"
+          ? "강한 불맛과 빠른 주방의 에너지가 살아있는 한국식 중화요리 경험."
+          : "A bold Korean-Chinese dining experience full of heat, flavor, and fast-moving kitchen energy.",
+
       mainImage: "https://i.ibb.co/pCrSgwK/3.png",
-      description:
-        lang === "ko"
-          ? "싱가포르에서 성공적으로 운영 중인 한국식 중식 캐주얼 다이닝 브랜드입니다. 홍콩반점은 합리적인 가격, 빠른 서비스, 일상 식사에 최적화된 메뉴 구조를 바탕으로 도심 상권에서 꾸준한 수요를 이끌어내고 있습니다."
-          : "A Korean-Chinese casual dining brand successfully operating in Singapore. PAIK'S NOODLE continues to attract strong demand through affordable pricing, fast service, and a menu structure optimized for everyday urban dining.",
-      points:
-        lang === "ko"
-          ? [
-              "합리적인 일상 외식 수요",
-              "빠르고 효율적인 운영 구조",
-              "도심 상권에 적합한 높은 접근성",
-            ]
-          : [
-              "Affordable everyday dining",
-              "Fast and efficient operation",
-              "Strong urban accessibility",
-            ],
+
       images: [
-        "https://i.ibb.co/gFZM9dp9/4.png",
-        "https://i.ibb.co/PGZ9QddS/image.jpg",
-        "https://i.ibb.co/fzhzgh3R/2.jpg",
+        "https://i.ibb.co/qFWjvn29/1.png",
+        "https://i.ibb.co/mVwsBcbz/2.png",
+        "https://i.ibb.co/VWFdkmt0/3.png",
+        "https://i.ibb.co/20W4qc0P/4.png",
+        "https://i.ibb.co/60Phq48L/5.png",
+        "https://i.ibb.co/KjhKFgSf/6.png",
+        "https://i.ibb.co/ym8QpwPF/7.png",
+        "https://i.ibb.co/wrr80Q4x/8.png",
+        "https://i.ibb.co/3mQkSrGp/9.png",
+        "https://i.ibb.co/N2GN6fqf/10.png",
+        "https://i.ibb.co/DP5CnJyY/11.png",
+        "https://i.ibb.co/1t9NxH9g/12.png",
       ],
     },
   ];
 
   return (
     <>
-      <section id="success-story" className="py-24 bg-muted/20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <p className="text-sm font-bold tracking-[0.3em] text-primary mb-3">
-              SUCCESS STORY
+      <section
+        id="success-story"
+        className="py-28 bg-[#0F0F10] text-zinc-100"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <p className="text-sm font-bold tracking-[0.35em] text-orange-400 mb-4">
+              BRAND EXPERIENCE
             </p>
 
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
               {lang === "ko"
-                ? "글로벌 성공 사례"
-                : "Global Success Stories"}
+                ? "한국 외식 브랜드의 에너지"
+                : "The Energy of Korean Dining Brands"}
             </h2>
 
-            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-zinc-400 max-w-3xl mx-auto leading-relaxed text-base md:text-lg">
               {lang === "ko"
-                ? "해외 시장에서 실제 운영 중인 더본코리아 브랜드의 대표 사례를 소개합니다."
-                : "Discover representative success cases of Theborn Korea brands operating in global markets."}
+                ? "뜨거운 불맛, 활기 있는 테이블, 사람들의 웃음과 에너지. 더본코리아 브랜드가 만들어내는 한국 외식 문화의 현장감을 경험해보세요."
+                : "Sizzling grills, vibrant tables, bold flavors, and the warmth of Korean dining culture. Experience the atmosphere and energy behind Theborn Korea brands."}
             </p>
           </div>
 
-          <div className="space-y-16">
+          <div className="space-y-32">
             {stories.map((story) => (
               <motion.article
                 key={story.brand}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.7 }}
                 viewport={{ once: true }}
-                className="bg-background rounded-[2rem] overflow-hidden border shadow-sm"
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-10">
+                  <div>
+                    <p className="text-orange-400 text-sm font-bold tracking-[0.25em] mb-4">
+                      BRAND EXPERIENCE
+                    </p>
+
+                    <h3 className="text-4xl md:text-5xl font-bold tracking-tight">
+                      {story.brand}
+                    </h3>
+
+                    <p className="mt-4 text-zinc-400 text-lg font-medium">
+                      {story.type}
+                    </p>
+
+                    <div className="mt-8 whitespace-pre-line text-zinc-200 leading-loose text-lg">
+                      {story.mainCopy}
+                    </div>
+
+                    <div className="mt-8">
+                      <p className="text-xs tracking-[0.3em] text-zinc-500 mb-3">
+                        MOOD KEYWORDS
+                      </p>
+
+                      <p className="text-zinc-300 leading-relaxed">
+                        {story.mood}
+                      </p>
+                    </div>
+
+                    <div className="mt-8 border-l border-orange-400/50 pl-5">
+                      <p className="text-zinc-100 leading-relaxed text-lg italic">
+                        {story.memory}
+                      </p>
+                    </div>
+                  </div>
+
                   <div
-                    className="relative min-h-[280px] md:min-h-[420px] overflow-hidden cursor-pointer"
+                    className="relative rounded-[2rem] overflow-hidden cursor-pointer group"
                     onClick={() => setSelectedImage(story.mainImage)}
                   >
                     <img
                       src={story.mainImage}
-                      alt={`${story.brand} ${story.location}`}
-                      className="w-full h-full object-cover object-center absolute inset-0 transition-transform duration-700 hover:scale-105"
+                      alt={story.brand}
+                      className="w-full h-[520px] object-cover object-center transition-transform duration-700 group-hover:scale-105"
                     />
-                  </div>
 
-                  <div className="p-6 md:p-10 flex flex-col justify-center">
-                    <div className="mb-5">
-                      <p className="text-sm font-bold text-primary tracking-wide mb-2">
-                        {story.flag} {story.country}
-                      </p>
-
-                      <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                        {story.brand}
-                      </h3>
-
-                      <p className="mt-1 text-lg font-semibold text-muted-foreground">
-                        {story.location}
-                      </p>
-                    </div>
-
-                    <p className="text-muted-foreground leading-relaxed">
-                      {story.description}
-                    </p>
-
-                    <div className="mt-7">
-                      <p className="text-sm font-bold tracking-[0.2em] text-foreground mb-3">
-                        WHY IT WORKS
-                      </p>
-
-                      <div className="flex flex-wrap gap-2">
-                        {story.points.map((point) => (
-                          <span
-                            key={point}
-                            className="rounded-full border bg-muted/50 px-4 py-2 text-sm font-semibold text-foreground"
-                          >
-                            {point}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 md:p-5 bg-muted/30">
-                  {story.images.map((image, imageIndex) => (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {story.images.map((image, index) => (
                     <div
-                      key={`${story.brand}-${imageIndex}`}
-                      className="aspect-[4/3] rounded-2xl overflow-hidden bg-muted border cursor-pointer"
+                      key={`${story.brand}-${index}`}
+                      className="relative rounded-2xl overflow-hidden cursor-pointer group bg-[#18181B]"
                       onClick={() => setSelectedImage(image)}
                     >
                       <img
                         src={image}
-                        alt={`${story.brand} sub image ${imageIndex + 1}`}
-                        className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                        alt={`${story.brand}-${index}`}
+                        className="w-full h-[180px] md:h-[220px] object-cover object-center transition-transform duration-500 group-hover:scale-105"
                       />
+
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
                     </div>
                   ))}
                 </div>
@@ -200,11 +260,11 @@ export default function SuccessStory({ lang }: { lang: "ko" | "en" }) {
 
       {selectedImage && (
         <div
-          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4"
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-5 right-5 text-white"
+            className="absolute top-6 right-6 text-white"
             onClick={() => setSelectedImage(null)}
           >
             <X className="w-8 h-8" />
