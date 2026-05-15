@@ -31,32 +31,19 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
     { id: 12, brand: "PAIK'S NOODLE", src: "https://i.ibb.co/xSK9Y0Gb/image.png", alt: "PAIK'S NOODLE gallery image 4" },
   ];
 
-  const brands: {
-    key: BrandType;
-    label: string;
-    logo?: string;
-  }[] = [
-    {
-      key: "BORNGA",
-      label: lang === "ko" ? "본가" : "BORNGA",
-      logo: "https://i.ibb.co/6q7JGsB/image.png",
-    },
-    {
-      key: "SAEMAEUL",
-      label: lang === "ko" ? "새마을식당" : "SAEMAEUL",
-      logo: "https://i.ibb.co/7tN67FZd/2.png",
-    },
-    {
-      key: "PAIK'S NOODLE",
-      label: lang === "ko" ? "홍콩반점 0410" : "PAIK'S NOODLE",
-      logo: "https://i.ibb.co/9927sbhv/png-01.png",
-    },
+  const brands = [
+    { key: "BORNGA" as BrandType, label: lang === "ko" ? "본가" : "BORNGA" },
+    { key: "SAEMAEUL" as BrandType, label: lang === "ko" ? "새마을식당" : "SAEMAEULSIKDANG" },
+    { key: "PAIK'S NOODLE" as BrandType, label: lang === "ko" ? "홍콩반점 0410" : "PAIK'S NOODLE" },
   ];
 
   return (
-    <section id="brand-gallery" className="py-24 bg-muted/30">
+    <section id="brand-gallery" className="py-24 bg-[#0F0F10] text-zinc-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
+          <p className="text-sm font-bold tracking-[0.35em] text-orange-400 mb-4">
+            BRAND MOMENTS
+          </p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
             {lang === "ko" ? "브랜드 이미지" : "Brand Gallery"}
           </h2>
@@ -75,8 +62,7 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
                   viewport={{ once: true }}
                   className="mb-6 flex flex-col items-center text-center"
                 >
-                 
-                  <h3 className="text-xl md:text-2xl font-bold tracking-tight">
+                  <h3 className="text-xl md:text-2xl font-bold tracking-tight text-zinc-100">
                     {brand.label}
                   </h3>
                 </motion.div>
@@ -91,12 +77,12 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
                       transition={{ duration: 0.35, delay: index * 0.06 }}
                       viewport={{ once: true }}
                       onClick={() => setSelectedImage(item)}
-                      className="group relative overflow-hidden rounded-2xl border bg-background shadow-sm aspect-[4/3] text-left transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg"
+                      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#18181B] shadow-sm aspect-[4/3] text-left transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg"
                     >
                       <img
                         src={item.src}
                         alt={item.alt}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                     </motion.button>
@@ -111,7 +97,7 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
       <AnimatePresence>
         {selectedImage && (
           <motion.div
-            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -134,12 +120,8 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
                 <X className="w-8 h-8" />
               </button>
 
-              <div className="overflow-hidden rounded-2xl bg-background shadow-2xl">
-                <img
-                  src={selectedImage.src}
-                  alt={selectedImage.alt}
-                  className="w-full max-h-[80vh] object-contain bg-black"
-                />
+              <div className="overflow-hidden rounded-2xl bg-black shadow-2xl">
+                <img src={selectedImage.src} alt={selectedImage.alt} className="w-full max-h-[80vh] object-contain bg-black" />
               </div>
             </motion.div>
           </motion.div>
