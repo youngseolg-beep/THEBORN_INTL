@@ -31,68 +31,36 @@ export default function Process({ lang }: { lang: "ko" | "en" }) {
     lang === "ko"
       ? [
           { title: "STEP 01", desc: "사업신청서 접수", icon: Mail },
-          {
-            title: "STEP 02",
-            desc: "적격성 평가를 위한 수권 서류 제출",
-            icon: ClipboardCheck,
-          },
-          {
-            title: "STEP 03",
-            desc: (
-              <>
-                사업 관련 비대면 미팅
-                <br />
-                (화상미팅)
-              </>
-            ),
-            icon: FileSignature,
-          },
+          { title: "STEP 02", desc: "적격성 평가를 위한 수권 서류 제출", icon: ClipboardCheck },
+          { title: "STEP 03", desc: <>사업 관련 비대면 미팅<br />(화상미팅)</>, icon: FileSignature },
           { title: "STEP 04", desc: "사업성 검토 및 적격성 평가 진행", icon: FileUp },
           { title: "STEP 05", desc: "가맹사업 진행 여부 확정", icon: Search },
           { title: "STEP 06", desc: "비밀유지 협약서(NDA) 체결", icon: Handshake },
           { title: "STEP 07", desc: "사업정보 공유 및 사업계획 수립", icon: FileText },
           { title: "STEP 08", desc: "가맹계약서 체결", icon: TrendingUp },
-          {
-            title: "STEP 09",
-            desc: (
-              <>
-                사업개시
-                <br />
-                (시장조사/교육/오픈 등)
-              </>
-            ),
-            icon: MapPin,
-          },
+          { title: "STEP 09", desc: <>사업개시<br />(시장조사/교육/오픈 등)</>, icon: MapPin },
         ]
       : [
           { title: "STEP 01", desc: "Application Submission", icon: Mail },
-          {
-            title: "STEP 02",
-            desc: "Submission of Authorization Documents",
-            icon: ClipboardCheck,
-          },
+          { title: "STEP 02", desc: "Submission of Authorization Documents", icon: ClipboardCheck },
           { title: "STEP 03", desc: "Non-face-to-face Meeting", icon: FileSignature },
           { title: "STEP 04", desc: "Feasibility Study & Evaluation", icon: FileUp },
           { title: "STEP 05", desc: "Confirmation of Franchise Business", icon: Search },
           { title: "STEP 06", desc: "NDA Signing", icon: Handshake },
           { title: "STEP 07", desc: "Business Info Sharing & Planning", icon: FileText },
           { title: "STEP 08", desc: "Franchise Agreement Signing", icon: TrendingUp },
-          {
-            title: "STEP 09",
-            desc: "Business Launch (Market Research/Training/Opening)",
-            icon: MapPin,
-          },
+          { title: "STEP 09", desc: "Business Launch (Market Research/Training/Opening)", icon: MapPin },
         ];
 
   const downloadItems: DownloadItem[] =
     lang === "ko"
       ? [
-         {
-  title: "사업신청서",
-  desc: "출점 검토를 위한 기본 신청 서류 다운로드",
-  href: "/downloads/theborn-global-application.docx",
-  fileName: "더본코리아 글로벌사업 신청서.docx",
-},
+          {
+            title: "사업신청서",
+            desc: "출점 검토를 위한 기본 신청 서류 다운로드",
+            href: "/downloads/theborn-global-application.docx",
+            fileName: "더본코리아 글로벌사업 신청서.docx",
+          },
           {
             title: "브랜드 브로슈어",
             desc: "브랜드 소개 및 가맹 정보 브로슈어 다운로드",
@@ -116,7 +84,7 @@ export default function Process({ lang }: { lang: "ko" | "en" }) {
         ];
 
   return (
-    <section id="process" className="py-24">
+    <section id="process" className="py-24 bg-[#0F0F10] text-zinc-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center tracking-tight">
           {lang === "ko" ? "출점 프로세스" : "Franchise Process"}
@@ -130,11 +98,11 @@ export default function Process({ lang }: { lang: "ko" | "en" }) {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="flex flex-col items-center text-center p-6 bg-background rounded-2xl border shadow-sm w-full max-w-[200px]"
+              className="flex flex-col items-center text-center p-6 bg-[#18181B] rounded-2xl border border-white/10 shadow-sm w-full max-w-[200px]"
             >
-              <step.icon className="h-12 w-12 text-primary mb-4" />
-              <div className="text-sm font-bold text-primary mb-2">{step.title}</div>
-              <p className="text-sm text-muted-foreground font-medium">{step.desc}</p>
+              <step.icon className="h-12 w-12 text-orange-400 mb-4" />
+              <div className="text-sm font-bold text-orange-400 mb-2">{step.title}</div>
+              <p className="text-sm text-zinc-400 font-medium">{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -146,12 +114,12 @@ export default function Process({ lang }: { lang: "ko" | "en" }) {
           viewport={{ once: true }}
           className="mt-16"
         >
-          <div className="rounded-3xl border bg-background shadow-sm p-6 md:p-8">
+          <div className="rounded-3xl border border-white/10 bg-[#18181B] shadow-sm p-6 md:p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
                 {lang === "ko" ? "자료 다운로드" : "Download Documents"}
               </h3>
-              <p className="mt-2 text-sm md:text-base text-muted-foreground">
+              <p className="mt-2 text-sm md:text-base text-zinc-400">
                 {lang === "ko"
                   ? "사업 진행에 필요한 주요 서류를 아래에서 다운로드할 수 있습니다."
                   : "You can download the key documents required for the franchise process below."}
@@ -164,19 +132,17 @@ export default function Process({ lang }: { lang: "ko" | "en" }) {
                   key={index}
                   href={item.href}
                   download={item.fileName}
-                  className="group rounded-2xl border bg-muted/30 p-6 hover:shadow-lg hover:-translate-y-1 transition duration-200"
+                  className="group rounded-2xl border border-white/10 bg-[#0F0F10] p-6 hover:shadow-lg hover:-translate-y-1 transition duration-200"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="shrink-0 rounded-2xl bg-background border p-4">
-                      <Download className="h-7 w-7 text-primary" />
+                    <div className="shrink-0 rounded-2xl bg-[#18181B] border border-white/10 p-4">
+                      <Download className="h-7 w-7 text-orange-400" />
                     </div>
 
                     <div className="flex-1">
-                      <div className="text-lg font-bold tracking-tight">{item.title}</div>
-                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                        {item.desc}
-                      </p>
-                      <div className="mt-4 inline-flex items-center text-sm font-semibold text-primary">
+                      <div className="text-lg font-bold tracking-tight text-zinc-100">{item.title}</div>
+                      <p className="mt-2 text-sm text-zinc-400 leading-relaxed">{item.desc}</p>
+                      <div className="mt-4 inline-flex items-center text-sm font-semibold text-orange-400">
                         {lang === "ko" ? "다운로드" : "Download"}
                       </div>
                     </div>
