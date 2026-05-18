@@ -84,7 +84,7 @@ SAEMAEULSIKDANG captures the lively atmosphere of Korean social dining culture.`
         "https://i.ibb.co/hRYQX0NM/6.png",
         "https://i.ibb.co/8L33YQ23/7.png",
         "https://i.ibb.co/kgB22N81/8.png",
-        "https://i.ibb.co/YF8n3gX/9.png",
+        "https://i.ibb.co/YF8n3gkX/9.png",
         "https://i.ibb.co/20zDL7ft/10.png",
       ],
     },
