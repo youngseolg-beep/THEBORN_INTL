@@ -134,13 +134,13 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
                   <img
                     src={brand.logo}
                     alt={`${brand.name} logo`}
-                    className={
-                      index === 0
-                        ? "w-auto h-14 object-contain"
-                        : index === 1
-                        ? "w-auto h-12 object-contain"
-                        : "w-[200px] h-auto object-contain -mt-2"
-                    }
+                   className={
+  index === 0
+    ? "w-auto h-24 md:h-28 object-contain brightness-125 contrast-125"
+    : index === 1
+    ? "w-auto h-16 md:h-20 object-contain"
+    : "w-[220px] md:w-[260px] h-auto object-contain -mt-2"
+}
                   />
                 </div>
               </AccordionTrigger>
