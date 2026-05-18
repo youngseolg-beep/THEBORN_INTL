@@ -134,9 +134,9 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
                   <img
                     src={brand.logo}
                     alt={`${brand.name} logo`}
-                   className={
+                  className={
   index === 0
-    ? "w-auto h-24 md:h-28 object-contain brightness-125 contrast-125"
+    ? "w-[320px] md:w-[420px] h-auto object-contain brightness-125 contrast-125"
     : index === 1
     ? "w-auto h-16 md:h-20 object-contain"
     : "w-[220px] md:w-[260px] h-auto object-contain -mt-2"
