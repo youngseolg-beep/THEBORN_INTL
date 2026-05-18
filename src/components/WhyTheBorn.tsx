@@ -23,7 +23,7 @@ export default function WhyTheBorn({
               <img
                 src="https://i.ibb.co/JWckcn22/Generated-Image-May-15-2026-5-35-PM.jpg"
                 alt="WHY THE BORN"
-                className="w-full h-[680px] object-cover object-center"
+                className="w-full h-[520px] md:h-[560px] object-cover object-center"
               />
             </div>
           </motion.div>
