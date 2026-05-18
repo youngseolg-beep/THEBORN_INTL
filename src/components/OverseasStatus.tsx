@@ -36,7 +36,7 @@ function Counter({
       ref={ref}
       className="text-center p-4 md:p-6 bg-[#18181B] rounded-2xl border border-white/10 shadow-sm"
     >
-      <motion.div className="text-3xl md:text-5xl font-bold text-orange-400 mb-1 md:mb-2">
+      <motion.div className="text-2xl md:text-5xl font-bold text-orange-400 mb-1 md:mb-2">
         {display}
       </motion.div>
       <div className="text-xs md:text-base text-zinc-400 font-medium">
