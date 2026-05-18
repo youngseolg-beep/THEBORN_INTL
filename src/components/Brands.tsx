@@ -11,7 +11,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
   const brands = [
     {
       name: lang === "ko" ? "본가" : "BORNGA",
-      logo: "https://i.ibb.co/HT50xv8z/image.png",
+      logo: "https://i.ibb.co/9mMFs0VW/image.png",
       imageUrl: "https://i.ibb.co/jkrTJ0xK/2.jpg",
       videoUrl: "https://www.youtube.com/embed/L4JR9SuM8hQ",
       details:
