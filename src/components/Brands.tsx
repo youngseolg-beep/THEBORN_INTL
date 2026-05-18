@@ -18,15 +18,15 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
         lang === "ko"
           ? [
               { label: "콘셉트", value: "정통 한식 프리미엄 BBQ 다이닝" },
-              { label: "타깃 고객", value: "가족 단위 고객, 비즈니스 모임, 한국 문화를 체험하고자 하는 외국인" },
-              { label: "운영 특징", value: "고품질 원육과 신선한 식재료를 바탕으로 단체 회식과 가족 모임까지 수용 가능한 프리미엄 운영 모델" },
+              { label: "타깃 고객", value: "가족, 비즈니스 모임, 한국 BBQ 문화를 경험하고자 하는 고객" },
+              { label: "운영 특징", value: "고품질 원육과 신선한 식재료를 바탕으로 단체 모임까지 수용 가능한 프리미엄 운영 모델" },
               { label: "대표 메뉴", value: "우삼겹, 꽃살, 된장찌개, 돌솥비빔밥" },
               { label: "매장 규모", value: "100~200평 내외 / 150석 이상" },
             ]
           : [
               { label: "Concept", value: "Authentic Korean Premium BBQ Dining" },
-              { label: "Target", value: "Families, Business Meetings, Foreigners experiencing Korean culture" },
-              { label: "Operation", value: "Premium operation model accommodating large groups and family gatherings with high-quality meat and fresh ingredients" },
+              { label: "Target", value: "Families, business gatherings, and customers seeking Korean BBQ culture" },
+              { label: "Operation", value: "Premium model for group dining with quality meat and fresh ingredients" },
               { label: "Signature", value: "Woosamgyeop, Kkotsal, Doenjang-jjigae, Dolsot Bibimbap" },
               { label: "Scale", value: "100~200 Pyeong / 150+ Seats" },
             ],
@@ -54,17 +54,17 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
         lang === "ko"
           ? [
               { label: "콘셉트", value: "숯불 직화 BBQ 기반 한국식 캐주얼 다이닝" },
-              { label: "타깃 고객", value: "직장인, 20~40대 고객층, 연인 등 가성비 한식 안주 수요 고객" },
-              { label: "운영 특징", value: "점심에는 간편한 식사, 저녁에는 푸짐한 BBQ와 주류를 즐길 수 있으며 내점·포장·배달이 모두 가능한 유연한 운영 모델" },
+              { label: "타깃 고객", value: "직장인, 20~40대 고객층, 캐주얼 한식과 주류를 즐기는 고객" },
+              { label: "운영 특징", value: "점심 식사부터 저녁 BBQ와 주류까지 대응 가능한 유연한 운영 모델" },
               { label: "대표 메뉴", value: "열탄불고기, 7분돼지김치, 삼겹살, 옛날도시락" },
-              { label: "매장 규모", value: "60평 이상의 100석 내외 중소형 매장 중심" },
+              { label: "매장 규모", value: "60평 이상 / 100석 내외" },
             ]
           : [
               { label: "Concept", value: "Korean Casual Dining based on Charcoal BBQ" },
-              { label: "Target", value: "Office workers, 20s-40s, Couples looking for cost-effective Korean food" },
-              { label: "Operation", value: "Flexible model for lunch, dinner BBQ/drinks, dine-in, takeout, and delivery" },
+              { label: "Target", value: "Office workers, young customers, and casual Korean dining guests" },
+              { label: "Operation", value: "Flexible model for lunch, BBQ dinner, drinks, takeout, and delivery" },
               { label: "Signature", value: "Yeoltan Bulgogi, 7-Minute Pork Kimchi Stew, Samgyeopsal, Yetnal Dosirak" },
-              { label: "Scale", value: "60+ Pyeong / 100 Seats" },
+              { label: "Scale", value: "60+ Pyeong / Around 100 Seats" },
             ],
       menus:
         lang === "ko"
@@ -90,17 +90,17 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
         lang === "ko"
           ? [
               { label: "콘셉트", value: "합리적인 가격의 캐주얼 중식 전문 브랜드" },
-              { label: "타깃 고객", value: "가족 단위 고객, 학생, 직장인 등 빠르고 부담 없는 식사를 선호하는 소비자" },
-              { label: "운영 특징", value: "소형 매장 중심 운영으로 배달·테이크아웃에 최적화된 효율적인 운영 구조" },
+              { label: "타깃 고객", value: "가족, 학생, 직장인 등 빠르고 부담 없는 식사를 원하는 고객" },
+              { label: "운영 특징", value: "소형 매장, 배달, 테이크아웃에 적합한 효율적인 운영 구조" },
               { label: "대표 메뉴", value: "짜장면, 짬뽕, 탕수육, 볶음밥" },
               { label: "매장 규모", value: "15~25평 내외 / 20석 미만" },
             ]
           : [
-              { label: "Concept", value: "Reasonably priced Casual Chinese Brand" },
-              { label: "Target", value: "Families, Students, Office workers seeking quick, affordable meals" },
-              { label: "Operation", value: "Efficient structure optimized for small stores, delivery, and takeout" },
+              { label: "Concept", value: "Reasonably priced Korean-Chinese casual dining brand" },
+              { label: "Target", value: "Families, students, and office workers seeking quick, affordable meals" },
+              { label: "Operation", value: "Efficient model for compact stores, delivery, and takeout" },
               { label: "Signature", value: "Jjajangmyeon, Jjamppong, Tangsuyuk, Fried Rice" },
-              { label: "Scale", value: "15~25 Pyeong / <20 Seats" },
+              { label: "Scale", value: "15~25 Pyeong / Under 20 Seats" },
             ],
       menus:
         lang === "ko"
@@ -120,41 +120,45 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
   ];
 
   return (
-    <section id="brands" className="py-24 bg-[#0F0F10] text-zinc-100">
+    <section id="brands" className="py-16 md:py-24 bg-[#0F0F10] text-zinc-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center tracking-tight">
+        <h2 className="text-2xl md:text-4xl font-bold mb-8 md:mb-12 text-center tracking-tight">
           {lang === "ko" ? "브랜드 소개" : "Our Brands"}
         </h2>
 
         <Accordion type="single" collapsible className="w-full">
           {brands.map((brand, index) => (
             <AccordionItem key={index} value={`item-${index}`} className="border-white/10">
-              <AccordionTrigger className="text-xl font-bold tracking-tight text-zinc-100 hover:text-orange-400">
-                <div className="flex justify-center items-center w-full py-4">
+              <AccordionTrigger className="text-lg md:text-xl font-bold tracking-tight text-zinc-100 hover:text-orange-400">
+                <div className="flex justify-center items-center w-full py-3 md:py-4">
                   <img
                     src={brand.logo}
                     alt={`${brand.name} logo`}
-                 className={
-  index === 0
-    ? "w-[260px] md:w-[340px] h-auto object-contain"
-    : index === 1
-    ? "w-auto h-16 md:h-20 object-contain"
-    : "w-[220px] md:w-[260px] h-auto object-contain -mt-2"
-}
+                    className={
+                      index === 0
+                        ? "w-[220px] md:w-[340px] h-auto object-contain"
+                        : index === 1
+                        ? "w-auto h-14 md:h-20 object-contain"
+                        : "w-[180px] md:w-[260px] h-auto object-contain -mt-1 md:-mt-2"
+                    }
                   />
                 </div>
               </AccordionTrigger>
 
-              <AccordionContent className="space-y-6 text-zinc-300">
+              <AccordionContent className="space-y-5 md:space-y-6 text-zinc-300">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.45 }}
                   viewport={{ once: true }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4"
                 >
                   <div className="aspect-video bg-[#18181B] rounded-xl overflow-hidden border border-white/10">
-                    <img src={brand.imageUrl} alt={brand.name} className="w-full h-full object-cover object-center" />
+                    <img
+                      src={brand.imageUrl}
+                      alt={brand.name}
+                      className="w-full h-full object-cover object-center"
+                    />
                   </div>
 
                   <div className="aspect-video rounded-xl overflow-hidden border border-white/10 bg-[#18181B]">
@@ -168,39 +172,47 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
                   </div>
                 </motion.div>
 
-                <div className="mt-6">
+                <div className="mt-5 md:mt-6">
                   <p className="mb-3 text-orange-400 font-semibold tracking-wide text-sm md:text-2xl">
                     {lang === "ko" ? "대표 메뉴" : "SIGNATURE MENU"}
                   </p>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     {brand.menus.map((menu, menuIndex) => (
                       <div
                         key={menuIndex}
-                        className="bg-[#18181B] rounded-xl p-3 text-center border border-white/10 transition transform hover:-translate-y-1 hover:shadow-lg duration-200"
+                        className="bg-[#18181B] rounded-xl p-2.5 md:p-3 text-center border border-white/10 transition transform hover:-translate-y-1 hover:shadow-lg duration-200"
                       >
-                        <img src={menu.image} alt={menu.name} className="w-full h-24 object-contain rounded-md mb-2 bg-white" />
-                        <p className="font-semibold text-sm min-h-[40px] flex items-center justify-center text-zinc-100">
+                        <img
+                          src={menu.image}
+                          alt={menu.name}
+                          className="w-full h-20 md:h-24 object-contain rounded-md mb-2 bg-white"
+                        />
+                        <p className="font-semibold text-xs md:text-sm min-h-[34px] md:min-h-[40px] flex items-center justify-center text-zinc-100 leading-tight">
                           {menu.name}
                         </p>
-                        <p className="text-sm font-bold text-orange-400">{menu.price}</p>
+                        <p className="text-xs md:text-sm font-bold text-orange-400">
+                          {menu.price}
+                        </p>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
+                  transition={{ duration: 0.45, delay: 0.15 }}
                   viewport={{ once: true }}
-                  className="space-y-3"
+                  className="space-y-2.5 md:space-y-3"
                 >
                   {brand.details.map((detail, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <Check className="h-5 w-5 text-orange-400 shrink-0 mt-0.5" />
-                      <p>
-                        <span className="font-semibold text-zinc-100">{detail.label}: </span>
+                    <div key={i} className="flex items-start gap-2.5 md:gap-3">
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-orange-400 shrink-0 mt-0.5" />
+                      <p className="text-sm md:text-base leading-relaxed">
+                        <span className="font-semibold text-zinc-100">
+                          {detail.label}:{" "}
+                        </span>
                         {detail.value}
                       </p>
                     </div>
