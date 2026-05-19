@@ -23,7 +23,7 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
     { id: 5, brand: "SAEMAEUL", src: "https://i.ibb.co/PZ0HY3wX/Kakao-Talk-20240108-180020705.jpg", alt: "SAEMAEUL gallery image 1" },
     { id: 6, brand: "SAEMAEUL", src: "https://i.ibb.co/k28pS6js/7-3-9555.jpg", alt: "SAEMAEUL gallery image 2" },
     { id: 7, brand: "SAEMAEUL", src: "https://i.ibb.co/cP0yHS0/5-9628.webp", alt: "SAEMAEUL gallery image 3" },
-    { id: 8, brand: "SAEMAEUL", src: "https://i.ibb.co/RTQQb92v/20180809-111702.jpg", alt: "SAEMAEUL gallery image 4" },
+    { id: 8, brand: "SAEMAEUL", src: "https://i.ibb.co/TD5wtRXb/3.jpg", alt: "SAEMAEUL gallery image 4" },
 
     { id: 9, brand: "PAIK'S NOODLE", src: "https://i.ibb.co/YFvgkTmh/0155.jpg", alt: "PAIK'S NOODLE gallery image 1" },
     { id: 10, brand: "PAIK'S NOODLE", src: "https://i.ibb.co/7tx24GdY/Kakao-Talk-20231010-231444013-06.jpg", alt: "PAIK'S NOODLE gallery image 2" },
