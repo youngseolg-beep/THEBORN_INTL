@@ -57,7 +57,7 @@ BORNGA delivers a Korean dining experience built around gathering, grilling, and
       mainCopy:
         lang === "ko"
           ? `늦은 밤까지 이어지는 활기,
-연탄불 위의 불맛,
+숯불 위의 불맛,
 술잔과 웃음이 오가는 한국식 외식 문화.
 
 새마을식당은 한국 특유의 활기 있는 소셜 다이닝 분위기를 담아냅니다.`
