@@ -33,7 +33,7 @@ export default function BrandGallery({ lang }: { lang: "ko" | "en" }) {
 
   const brands = [
     { key: "BORNGA" as BrandType, label: lang === "ko" ? "본가" : "BORNGA" },
-    { key: "SAEMAEUL" as BrandType, label: lang === "ko" ? "새마을식당" : "SAEMAEULSIKDANG" },
+    { key: "SAEMAEUL" as BrandType, label: lang === "ko" ? "새마을식당" : "SAEMAEUL" },
     { key: "PAIK'S NOODLE" as BrandType, label: lang === "ko" ? "홍콩반점" : "PAIK'S NOODLE" },
   ];
 
