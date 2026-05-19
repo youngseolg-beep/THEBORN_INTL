@@ -86,6 +86,8 @@ SAEMAEUL captures the lively atmosphere of Korean social dining culture.`,
         "https://i.ibb.co/kgB22N81/8.png",
         "https://i.ibb.co/YF8n3gkX/9.png",
         "https://i.ibb.co/20zDL7ft/10.png",
+        "https://i.ibb.co/Xr335L4W/image.jpg",
+        "https://i.ibb.co/Kpn1t3fc/2.jpg"
       ],
     },
     {
