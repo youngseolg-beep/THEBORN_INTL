@@ -46,7 +46,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
             ],
     },
     {
-      name: lang === "ko" ? "새마을식당" : "SAEMAEULSIKDANG",
+      name: lang === "ko" ? "새마을식당" : "SAEMAEUL",
       logo: "https://i.ibb.co/7tN67FZd/2.png",
       imageUrl: "https://i.ibb.co/xK5ybB0Y/image.jpg",
       videoUrl: "https://www.youtube.com/embed/80X0DF6MTKA",
