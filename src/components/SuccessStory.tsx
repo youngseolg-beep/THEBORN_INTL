@@ -49,7 +49,7 @@ BORNGA delivers a Korean dining experience built around gathering, grilling, and
       ],
     },
     {
-      brand: lang === "ko" ? "새마을식당" : "SAEMAEULSIKDANG",
+      brand: lang === "ko" ? "새마을식당" : "SAEMAEUL",
       type:
         lang === "ko"
           ? "한국식 캐주얼 BBQ & 소셜 다이닝"
@@ -65,7 +65,7 @@ BORNGA delivers a Korean dining experience built around gathering, grilling, and
 Smoky grills.
 Shared drinks and vibrant tables.
 
-SAEMAEULSIKDANG captures the lively atmosphere of Korean social dining culture.`,
+SAEMAEUL captures the lively atmosphere of Korean social dining culture.`,
       mood:
         lang === "ko"
           ? "야간 외식 • 불맛 • 소셜 다이닝 • 활기 • 한국 길거리 감성"
