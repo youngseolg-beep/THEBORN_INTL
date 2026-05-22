@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "motion/react";
 
 export default function Hero({ lang }: { lang: "ko" | "en" }) {
   const backgrounds = [
-    "https://i.ibb.co/pjSPPScQ/2601-theborn-CEO-Paik-Jong-Won-Cooking-000028.jpg",
     "https://i.ibb.co/WWnFZmP8/bornga.jpg",
     "https://i.ibb.co/YBZqkB46/saemaeul.jpg",
     "https://i.ibb.co/PGk7YdYZ/paiksnoodle.png",
