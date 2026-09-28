@@ -36,11 +36,11 @@ const operatingCountryIds = new Set([
 const singapore = projection([103.8198, 1.3521])!;
 
 type MapProps = {
-  directOpacity: number | MotionValue<number>;
-  operatingOpacity: number | MotionValue<number>;
+  directEmphasis: number | MotionValue<number>;
+  masterEmphasis: number | MotionValue<number>;
 };
 
-function WorldMap({ directOpacity, operatingOpacity }: MapProps) {
+function WorldMap({ directEmphasis, masterEmphasis }: MapProps) {
   const id = useId();
   return (
     <svg viewBox="0 0 1000 524" role="img" aria-labelledby={id}
@@ -51,22 +51,35 @@ function WorldMap({ directOpacity, operatingOpacity }: MapProps) {
           <path key={country.id} d={country.d} fill="#303238" stroke="#55575e"
             strokeWidth="0.45" vectorEffect="non-scaling-stroke" />
         ))}
-        <motion.g style={{ opacity: directOpacity }}>
-          {countryPaths.filter((country) => directCountryIds.has(country.id)).map((country) => (
-            <path key={country.id} d={country.d} fill="#d71920" stroke="#ed454b"
-              strokeWidth="0.5" vectorEffect="non-scaling-stroke" />
-          ))}
-        </motion.g>
-        <motion.g style={{ opacity: operatingOpacity }}>
+        <g opacity="0.78">
           {countryPaths.filter((country) => operatingCountryIds.has(country.id)).map((country) => (
-            <path key={country.id} d={country.d} fill="#d71920" stroke="#ed454b"
+            <path key={country.id} d={country.d} fill="#b5161d" stroke="#d63a40"
               strokeWidth="0.5" vectorEffect="non-scaling-stroke" />
           ))}
           {/* Accurate coordinate fallback for Singapore, absent at 1:110m. */}
-          <circle cx={singapore[0]} cy={singapore[1]} r="2.6" fill="#d71920"
-            stroke="#ed454b" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <circle cx={singapore[0]} cy={singapore[1]} r="2.6" fill="#b5161d"
+            stroke="#d63a40" strokeWidth="1" vectorEffect="non-scaling-stroke" />
           <circle cx={singapore[0]} cy={singapore[1]} r="4.5" fill="none"
-            stroke="#ed454b" strokeWidth="0.6" opacity="0.55"
+            stroke="#d63a40" strokeWidth="0.6" opacity="0.55"
+            vectorEffect="non-scaling-stroke" />
+        </g>
+        <motion.g style={{ opacity: directEmphasis }}>
+          {countryPaths.filter((country) => directCountryIds.has(country.id)).map((country) => (
+            <path key={country.id} d={country.d} fill="#ed2028" stroke="#ff6b70"
+              strokeWidth="0.7" vectorEffect="non-scaling-stroke" />
+          ))}
+        </motion.g>
+        <motion.g style={{ opacity: masterEmphasis }}>
+          {countryPaths.filter((country) =>
+            operatingCountryIds.has(country.id) && !directCountryIds.has(country.id)
+          ).map((country) => (
+            <path key={country.id} d={country.d} fill="#ed2028" stroke="#ff6b70"
+              strokeWidth="0.7" vectorEffect="non-scaling-stroke" />
+          ))}
+          <circle cx={singapore[0]} cy={singapore[1]} r="2.6" fill="#ed2028"
+            stroke="#ff6b70" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <circle cx={singapore[0]} cy={singapore[1]} r="4.5" fill="none"
+            stroke="#ff6b70" strokeWidth="0.7" opacity="0.65"
             vectorEffect="non-scaling-stroke" />
         </motion.g>
       </g>
@@ -86,9 +99,11 @@ export default function GlobalPresence() {
   const mapOpacity = useTransform(scrollYProgress, [0, 0.2, 0.88, 1], [0.65, 1, 1, 0.85]);
   // Scale stays inside its layout cell, including on mobile.
   const mapScale = useTransform(scrollYProgress, [0, 0.25, 0.55, 0.85, 1], [0.97, 0.985, 1, 0.99, 0.98]);
-  const directOpacity = useTransform(scrollYProgress, [0, 0.18, 0.25, 0.48, 0.55, 1], [0, 0, 1, 1, 0, 0]);
+  const directCopyOpacity = useTransform(scrollYProgress, [0, 0.18, 0.25, 0.48, 0.55, 1], [0, 0, 1, 1, 0, 0]);
+  const directEmphasis = useTransform(scrollYProgress, [0, 0.18, 0.25, 0.48, 0.55, 1], [0, 0, 0.38, 0.38, 0, 0]);
   // Outgoing copy is completely gone before incoming copy starts.
-  const masterOpacity = useTransform(scrollYProgress, [0, 0.58, 0.65, 1], [0, 0, 1, 1]);
+  const masterCopyOpacity = useTransform(scrollYProgress, [0, 0.58, 0.65, 1], [0, 0, 1, 1]);
+  const masterEmphasis = useTransform(scrollYProgress, [0, 0.58, 0.65, 0.85, 0.92, 1], [0, 0, 0.34, 0.34, 0.16, 0]);
   const directVisibility = useTransform(scrollYProgress, (value) =>
     value >= 0.18 && value < 0.55 ? "visible" : "hidden");
   const masterVisibility = useTransform(scrollYProgress, (value) =>
@@ -135,7 +150,7 @@ export default function GlobalPresence() {
         <div className="mx-auto max-w-6xl">
           {heading}
           <div className="my-8 aspect-[1000/524]">
-            <WorldMap directOpacity={0} operatingOpacity={1} />
+            <WorldMap directEmphasis={0} masterEmphasis={0} />
           </div>
           <div className="grid gap-8 md:grid-cols-2">
             {directCopy}
@@ -156,15 +171,15 @@ export default function GlobalPresence() {
           {heading}
           <motion.div className="min-h-0 min-w-0"
             style={{ opacity: mapOpacity, scale: mapScale }}>
-            <WorldMap directOpacity={directOpacity} operatingOpacity={masterOpacity} />
+            <WorldMap directEmphasis={directEmphasis} masterEmphasis={masterEmphasis} />
           </motion.div>
           <div className="grid min-w-0">
             <motion.div className="col-start-1 row-start-1"
-              style={{ opacity: directOpacity, visibility: directVisibility }}>
+              style={{ opacity: directCopyOpacity, visibility: directVisibility }}>
               {directCopy}
             </motion.div>
             <motion.div className="col-start-1 row-start-1"
-              style={{ opacity: masterOpacity, visibility: masterVisibility }}>
+              style={{ opacity: masterCopyOpacity, visibility: masterVisibility }}>
               {masterCopy}
             </motion.div>
           </div>
