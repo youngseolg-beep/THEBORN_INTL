@@ -17,20 +17,35 @@ const countryPaths = countries.features.map((country, index) => ({
 }));
 // ISO 3166-1 numeric identifiers supplied by world-atlas.
 const directCountryIds = new Set(["840", "156", "392"]);
-const korea = projection([127.8, 36.3])!;
+const operatingCountryIds = new Set([
+  "840", // United States
+  "156", // China
+  "392", // Japan
+  "360", // Indonesia
+  "608", // Philippines
+  "158", // Taiwan
+  "458", // Malaysia
+  "496", // Mongolia
+  "528", // Netherlands
+  "276", // Germany
+  "036", // Australia
+  "764", // Thailand
+  "116", // Cambodia
+]);
+// Singapore is omitted from Natural Earth's 1:110m country geometry.
+const singapore = projection([103.8198, 1.3521])!;
 
 type MapProps = {
   directOpacity: number | MotionValue<number>;
-  accentOpacity: number | MotionValue<number>;
-  accentRadius: number | MotionValue<number>;
+  operatingOpacity: number | MotionValue<number>;
 };
 
-function WorldMap({ directOpacity, accentOpacity, accentRadius }: MapProps) {
+function WorldMap({ directOpacity, operatingOpacity }: MapProps) {
   const id = useId();
   return (
     <svg viewBox="0 0 1000 524" role="img" aria-labelledby={id}
       className="h-full w-full" preserveAspectRatio="xMidYMid meet">
-      <title id={id}>World map: direct operations in the United States, China, and Japan. Other international markets use the Master Franchise model.</title>
+      <title id={id}>World map showing direct operations in the United States, China, and Japan, followed by all current operating countries.</title>
       <g aria-hidden="true" strokeLinejoin="round">
         {countryPaths.map((country) => (
           <path key={country.id} d={country.d} fill="#303238" stroke="#55575e"
@@ -42,10 +57,18 @@ function WorldMap({ directOpacity, accentOpacity, accentRadius }: MapProps) {
               strokeWidth="0.5" vectorEffect="non-scaling-stroke" />
           ))}
         </motion.g>
-        {/* An atmospheric origin accent, not a marker of MF destinations. */}
-        <motion.circle cx={korea[0]} cy={korea[1]} r={accentRadius}
-          fill="none" stroke="#d71920" strokeWidth="1"
-          vectorEffect="non-scaling-stroke" style={{ opacity: accentOpacity }} />
+        <motion.g style={{ opacity: operatingOpacity }}>
+          {countryPaths.filter((country) => operatingCountryIds.has(country.id)).map((country) => (
+            <path key={country.id} d={country.d} fill="#d71920" stroke="#ed454b"
+              strokeWidth="0.5" vectorEffect="non-scaling-stroke" />
+          ))}
+          {/* Accurate coordinate fallback for Singapore, absent at 1:110m. */}
+          <circle cx={singapore[0]} cy={singapore[1]} r="2.6" fill="#d71920"
+            stroke="#ed454b" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <circle cx={singapore[0]} cy={singapore[1]} r="4.5" fill="none"
+            stroke="#ed454b" strokeWidth="0.6" opacity="0.55"
+            vectorEffect="non-scaling-stroke" />
+        </motion.g>
       </g>
     </svg>
   );
@@ -70,8 +93,6 @@ export default function GlobalPresence() {
     value >= 0.18 && value < 0.55 ? "visible" : "hidden");
   const masterVisibility = useTransform(scrollYProgress, (value) =>
     value > 0.58 ? "visible" : "hidden");
-  const accentOpacity = useTransform(scrollYProgress, [0, 0.58, 0.7, 0.85, 1], [0, 0, 0.28, 0.2, 0.1]);
-  const accentRadius = useTransform(scrollYProgress, [0, 0.58, 1], [8, 8, 42]);
   const statsOpacity = useTransform(scrollYProgress, [0, 0.83, 0.94, 1], [0, 0, 1, 1]);
 
   const heading = (
@@ -114,7 +135,7 @@ export default function GlobalPresence() {
         <div className="mx-auto max-w-6xl">
           {heading}
           <div className="my-8 aspect-[1000/524]">
-            <WorldMap directOpacity={1} accentOpacity={0} accentRadius={8} />
+            <WorldMap directOpacity={0} operatingOpacity={1} />
           </div>
           <div className="grid gap-8 md:grid-cols-2">
             {directCopy}
@@ -135,7 +156,7 @@ export default function GlobalPresence() {
           {heading}
           <motion.div className="min-h-0 min-w-0"
             style={{ opacity: mapOpacity, scale: mapScale }}>
-            <WorldMap directOpacity={directOpacity} accentOpacity={accentOpacity} accentRadius={accentRadius} />
+            <WorldMap directOpacity={directOpacity} operatingOpacity={masterOpacity} />
           </motion.div>
           <div className="grid min-w-0">
             <motion.div className="col-start-1 row-start-1"
