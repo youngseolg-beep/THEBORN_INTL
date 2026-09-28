@@ -11,7 +11,7 @@ export default function HeroStory() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
-  const { corporate, globalPresence } = homeV2Content;
+  const { corporate } = homeV2Content;
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -30,38 +30,38 @@ export default function HeroStory() {
 
   const desktopImageScale = useTransform(
     scrollYProgress,
-    [0, 0.4, 0.8, 1],
-    [1, 1.015, 1.075, 1.1],
+    [0, 0.2, 0.45, 0.7, 0.88, 1],
+    [1, 1.01, 1.025, 1.05, 1.07, 1.08],
   );
   const mobileImageScale = useTransform(
     scrollYProgress,
-    [0, 0.4, 0.8, 1],
-    [1, 1.008, 1.035, 1.045],
+    [0, 0.2, 0.45, 0.7, 0.88, 1],
+    [1, 1.005, 1.015, 1.025, 1.032, 1.035],
   );
   const desktopImageY = useTransform(
     scrollYProgress,
-    [0, 0.4, 0.8, 1],
-    ["0%", "-1%", "-4%", "-5%"],
+    [0, 0.2, 0.45, 0.7, 0.88, 1],
+    ["0%", "-0.5%", "-1.5%", "-3%", "-4%", "-4.5%"],
   );
   const mobileImageY = useTransform(
     scrollYProgress,
-    [0, 0.4, 0.8, 1],
-    ["0%", "-0.5%", "-1.5%", "-2%"],
+    [0, 0.2, 0.45, 0.7, 0.88, 1],
+    ["0%", "-0.25%", "-0.5%", "-1%", "-1.25%", "-1.5%"],
   );
   const textOpacity = useTransform(
     scrollYProgress,
-    [0, 0.25, 0.55, 0.8],
-    [1, 1, 0.25, 0],
+    [0, 0.2, 0.45, 0.7],
+    [1, 1, 0.4, 0.05],
   );
   const textY = useTransform(
     scrollYProgress,
-    [0, 0.25, 0.55, 0.8],
-    ["0vh", "0vh", "-4vh", "-7vh"],
+    [0, 0.2, 0.45, 0.7],
+    ["0vh", "0vh", "-2.5vh", "-4vh"],
   );
   const sceneOpacity = useTransform(
     scrollYProgress,
-    [0, 0.8, 1],
-    [1, 1, 0],
+    [0, 0.7, 0.88, 1],
+    [1, 1, 0.88, 0.55],
   );
 
   const reduceMotion = Boolean(prefersReducedMotion);
@@ -80,7 +80,7 @@ export default function HeroStory() {
     <section
       ref={sectionRef}
       aria-labelledby="home-v2-hero-title"
-      className={reduceMotion ? "min-h-svh bg-black" : "h-[200svh] bg-black"}
+      className={reduceMotion ? "min-h-svh bg-black" : "h-[150svh] bg-black"}
     >
       <motion.div
         className="sticky top-0 h-svh overflow-hidden bg-black"
@@ -111,18 +111,18 @@ export default function HeroStory() {
             y: reduceMotion ? 0 : textY,
           }}
         >
-          <div className="max-w-3xl">
-            <h1 id="home-v2-hero-title" className="sr-only">
-              {corporate.name}
-            </h1>
+          <div>
             <img
               src={corporate.media.primaryLogo.src}
               alt={corporate.media.primaryLogo.alt}
-              className="mb-7 h-auto w-36 sm:w-40 md:mb-9 md:w-48"
+              className="mb-5 h-auto w-28 sm:w-32 md:mb-6 md:w-36"
             />
-            <p className="max-w-2xl text-balance text-2xl font-medium leading-tight tracking-[-0.035em] text-white sm:text-3xl md:text-4xl lg:text-5xl">
-              {globalPresence.overview}
-            </p>
+            <h1
+              id="home-v2-hero-title"
+              className="text-5xl font-medium leading-none tracking-[-0.055em] text-white sm:text-6xl md:text-7xl lg:text-8xl"
+            >
+              {corporate.name}
+            </h1>
           </div>
         </motion.div>
       </motion.div>
