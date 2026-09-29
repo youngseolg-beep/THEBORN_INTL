@@ -52,29 +52,34 @@ const koreaPoint = projection(korea)!;
 const singaporeCoordinate: [number, number] = [103.8198, 1.3521];
 const singaporePoint = projection(singaporeCoordinate)!;
 
-type Destination = {
+type ActivationGroup = {
   key: string;
-  countryId?: string;
-  additionalCountryIds?: string[];
+  countryIds: string[];
+  includesSingapore?: boolean;
   start: number;
-  arrival: number;
+  end: number;
 };
 
-const destinations: Destination[] = [
-  { key: "Japan", countryId: "392", start: 0.08, arrival: 0.104 },
-  { key: "China", countryId: "156", start: 0.124, arrival: 0.148 },
-  { key: "Taiwan", countryId: "158", start: 0.168, arrival: 0.192 },
-  { key: "Mongolia", countryId: "496", start: 0.212, arrival: 0.236 },
-  { key: "Thailand", countryId: "764", start: 0.256, arrival: 0.28 },
-  { key: "Cambodia", countryId: "116", start: 0.3, arrival: 0.324 },
-  { key: "Malaysia", countryId: "458", start: 0.344, arrival: 0.368 },
-  { key: "Singapore", start: 0.388, arrival: 0.412 },
-  { key: "Indonesia", countryId: "360", start: 0.432, arrival: 0.456 },
-  { key: "Philippines", countryId: "608", start: 0.476, arrival: 0.5 },
-  { key: "Germany", countryId: "276", start: 0.52, arrival: 0.57 },
-  { key: "Netherlands", countryId: "528", start: 0.59, arrival: 0.64 },
-  { key: "Australia", countryId: "036", start: 0.66, arrival: 0.755 },
-  { key: "United States", countryId: "840", additionalCountryIds: ["124"], start: 0.78, arrival: 0.895 },
+const activationGroups: ActivationGroup[] = [
+  {
+    key: "asia",
+    countryIds: ["392", "156", "158", "496", "764", "116", "458", "360", "608"],
+    includesSingapore: true,
+    start: 0.22,
+    end: 0.42,
+  },
+  {
+    key: "europe-oceania",
+    countryIds: ["276", "528", "036"],
+    start: 0.48,
+    end: 0.66,
+  },
+  {
+    key: "north-america",
+    countryIds: ["840", "124"],
+    start: 0.7,
+    end: 0.8,
+  },
 ];
 
 const operatingCountries = [
@@ -95,13 +100,24 @@ const operatingCountries = [
   "Australia",
 ];
 
-function DestinationGeometry({ destination, opacity }: {
-  destination: Destination;
+function ActivationGeometry({ group, opacity }: {
+  group: ActivationGroup;
   opacity: number | MotionValue<number>;
 }) {
-  if (!destination.countryId) {
-    return (
-      <motion.g style={{ opacity }}>
+  return (
+    <motion.g style={{ opacity }}>
+      {group.countryIds.map((countryId) => (
+        <path
+          key={countryId}
+          d={countryPathById.get(countryId) ?? ""}
+          fill="#ed2028"
+          stroke="#ff6b70"
+          strokeWidth="0.7"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+      {group.includesSingapore && (
+        <>
         <circle
           cx={singaporePoint[0]}
           cy={singaporePoint[1]}
@@ -121,40 +137,23 @@ function DestinationGeometry({ destination, opacity }: {
           opacity="0.65"
           vectorEffect="non-scaling-stroke"
         />
-      </motion.g>
-    );
-  }
-
-  const countryIds = [destination.countryId, ...(destination.additionalCountryIds ?? [])];
-
-  return (
-    <motion.g style={{ opacity }}>
-      {countryIds.map((countryId) => (
-        <path
-          key={countryId}
-          d={countryPathById.get(countryId) ?? ""}
-          fill="#ed2028"
-          stroke="#ff6b70"
-          strokeWidth="0.7"
-          vectorEffect="non-scaling-stroke"
-        />
-      ))}
+        </>
+      )}
     </motion.g>
   );
 }
 
-function AnimatedDestination({ destination, progress }: {
-  destination: Destination;
+function AnimatedActivationGroup({ group, progress }: {
+  group: ActivationGroup;
   progress: MotionValue<number>;
 }) {
-  // Each destination's assigned window is the visible country-color transition.
   const activationOpacity = useTransform(
     progress,
-    [0, destination.start, destination.arrival, 1],
+    [0, group.start, group.end, 1],
     [0, 0, 1, 1],
   );
 
-  return <DestinationGeometry destination={destination} opacity={activationOpacity} />;
+  return <ActivationGeometry group={group} opacity={activationOpacity} />;
 }
 
 function AnimatedCountryName({ country, index, progress }: {
@@ -162,14 +161,11 @@ function AnimatedCountryName({ country, index, progress }: {
   index: number;
   progress: MotionValue<number>;
 }) {
-  const revealStart = 0.902 + index * 0.003;
+  const revealStart = 0.85 + index * 0.0052;
   const revealEnd = revealStart + 0.014;
-  const opacity = useTransform(
-    progress,
-    [0, revealStart, revealEnd, 1],
-    [0, 0, 1, 1],
-  );
-  const y = useTransform(progress, [0, revealStart, revealEnd, 1], [10, 10, 0, 0]);
+  const opacity = useTransform(progress, (value) =>
+    Math.min(1, Math.max(0, (value - revealStart) / (revealEnd - revealStart))));
+  const y = useTransform(opacity, (value) => 10 * (1 - value));
 
   return (
     <motion.li
@@ -195,12 +191,19 @@ function StaticCountryList() {
 
 type WorldMapProps = {
   progress?: MotionValue<number>;
+  cameraTransform?: string | MotionValue<string>;
   originOpacity: number | MotionValue<number>;
   originRadius: number | MotionValue<number>;
   staticActive?: boolean;
 };
 
-function WorldMap({ progress, originOpacity, originRadius, staticActive = false }: WorldMapProps) {
+function WorldMap({
+  progress,
+  cameraTransform = "translate(0 0) scale(1)",
+  originOpacity,
+  originRadius,
+  staticActive = false,
+}: WorldMapProps) {
   const id = useId();
 
   return (
@@ -214,7 +217,16 @@ function WorldMap({ progress, originOpacity, originRadius, staticActive = false 
       <title id={id}>
         World map showing THEBORN expansion from South Korea to its overseas destinations.
       </title>
-      <g aria-hidden="true" strokeLinejoin="round">
+      <motion.g
+        aria-hidden="true"
+        strokeLinejoin="round"
+        style={{
+          transform: cameraTransform,
+          transformBox: "view-box",
+          originX: 0,
+          originY: 0,
+        }}
+      >
         {countryPaths.map((country) => (
           <path
             key={country.id}
@@ -237,15 +249,15 @@ function WorldMap({ progress, originOpacity, originRadius, staticActive = false 
           vectorEffect="non-scaling-stroke"
         />
 
-        {progress && destinations.map((destination) => (
-          <AnimatedDestination
-            key={destination.key}
-            destination={destination}
+        {progress && activationGroups.map((group) => (
+          <AnimatedActivationGroup
+            key={group.key}
+            group={group}
             progress={progress}
           />
         ))}
-        {staticActive && destinations.map((destination) => (
-          <DestinationGeometry key={destination.key} destination={destination} opacity={1} />
+        {staticActive && activationGroups.map((group) => (
+          <ActivationGeometry key={group.key} group={group} opacity={1} />
         ))}
 
         <motion.circle
@@ -265,7 +277,7 @@ function WorldMap({ progress, originOpacity, originRadius, staticActive = false 
           fill="#ed2028"
           style={{ opacity: originOpacity }}
         />
-      </g>
+      </motion.g>
     </svg>
   );
 }
@@ -280,21 +292,27 @@ export default function GlobalPresence() {
     offset: ["start start", "end end"],
   });
 
-  const mapOpacity = useTransform(scrollYProgress, [0, 0.08, 1], [0.72, 1, 1]);
-  const mapScale = useTransform(
+  const cameraStages = [0, 0.2, 0.45, 0.68, 0.82, 1];
+  const cameraScaleValues = [5.4, 4.1, 2.3, 1.35, 1, 1];
+  const cameraTransform = useTransform(
     scrollYProgress,
-    [0, 0.08, 0.52, 0.66, 0.78, 0.91, 1],
-    [0.97, 0.985, 1, 0.993, 1, 0.996, 0.985],
+    cameraStages,
+    cameraScaleValues.map((scale, index) => {
+      const x = index < 4 ? 500 - koreaPoint[0] * scale : 0;
+      const y = index < 4 ? 262 - koreaPoint[1] * scale : 0;
+      return `translate(${x}px, ${y}px) scale(${scale})`;
+    }),
   );
+  const mapOpacity = useTransform(scrollYProgress, [0, 0.04, 1], [0.9, 1, 1]);
   const originOpacity = useTransform(
     scrollYProgress,
-    [0, 0.035, 0.08, 0.895, 0.93, 1],
-    [0, 0.45, 0.62, 0.62, 0, 0],
+    cameraStages,
+    [0.9, 0.85, 0.72, 0.55, 0.35, 0.3],
   );
   const originRadius = useTransform(
     scrollYProgress,
-    [0, 0.08, 0.3, 0.52, 0.66, 0.78, 0.91, 1],
-    [3.8, 5.5, 4.2, 5.5, 4.3, 5.4, 4.2, 3.8],
+    cameraStages,
+    [1.2, 1.3, 1.5, 1.8, 2.1, 2.1],
   );
 
   const heading = (
@@ -354,7 +372,7 @@ export default function GlobalPresence() {
 
   return (
     <section aria-labelledby={titleId} className="bg-[#09090b] text-white">
-      <div ref={sectionRef} className="h-[400svh]">
+      <div ref={sectionRef} className="h-[280svh]">
         <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
           <div className="mx-auto flex h-full min-h-[32rem] max-w-7xl flex-col px-6 py-5 sm:px-10 md:px-16 md:py-6">
             <div className="relative z-10 shrink-0">
@@ -363,10 +381,11 @@ export default function GlobalPresence() {
             <div className="mt-3 flex min-h-0 flex-1 items-center justify-center md:mt-4">
               <motion.div
                 className="aspect-[1000/524] w-full shrink-0 md:w-[min(90vw,140svh)] md:max-w-none"
-                style={{ opacity: mapOpacity, scale: mapScale }}
+                style={{ opacity: mapOpacity }}
               >
                 <WorldMap
                   progress={scrollYProgress}
+                  cameraTransform={cameraTransform}
                   originOpacity={originOpacity}
                   originRadius={originRadius}
                 />
