@@ -6,9 +6,9 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { geoArea, geoCentroid, geoInterpolate, geoNaturalEarth1, geoPath } from "d3-geo";
+import { geoArea, geoCentroid, geoNaturalEarth1, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
-import type { LineString, Polygon, Position } from "geojson";
+import type { Polygon } from "geojson";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import countriesData from "world-atlas/countries-110m.json";
 import { homeV2Content } from "../../data/homeV2Content";
@@ -37,12 +37,14 @@ const contiguousUnitedStatesPath = contiguousUnitedStates
   ? path(contiguousUnitedStates) ?? ""
   : "";
 
-const countryPaths = countries.features.map((country, index) => ({
-  id: country.id == null ? `unassigned-${index}` : String(country.id).padStart(3, "0"),
-  d: String(country.id).padStart(3, "0") === "840"
-    ? contiguousUnitedStatesPath
-    : path(country) ?? "",
-}));
+const countryPaths = countries.features
+  .filter((country) => String(country.id).padStart(3, "0") !== "010")
+  .map((country, index) => ({
+    id: country.id == null ? `unassigned-${index}` : String(country.id).padStart(3, "0"),
+    d: String(country.id).padStart(3, "0") === "840"
+      ? contiguousUnitedStatesPath
+      : path(country) ?? "",
+  }));
 const countryPathById = new Map(countryPaths.map((country) => [country.id, country.d]));
 
 const korea: [number, number] = [127.7669, 35.9078];
@@ -50,69 +52,47 @@ const koreaPoint = projection(korea)!;
 const singaporeCoordinate: [number, number] = [103.8198, 1.3521];
 const singaporePoint = projection(singaporeCoordinate)!;
 
-type RegionKey = "asia" | "europe" | "oceania" | "northAmerica";
 type Destination = {
   key: string;
-  label?: string;
   countryId?: string;
   additionalCountryIds?: string[];
-  region: RegionKey;
-  coordinate: [number, number];
   start: number;
   arrival: number;
-  fadeEnd: number;
-  route: string;
 };
 
-function createGeodesicRoute(destination: Position): string {
-  const interpolate = geoInterpolate(korea, destination as [number, number]);
-  const coordinates = Array.from({ length: 41 }, (_, index) => interpolate(index / 40));
-  const geometry: LineString = { type: "LineString", coordinates };
-  return path(geometry) ?? "";
-}
-
-function createPacificUnitedStatesRoute(): string {
-  const pacificEast = projection([179.5, 43])!;
-  const pacificWest = projection([-179.5, 43])!;
-  const westernUnitedStates = projection([-122.4, 37.7])!;
-
-  // Two ordered subpaths cross the projection seam: Korea travels toward the
-  // right edge, then resumes at the left edge and arrives in the western U.S.
-  return [
-    `M ${koreaPoint[0]} ${koreaPoint[1]}`,
-    `C ${koreaPoint[0] + 38} ${koreaPoint[1] - 42}, ${pacificEast[0] - 35} ${pacificEast[1] - 20}, ${pacificEast[0]} ${pacificEast[1]}`,
-    `M ${pacificWest[0]} ${pacificWest[1]}`,
-    `C ${pacificWest[0] + 38} ${pacificWest[1] - 18}, ${westernUnitedStates[0] - 42} ${westernUnitedStates[1] - 28}, ${westernUnitedStates[0]} ${westernUnitedStates[1]}`,
-  ].join(" ");
-}
-
-function createDestination(
-  destination: Omit<Destination, "route">,
-): Destination {
-  return {
-    ...destination,
-    route: destination.key === "United States"
-      ? createPacificUnitedStatesRoute()
-      : createGeodesicRoute(destination.coordinate),
-  };
-}
-
-// Each destination owns its route and arrival threshold. The order is the story order.
 const destinations: Destination[] = [
-  createDestination({ key: "Japan", countryId: "392", region: "asia", coordinate: [138.2529, 36.2048], start: 0.08, arrival: 0.104, fadeEnd: 0.128 }),
-  createDestination({ key: "China", countryId: "156", region: "asia", coordinate: [104.1954, 35.8617], start: 0.124, arrival: 0.148, fadeEnd: 0.172 }),
-  createDestination({ key: "Taiwan", countryId: "158", region: "asia", coordinate: [120.9605, 23.6978], start: 0.168, arrival: 0.192, fadeEnd: 0.216 }),
-  createDestination({ key: "Mongolia", countryId: "496", region: "asia", coordinate: [103.8467, 46.8625], start: 0.212, arrival: 0.236, fadeEnd: 0.26 }),
-  createDestination({ key: "Thailand", countryId: "764", region: "asia", coordinate: [100.9925, 15.87], start: 0.256, arrival: 0.28, fadeEnd: 0.304 }),
-  createDestination({ key: "Cambodia", countryId: "116", region: "asia", coordinate: [104.991, 12.5657], start: 0.3, arrival: 0.324, fadeEnd: 0.348 }),
-  createDestination({ key: "Malaysia", countryId: "458", region: "asia", coordinate: [101.9758, 4.2105], start: 0.344, arrival: 0.368, fadeEnd: 0.392 }),
-  createDestination({ key: "Singapore", region: "asia", coordinate: singaporeCoordinate, start: 0.388, arrival: 0.412, fadeEnd: 0.436 }),
-  createDestination({ key: "Indonesia", countryId: "360", region: "asia", coordinate: [113.9213, -0.7893], start: 0.432, arrival: 0.456, fadeEnd: 0.48 }),
-  createDestination({ key: "Philippines", countryId: "608", region: "asia", coordinate: [121.774, 12.8797], start: 0.476, arrival: 0.5, fadeEnd: 0.524 }),
-  createDestination({ key: "Germany", countryId: "276", region: "europe", coordinate: [10.4515, 51.1657], start: 0.52, arrival: 0.57, fadeEnd: 0.602 }),
-  createDestination({ key: "Netherlands", countryId: "528", region: "europe", coordinate: [5.2913, 52.1326], start: 0.59, arrival: 0.64, fadeEnd: 0.675 }),
-  createDestination({ key: "Australia", countryId: "036", region: "oceania", coordinate: [133.7751, -25.2744], start: 0.66, arrival: 0.755, fadeEnd: 0.79 }),
-  createDestination({ key: "United States", label: "United States / Canada", countryId: "840", additionalCountryIds: ["124"], region: "northAmerica", coordinate: [-122.4, 37.7], start: 0.78, arrival: 0.895, fadeEnd: 0.925 }),
+  { key: "Japan", countryId: "392", start: 0.08, arrival: 0.104 },
+  { key: "China", countryId: "156", start: 0.124, arrival: 0.148 },
+  { key: "Taiwan", countryId: "158", start: 0.168, arrival: 0.192 },
+  { key: "Mongolia", countryId: "496", start: 0.212, arrival: 0.236 },
+  { key: "Thailand", countryId: "764", start: 0.256, arrival: 0.28 },
+  { key: "Cambodia", countryId: "116", start: 0.3, arrival: 0.324 },
+  { key: "Malaysia", countryId: "458", start: 0.344, arrival: 0.368 },
+  { key: "Singapore", start: 0.388, arrival: 0.412 },
+  { key: "Indonesia", countryId: "360", start: 0.432, arrival: 0.456 },
+  { key: "Philippines", countryId: "608", start: 0.476, arrival: 0.5 },
+  { key: "Germany", countryId: "276", start: 0.52, arrival: 0.57 },
+  { key: "Netherlands", countryId: "528", start: 0.59, arrival: 0.64 },
+  { key: "Australia", countryId: "036", start: 0.66, arrival: 0.755 },
+  { key: "United States", countryId: "840", additionalCountryIds: ["124"], start: 0.78, arrival: 0.895 },
+];
+
+const operatingCountries = [
+  "United States",
+  "Canada",
+  "Japan",
+  "China",
+  "Taiwan",
+  "Mongolia",
+  "Thailand",
+  "Cambodia",
+  "Malaysia",
+  "Singapore",
+  "Indonesia",
+  "Philippines",
+  "Germany",
+  "Netherlands",
+  "Australia",
 ];
 
 function DestinationGeometry({ destination, opacity }: {
@@ -167,74 +147,49 @@ function AnimatedDestination({ destination, progress }: {
   destination: Destination;
   progress: MotionValue<number>;
 }) {
-  // The destination begins changing only when its route is almost complete.
+  // Each destination's assigned window is the visible country-color transition.
   const activationOpacity = useTransform(
     progress,
-    [0, destination.arrival - 0.006, destination.arrival + 0.006, 1],
+    [0, destination.start, destination.arrival, 1],
     [0, 0, 1, 1],
   );
 
   return <DestinationGeometry destination={destination} opacity={activationOpacity} />;
 }
 
-function AnimatedRoute({ destination, progress }: {
-  destination: Destination;
+function AnimatedCountryName({ country, index, progress }: {
+  country: string;
+  index: number;
   progress: MotionValue<number>;
 }) {
-  const pathLength = useTransform(
-    progress,
-    [0, destination.start, destination.arrival, 1],
-    [0, 0, 1, 1],
-  );
+  const revealStart = 0.91 + index * 0.004;
+  const revealEnd = revealStart + 0.018;
   const opacity = useTransform(
     progress,
-    [
-      0,
-      destination.start,
-      destination.start + 0.005,
-      destination.arrival,
-      destination.arrival + 0.012,
-      destination.fadeEnd,
-      destination.fadeEnd + 0.012,
-      1,
-    ],
-    [0, 0, 0.72, 0.72, 0.18, 0.12, 0, 0],
+    [0, revealStart, revealEnd, 1],
+    [0, 0, 1, 1],
   );
+  const y = useTransform(progress, [0, revealStart, revealEnd, 1], [10, 10, 0, 0]);
 
   return (
-    <motion.path
-      d={destination.route}
-      fill="none"
-      stroke="#ed2028"
-      strokeWidth="0.85"
-      strokeLinecap="round"
-      vectorEffect="non-scaling-stroke"
-      style={{ opacity, pathLength }}
-    />
+    <motion.li
+      className="text-center text-[11px] tracking-[0.08em] text-zinc-300 sm:text-xs"
+      style={{ opacity, y }}
+    >
+      {country}
+    </motion.li>
   );
 }
 
-function AnimatedDestinationLabel({ destination, nextStart, progress }: {
-  destination: Destination;
-  nextStart?: number;
-  progress: MotionValue<number>;
-}) {
-  const fadeInStart = Math.max(0, destination.start - 0.008);
-  const fadeOutEnd = (nextStart ?? 0.92) - 0.008;
-  const fadeOutStart = Math.max(destination.arrival + 0.006, fadeOutEnd - 0.008);
-  const opacity = useTransform(
-    progress,
-    [0, fadeInStart, destination.start, fadeOutStart, fadeOutEnd, 1],
-    [0, 0, 1, 1, 0, 0],
-  );
-
+function StaticCountryList() {
   return (
-    <motion.p
-      className="col-start-1 row-start-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-zinc-300 sm:text-xs"
-      style={{ opacity }}
-    >
-      {destination.label ?? destination.key}
-    </motion.p>
+    <ul className="mx-auto grid max-w-4xl grid-cols-2 gap-x-5 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
+      {operatingCountries.map((country) => (
+        <li key={country} className="text-center text-[11px] tracking-[0.08em] text-zinc-300 sm:text-xs">
+          {country}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -291,14 +246,6 @@ function WorldMap({ progress, originOpacity, originRadius, staticActive = false 
         ))}
         {staticActive && destinations.map((destination) => (
           <DestinationGeometry key={destination.key} destination={destination} opacity={1} />
-        ))}
-
-        {progress && destinations.map((destination) => (
-          <AnimatedRoute
-            key={destination.key}
-            destination={destination}
-            progress={progress}
-          />
         ))}
 
         <motion.circle
@@ -399,6 +346,7 @@ export default function GlobalPresence() {
           <div className="my-8 aspect-[1000/524]">
             <WorldMap staticActive originOpacity={0} originRadius={3.8} />
           </div>
+          <StaticCountryList />
           <div className="grid gap-8 md:grid-cols-2">
             {directCopy}
             {masterCopy}
@@ -412,10 +360,10 @@ export default function GlobalPresence() {
   return (
     <section ref={sectionRef} aria-labelledby={titleId} className="h-[400svh] bg-[#09090b] text-white">
       <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
-        <div className="mx-auto grid h-full min-h-[32rem] max-w-7xl grid-rows-[auto_minmax(0,1fr)_auto_auto] gap-4 px-6 py-6 sm:px-10 md:gap-5 md:px-16 md:py-9">
+        <div className="mx-auto grid h-full min-h-[32rem] max-w-7xl grid-rows-[auto_minmax(0,1fr)_auto_auto_auto] gap-4 px-6 py-6 sm:px-10 md:gap-5 md:px-16 md:py-9">
           {heading}
           <div className="relative min-h-0 min-w-0">
-            <div className="h-full w-full origin-center md:scale-[1.14]">
+            <div className="h-full w-full origin-center md:scale-[1.32]">
               <motion.div className="h-full w-full" style={{ opacity: mapOpacity, scale: mapScale }}>
                 <WorldMap
                   progress={scrollYProgress}
@@ -424,17 +372,17 @@ export default function GlobalPresence() {
                 />
               </motion.div>
             </div>
-            <div className="pointer-events-none absolute right-0 top-1 grid text-right sm:top-3">
-              {destinations.map((destination, index) => (
-                <AnimatedDestinationLabel
-                  key={destination.key}
-                  destination={destination}
-                  nextStart={destinations[index + 1]?.start}
-                  progress={scrollYProgress}
-                />
-              ))}
-            </div>
           </div>
+          <ul className="mx-auto grid w-full max-w-4xl grid-cols-2 gap-x-5 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
+            {operatingCountries.map((country, index) => (
+              <AnimatedCountryName
+                key={country}
+                country={country}
+                index={index}
+                progress={scrollYProgress}
+              />
+            ))}
+          </ul>
           <motion.div
             className="grid gap-3 md:grid-cols-2 md:gap-8"
             style={{ opacity: businessCopyOpacity, visibility: businessCopyVisibility }}
