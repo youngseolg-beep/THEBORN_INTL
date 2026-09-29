@@ -162,8 +162,8 @@ function AnimatedCountryName({ country, index, progress }: {
   index: number;
   progress: MotionValue<number>;
 }) {
-  const revealStart = 0.91 + index * 0.004;
-  const revealEnd = revealStart + 0.018;
+  const revealStart = 0.902 + index * 0.003;
+  const revealEnd = revealStart + 0.014;
   const opacity = useTransform(
     progress,
     [0, revealStart, revealEnd, 1],
@@ -271,7 +271,7 @@ function WorldMap({ progress, originOpacity, originRadius, staticActive = false 
 }
 
 export default function GlobalPresence() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const reduceMotion = useReducedMotion();
   const { corporate, globalPresence, partnership } = homeV2Content;
@@ -280,7 +280,7 @@ export default function GlobalPresence() {
     offset: ["start start", "end end"],
   });
 
-  const mapOpacity = useTransform(scrollYProgress, [0, 0.08, 0.91, 1], [0.72, 1, 1, 0.9]);
+  const mapOpacity = useTransform(scrollYProgress, [0, 0.08, 1], [0.72, 1, 1]);
   const mapScale = useTransform(
     scrollYProgress,
     [0, 0.08, 0.52, 0.66, 0.78, 0.91, 1],
@@ -296,10 +296,6 @@ export default function GlobalPresence() {
     [0, 0.08, 0.3, 0.52, 0.66, 0.78, 0.91, 1],
     [3.8, 5.5, 4.2, 5.5, 4.3, 5.4, 4.2, 3.8],
   );
-
-  const businessCopyOpacity = useTransform(scrollYProgress, [0, 0.91, 0.96, 1], [0, 0, 1, 1]);
-  const businessCopyVisibility = useTransform(scrollYProgress, (value) => value >= 0.91 ? "visible" : "hidden");
-  const statsOpacity = useTransform(scrollYProgress, [0, 0.92, 0.98, 1], [0, 0, 1, 1]);
 
   const heading = (
     <header>
@@ -337,11 +333,10 @@ export default function GlobalPresence() {
   if (reduceMotion) {
     return (
       <section
-        ref={sectionRef}
         aria-labelledby={titleId}
         className="min-h-svh bg-[#09090b] px-6 py-12 text-white sm:px-10 md:px-16"
       >
-        <div className="mx-auto max-w-6xl">
+        <div ref={sectionRef} className="mx-auto max-w-6xl">
           {heading}
           <div className="my-8 aspect-[1000/524]">
             <WorldMap staticActive originOpacity={0} originRadius={3.8} />
@@ -358,13 +353,18 @@ export default function GlobalPresence() {
   }
 
   return (
-    <section ref={sectionRef} aria-labelledby={titleId} className="h-[400svh] bg-[#09090b] text-white">
-      <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
-        <div className="mx-auto grid h-full min-h-[32rem] max-w-7xl grid-rows-[auto_minmax(0,1fr)_auto_auto_auto] gap-4 px-6 py-6 sm:px-10 md:gap-5 md:px-16 md:py-9">
-          {heading}
-          <div className="relative min-h-0 min-w-0">
-            <div className="h-full w-full origin-center md:scale-[1.32]">
-              <motion.div className="h-full w-full" style={{ opacity: mapOpacity, scale: mapScale }}>
+    <section aria-labelledby={titleId} className="bg-[#09090b] text-white">
+      <div ref={sectionRef} className="h-[400svh]">
+        <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
+          <div className="mx-auto flex h-full min-h-[32rem] max-w-7xl flex-col px-6 py-5 sm:px-10 md:px-16 md:py-6">
+            <div className="relative z-10 shrink-0">
+              {heading}
+            </div>
+            <div className="mt-3 flex min-h-0 flex-1 items-center justify-center md:mt-4">
+              <motion.div
+                className="aspect-[1000/524] w-full shrink-0 md:w-[min(90vw,140svh)] md:max-w-none"
+                style={{ opacity: mapOpacity, scale: mapScale }}
+              >
                 <WorldMap
                   progress={scrollYProgress}
                   originOpacity={originOpacity}
@@ -372,28 +372,27 @@ export default function GlobalPresence() {
                 />
               </motion.div>
             </div>
+            <ul className="mx-auto mt-2 grid w-full max-w-4xl shrink-0 grid-cols-2 gap-x-5 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
+              {operatingCountries.map((country, index) => (
+                <AnimatedCountryName
+                  key={country}
+                  country={country}
+                  index={index}
+                  progress={scrollYProgress}
+                />
+              ))}
+            </ul>
           </div>
-          <ul className="mx-auto grid w-full max-w-4xl grid-cols-2 gap-x-5 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
-            {operatingCountries.map((country, index) => (
-              <AnimatedCountryName
-                key={country}
-                country={country}
-                index={index}
-                progress={scrollYProgress}
-              />
-            ))}
-          </ul>
-          <motion.div
-            className="grid gap-3 md:grid-cols-2 md:gap-8"
-            style={{ opacity: businessCopyOpacity, visibility: businessCopyVisibility }}
-          >
-            {directCopy}
-            {masterCopy}
-          </motion.div>
-          <motion.p className="max-w-xl text-xs leading-relaxed text-zinc-400 sm:text-sm" style={{ opacity: statsOpacity }}>
-            {globalPresence.overseasSummary}
-          </motion.p>
         </div>
+      </div>
+      <div className="mx-auto max-w-7xl px-6 py-16 sm:px-10 md:px-16 md:py-20">
+        <div className="grid gap-8 md:grid-cols-2">
+          {directCopy}
+          {masterCopy}
+        </div>
+        <p className="mt-8 max-w-xl text-sm leading-relaxed text-zinc-400">
+          {globalPresence.overseasSummary}
+        </p>
       </div>
     </section>
   );
