@@ -53,7 +53,9 @@ const singaporePoint = projection(singaporeCoordinate)!;
 type RegionKey = "asia" | "europe" | "oceania" | "northAmerica";
 type Destination = {
   key: string;
+  label?: string;
   countryId?: string;
+  additionalCountryIds?: string[];
   region: RegionKey;
   coordinate: [number, number];
   start: number;
@@ -97,20 +99,20 @@ function createDestination(
 
 // Each destination owns its route and arrival threshold. The order is the story order.
 const destinations: Destination[] = [
-  createDestination({ key: "Japan", countryId: "392", region: "asia", coordinate: [138.2529, 36.2048], start: 0.08, arrival: 0.108, fadeEnd: 0.128 }),
-  createDestination({ key: "China", countryId: "156", region: "asia", coordinate: [104.1954, 35.8617], start: 0.124, arrival: 0.152, fadeEnd: 0.172 }),
-  createDestination({ key: "Taiwan", countryId: "158", region: "asia", coordinate: [120.9605, 23.6978], start: 0.168, arrival: 0.196, fadeEnd: 0.216 }),
-  createDestination({ key: "Mongolia", countryId: "496", region: "asia", coordinate: [103.8467, 46.8625], start: 0.212, arrival: 0.24, fadeEnd: 0.26 }),
-  createDestination({ key: "Thailand", countryId: "764", region: "asia", coordinate: [100.9925, 15.87], start: 0.256, arrival: 0.284, fadeEnd: 0.304 }),
-  createDestination({ key: "Cambodia", countryId: "116", region: "asia", coordinate: [104.991, 12.5657], start: 0.3, arrival: 0.328, fadeEnd: 0.348 }),
-  createDestination({ key: "Malaysia", countryId: "458", region: "asia", coordinate: [101.9758, 4.2105], start: 0.344, arrival: 0.372, fadeEnd: 0.392 }),
-  createDestination({ key: "Singapore", region: "asia", coordinate: singaporeCoordinate, start: 0.388, arrival: 0.416, fadeEnd: 0.436 }),
-  createDestination({ key: "Indonesia", countryId: "360", region: "asia", coordinate: [113.9213, -0.7893], start: 0.432, arrival: 0.46, fadeEnd: 0.48 }),
-  createDestination({ key: "Philippines", countryId: "608", region: "asia", coordinate: [121.774, 12.8797], start: 0.476, arrival: 0.504, fadeEnd: 0.524 }),
+  createDestination({ key: "Japan", countryId: "392", region: "asia", coordinate: [138.2529, 36.2048], start: 0.08, arrival: 0.104, fadeEnd: 0.128 }),
+  createDestination({ key: "China", countryId: "156", region: "asia", coordinate: [104.1954, 35.8617], start: 0.124, arrival: 0.148, fadeEnd: 0.172 }),
+  createDestination({ key: "Taiwan", countryId: "158", region: "asia", coordinate: [120.9605, 23.6978], start: 0.168, arrival: 0.192, fadeEnd: 0.216 }),
+  createDestination({ key: "Mongolia", countryId: "496", region: "asia", coordinate: [103.8467, 46.8625], start: 0.212, arrival: 0.236, fadeEnd: 0.26 }),
+  createDestination({ key: "Thailand", countryId: "764", region: "asia", coordinate: [100.9925, 15.87], start: 0.256, arrival: 0.28, fadeEnd: 0.304 }),
+  createDestination({ key: "Cambodia", countryId: "116", region: "asia", coordinate: [104.991, 12.5657], start: 0.3, arrival: 0.324, fadeEnd: 0.348 }),
+  createDestination({ key: "Malaysia", countryId: "458", region: "asia", coordinate: [101.9758, 4.2105], start: 0.344, arrival: 0.368, fadeEnd: 0.392 }),
+  createDestination({ key: "Singapore", region: "asia", coordinate: singaporeCoordinate, start: 0.388, arrival: 0.412, fadeEnd: 0.436 }),
+  createDestination({ key: "Indonesia", countryId: "360", region: "asia", coordinate: [113.9213, -0.7893], start: 0.432, arrival: 0.456, fadeEnd: 0.48 }),
+  createDestination({ key: "Philippines", countryId: "608", region: "asia", coordinate: [121.774, 12.8797], start: 0.476, arrival: 0.5, fadeEnd: 0.524 }),
   createDestination({ key: "Germany", countryId: "276", region: "europe", coordinate: [10.4515, 51.1657], start: 0.52, arrival: 0.57, fadeEnd: 0.602 }),
   createDestination({ key: "Netherlands", countryId: "528", region: "europe", coordinate: [5.2913, 52.1326], start: 0.59, arrival: 0.64, fadeEnd: 0.675 }),
   createDestination({ key: "Australia", countryId: "036", region: "oceania", coordinate: [133.7751, -25.2744], start: 0.66, arrival: 0.755, fadeEnd: 0.79 }),
-  createDestination({ key: "United States", countryId: "840", region: "northAmerica", coordinate: [-122.4, 37.7], start: 0.78, arrival: 0.895, fadeEnd: 0.925 }),
+  createDestination({ key: "United States", label: "United States / Canada", countryId: "840", additionalCountryIds: ["124"], region: "northAmerica", coordinate: [-122.4, 37.7], start: 0.78, arrival: 0.895, fadeEnd: 0.925 }),
 ];
 
 function DestinationGeometry({ destination, opacity }: {
@@ -143,15 +145,21 @@ function DestinationGeometry({ destination, opacity }: {
     );
   }
 
+  const countryIds = [destination.countryId, ...(destination.additionalCountryIds ?? [])];
+
   return (
-    <motion.path
-      d={countryPathById.get(destination.countryId) ?? ""}
-      fill="#ed2028"
-      stroke="#ff6b70"
-      strokeWidth="0.7"
-      vectorEffect="non-scaling-stroke"
-      style={{ opacity }}
-    />
+    <motion.g style={{ opacity }}>
+      {countryIds.map((countryId) => (
+        <path
+          key={countryId}
+          d={countryPathById.get(countryId) ?? ""}
+          fill="#ed2028"
+          stroke="#ff6b70"
+          strokeWidth="0.7"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+    </motion.g>
   );
 }
 
@@ -162,7 +170,7 @@ function AnimatedDestination({ destination, progress }: {
   // The destination begins changing only when its route is almost complete.
   const activationOpacity = useTransform(
     progress,
-    [0, destination.arrival - 0.006, destination.arrival + 0.012, 1],
+    [0, destination.arrival - 0.006, destination.arrival + 0.006, 1],
     [0, 0, 1, 1],
   );
 
@@ -206,6 +214,30 @@ function AnimatedRoute({ destination, progress }: {
   );
 }
 
+function AnimatedDestinationLabel({ destination, nextStart, progress }: {
+  destination: Destination;
+  nextStart?: number;
+  progress: MotionValue<number>;
+}) {
+  const fadeInStart = Math.max(0, destination.start - 0.008);
+  const fadeOutEnd = (nextStart ?? 0.92) - 0.008;
+  const fadeOutStart = Math.max(destination.arrival + 0.006, fadeOutEnd - 0.008);
+  const opacity = useTransform(
+    progress,
+    [0, fadeInStart, destination.start, fadeOutStart, fadeOutEnd, 1],
+    [0, 0, 1, 1, 0, 0],
+  );
+
+  return (
+    <motion.p
+      className="col-start-1 row-start-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-zinc-300 sm:text-xs"
+      style={{ opacity }}
+    >
+      {destination.label ?? destination.key}
+    </motion.p>
+  );
+}
+
 type WorldMapProps = {
   progress?: MotionValue<number>;
   originOpacity: number | MotionValue<number>;
@@ -225,7 +257,7 @@ function WorldMap({ progress, originOpacity, originRadius, staticActive = false 
       preserveAspectRatio="xMidYMid meet"
     >
       <title id={id}>
-        World map showing THEBORN expansion from South Korea to fourteen overseas operating markets.
+        World map showing THEBORN expansion from South Korea to its overseas destinations.
       </title>
       <g aria-hidden="true" strokeLinejoin="round">
         {countryPaths.map((country) => (
@@ -318,13 +350,6 @@ export default function GlobalPresence() {
     [3.8, 5.5, 4.2, 5.5, 4.3, 5.4, 4.2, 3.8],
   );
 
-  const regionLabelOpacities = {
-    asia: useTransform(scrollYProgress, [0, 0.075, 0.1, 0.5, 0.525, 1], [0, 0, 1, 1, 0, 0]),
-    europe: useTransform(scrollYProgress, [0, 0.51, 0.53, 0.64, 0.665, 1], [0, 0, 1, 1, 0, 0]),
-    oceania: useTransform(scrollYProgress, [0, 0.65, 0.67, 0.755, 0.78, 1], [0, 0, 1, 1, 0, 0]),
-    northAmerica: useTransform(scrollYProgress, [0, 0.77, 0.79, 0.895, 0.915, 1], [0, 0, 1, 1, 0, 0]),
-  };
-
   const businessCopyOpacity = useTransform(scrollYProgress, [0, 0.91, 0.96, 1], [0, 0, 1, 1]);
   const businessCopyVisibility = useTransform(scrollYProgress, (value) => value >= 0.91 ? "visible" : "hidden");
   const statsOpacity = useTransform(scrollYProgress, [0, 0.92, 0.98, 1], [0, 0, 1, 1]);
@@ -389,27 +414,27 @@ export default function GlobalPresence() {
       <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
         <div className="mx-auto grid h-full min-h-[32rem] max-w-7xl grid-rows-[auto_minmax(0,1fr)_auto_auto] gap-4 px-6 py-6 sm:px-10 md:gap-5 md:px-16 md:py-9">
           {heading}
-          <motion.div className="relative min-h-0 min-w-0" style={{ opacity: mapOpacity, scale: mapScale }}>
-            <WorldMap
-              progress={scrollYProgress}
-              originOpacity={originOpacity}
-              originRadius={originRadius}
-            />
-            <div className="pointer-events-none absolute right-0 top-1 grid text-right sm:top-3">
-              <motion.p className="col-start-1 row-start-1 text-[10px] font-semibold tracking-[0.28em] text-zinc-300 sm:text-xs" style={{ opacity: regionLabelOpacities.asia }}>
-                ASIA
-              </motion.p>
-              <motion.p className="col-start-1 row-start-1 text-[10px] font-semibold tracking-[0.28em] text-zinc-300 sm:text-xs" style={{ opacity: regionLabelOpacities.europe }}>
-                EUROPE
-              </motion.p>
-              <motion.p className="col-start-1 row-start-1 text-[10px] font-semibold tracking-[0.28em] text-zinc-300 sm:text-xs" style={{ opacity: regionLabelOpacities.oceania }}>
-                OCEANIA
-              </motion.p>
-              <motion.p className="col-start-1 row-start-1 text-[10px] font-semibold tracking-[0.28em] text-zinc-300 sm:text-xs" style={{ opacity: regionLabelOpacities.northAmerica }}>
-                NORTH AMERICA
-              </motion.p>
+          <div className="relative min-h-0 min-w-0">
+            <div className="h-full w-full origin-center md:scale-[1.14]">
+              <motion.div className="h-full w-full" style={{ opacity: mapOpacity, scale: mapScale }}>
+                <WorldMap
+                  progress={scrollYProgress}
+                  originOpacity={originOpacity}
+                  originRadius={originRadius}
+                />
+              </motion.div>
             </div>
-          </motion.div>
+            <div className="pointer-events-none absolute right-0 top-1 grid text-right sm:top-3">
+              {destinations.map((destination, index) => (
+                <AnimatedDestinationLabel
+                  key={destination.key}
+                  destination={destination}
+                  nextStart={destinations[index + 1]?.start}
+                  progress={scrollYProgress}
+                />
+              ))}
+            </div>
+          </div>
           <motion.div
             className="grid gap-3 md:grid-cols-2 md:gap-8"
             style={{ opacity: businessCopyOpacity, visibility: businessCopyVisibility }}
