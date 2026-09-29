@@ -6,9 +6,9 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { geoInterpolate, geoNaturalEarth1, geoPath } from "d3-geo";
+import { geoArea, geoCentroid, geoInterpolate, geoNaturalEarth1, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
-import type { LineString, Position } from "geojson";
+import type { LineString, Polygon, Position } from "geojson";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import countriesData from "world-atlas/countries-110m.json";
 import { homeV2Content } from "../../data/homeV2Content";
@@ -18,9 +18,30 @@ const topology = countriesData as unknown as Topology<{ countries: GeometryColle
 const countries = feature(topology, topology.objects.countries);
 const projection = geoNaturalEarth1().fitExtent([[16, 12], [984, 512]], countries);
 const path = geoPath(projection);
+
+// Select the contiguous mainland polygon from Natural Earth's U.S. MultiPolygon.
+// Alaska and Hawaii are omitted without substituting any handmade geometry.
+const unitedStatesFeature = countries.features.find(
+  (country) => String(country.id).padStart(3, "0") === "840",
+);
+const contiguousUnitedStates = unitedStatesFeature?.geometry.type === "MultiPolygon"
+  ? unitedStatesFeature.geometry.coordinates
+      .map((coordinates): Polygon => ({ type: "Polygon", coordinates }))
+      .filter((polygon) => {
+        const [longitude, latitude] = geoCentroid(polygon);
+        return longitude >= -130 && longitude <= -60 && latitude >= 20 && latitude <= 55;
+      })
+      .sort((left, right) => geoArea(right) - geoArea(left))[0]
+  : undefined;
+const contiguousUnitedStatesPath = contiguousUnitedStates
+  ? path(contiguousUnitedStates) ?? ""
+  : "";
+
 const countryPaths = countries.features.map((country, index) => ({
   id: country.id == null ? `unassigned-${index}` : String(country.id).padStart(3, "0"),
-  d: path(country) ?? "",
+  d: String(country.id).padStart(3, "0") === "840"
+    ? contiguousUnitedStatesPath
+    : path(country) ?? "",
 }));
 const countryPathById = new Map(countryPaths.map((country) => [country.id, country.d]));
 
@@ -56,20 +77,20 @@ function createDestination(
 
 // Each destination owns its route and arrival threshold. The order is the story order.
 const destinations: Destination[] = [
-  createDestination({ key: "Japan", countryId: "392", region: "asia", coordinate: [138.2529, 36.2048], start: 0.1, arrival: 0.13, fadeEnd: 0.17 }),
-  createDestination({ key: "China", countryId: "156", region: "asia", coordinate: [104.1954, 35.8617], start: 0.14, arrival: 0.17, fadeEnd: 0.21 }),
-  createDestination({ key: "Taiwan", countryId: "158", region: "asia", coordinate: [120.9605, 23.6978], start: 0.18, arrival: 0.21, fadeEnd: 0.25 }),
-  createDestination({ key: "Mongolia", countryId: "496", region: "asia", coordinate: [103.8467, 46.8625], start: 0.22, arrival: 0.25, fadeEnd: 0.29 }),
-  createDestination({ key: "Thailand", countryId: "764", region: "asia", coordinate: [100.9925, 15.87], start: 0.26, arrival: 0.29, fadeEnd: 0.33 }),
-  createDestination({ key: "Cambodia", countryId: "116", region: "asia", coordinate: [104.991, 12.5657], start: 0.3, arrival: 0.33, fadeEnd: 0.37 }),
-  createDestination({ key: "Malaysia", countryId: "458", region: "asia", coordinate: [101.9758, 4.2105], start: 0.34, arrival: 0.37, fadeEnd: 0.41 }),
-  createDestination({ key: "Singapore", region: "asia", coordinate: singaporeCoordinate, start: 0.38, arrival: 0.41, fadeEnd: 0.45 }),
-  createDestination({ key: "Indonesia", countryId: "360", region: "asia", coordinate: [113.9213, -0.7893], start: 0.42, arrival: 0.45, fadeEnd: 0.49 }),
-  createDestination({ key: "Philippines", countryId: "608", region: "asia", coordinate: [121.774, 12.8797], start: 0.46, arrival: 0.49, fadeEnd: 0.53 }),
-  createDestination({ key: "Germany", countryId: "276", region: "europe", coordinate: [10.4515, 51.1657], start: 0.5, arrival: 0.56, fadeEnd: 0.6 }),
-  createDestination({ key: "Netherlands", countryId: "528", region: "europe", coordinate: [5.2913, 52.1326], start: 0.57, arrival: 0.63, fadeEnd: 0.67 }),
-  createDestination({ key: "Australia", countryId: "036", region: "oceania", coordinate: [133.7751, -25.2744], start: 0.65, arrival: 0.73, fadeEnd: 0.78 }),
-  createDestination({ key: "United States", countryId: "840", region: "northAmerica", coordinate: [-98.5795, 39.8283], start: 0.75, arrival: 0.86, fadeEnd: 0.9 }),
+  createDestination({ key: "Japan", countryId: "392", region: "asia", coordinate: [138.2529, 36.2048], start: 0.08, arrival: 0.108, fadeEnd: 0.128 }),
+  createDestination({ key: "China", countryId: "156", region: "asia", coordinate: [104.1954, 35.8617], start: 0.124, arrival: 0.152, fadeEnd: 0.172 }),
+  createDestination({ key: "Taiwan", countryId: "158", region: "asia", coordinate: [120.9605, 23.6978], start: 0.168, arrival: 0.196, fadeEnd: 0.216 }),
+  createDestination({ key: "Mongolia", countryId: "496", region: "asia", coordinate: [103.8467, 46.8625], start: 0.212, arrival: 0.24, fadeEnd: 0.26 }),
+  createDestination({ key: "Thailand", countryId: "764", region: "asia", coordinate: [100.9925, 15.87], start: 0.256, arrival: 0.284, fadeEnd: 0.304 }),
+  createDestination({ key: "Cambodia", countryId: "116", region: "asia", coordinate: [104.991, 12.5657], start: 0.3, arrival: 0.328, fadeEnd: 0.348 }),
+  createDestination({ key: "Malaysia", countryId: "458", region: "asia", coordinate: [101.9758, 4.2105], start: 0.344, arrival: 0.372, fadeEnd: 0.392 }),
+  createDestination({ key: "Singapore", region: "asia", coordinate: singaporeCoordinate, start: 0.388, arrival: 0.416, fadeEnd: 0.436 }),
+  createDestination({ key: "Indonesia", countryId: "360", region: "asia", coordinate: [113.9213, -0.7893], start: 0.432, arrival: 0.46, fadeEnd: 0.48 }),
+  createDestination({ key: "Philippines", countryId: "608", region: "asia", coordinate: [121.774, 12.8797], start: 0.476, arrival: 0.504, fadeEnd: 0.524 }),
+  createDestination({ key: "Germany", countryId: "276", region: "europe", coordinate: [10.4515, 51.1657], start: 0.52, arrival: 0.57, fadeEnd: 0.602 }),
+  createDestination({ key: "Netherlands", countryId: "528", region: "europe", coordinate: [5.2913, 52.1326], start: 0.59, arrival: 0.64, fadeEnd: 0.675 }),
+  createDestination({ key: "Australia", countryId: "036", region: "oceania", coordinate: [133.7751, -25.2744], start: 0.66, arrival: 0.755, fadeEnd: 0.79 }),
+  createDestination({ key: "United States", countryId: "840", region: "northAmerica", coordinate: [-98.5795, 39.8283], start: 0.78, arrival: 0.895, fadeEnd: 0.925 }),
 ];
 
 function DestinationGeometry({ destination, opacity }: {
@@ -260,33 +281,33 @@ export default function GlobalPresence() {
     offset: ["start start", "end end"],
   });
 
-  const mapOpacity = useTransform(scrollYProgress, [0, 0.1, 0.88, 1], [0.72, 1, 1, 0.9]);
+  const mapOpacity = useTransform(scrollYProgress, [0, 0.08, 0.91, 1], [0.72, 1, 1, 0.9]);
   const mapScale = useTransform(
     scrollYProgress,
-    [0, 0.1, 0.5, 0.65, 0.75, 0.88, 1],
+    [0, 0.08, 0.52, 0.66, 0.78, 0.91, 1],
     [0.97, 0.985, 1, 0.993, 1, 0.996, 0.985],
   );
   const originOpacity = useTransform(
     scrollYProgress,
-    [0, 0.04, 0.1, 0.86, 0.9, 1],
+    [0, 0.035, 0.08, 0.895, 0.93, 1],
     [0, 0.45, 0.62, 0.62, 0, 0],
   );
   const originRadius = useTransform(
     scrollYProgress,
-    [0, 0.1, 0.3, 0.5, 0.65, 0.75, 0.88, 1],
+    [0, 0.08, 0.3, 0.52, 0.66, 0.78, 0.91, 1],
     [3.8, 5.5, 4.2, 5.5, 4.3, 5.4, 4.2, 3.8],
   );
 
   const regionLabelOpacities = {
-    asia: useTransform(scrollYProgress, [0, 0.09, 0.12, 0.48, 0.51, 1], [0, 0, 1, 1, 0, 0]),
-    europe: useTransform(scrollYProgress, [0, 0.49, 0.52, 0.63, 0.66, 1], [0, 0, 1, 1, 0, 0]),
-    oceania: useTransform(scrollYProgress, [0, 0.64, 0.67, 0.73, 0.76, 1], [0, 0, 1, 1, 0, 0]),
-    northAmerica: useTransform(scrollYProgress, [0, 0.74, 0.77, 0.86, 0.89, 1], [0, 0, 1, 1, 0, 0]),
+    asia: useTransform(scrollYProgress, [0, 0.075, 0.1, 0.5, 0.525, 1], [0, 0, 1, 1, 0, 0]),
+    europe: useTransform(scrollYProgress, [0, 0.51, 0.53, 0.64, 0.665, 1], [0, 0, 1, 1, 0, 0]),
+    oceania: useTransform(scrollYProgress, [0, 0.65, 0.67, 0.755, 0.78, 1], [0, 0, 1, 1, 0, 0]),
+    northAmerica: useTransform(scrollYProgress, [0, 0.77, 0.79, 0.895, 0.915, 1], [0, 0, 1, 1, 0, 0]),
   };
 
-  const businessCopyOpacity = useTransform(scrollYProgress, [0, 0.87, 0.93, 1], [0, 0, 1, 1]);
-  const businessCopyVisibility = useTransform(scrollYProgress, (value) => value >= 0.87 ? "visible" : "hidden");
-  const statsOpacity = useTransform(scrollYProgress, [0, 0.9, 0.96, 1], [0, 0, 1, 1]);
+  const businessCopyOpacity = useTransform(scrollYProgress, [0, 0.91, 0.96, 1], [0, 0, 1, 1]);
+  const businessCopyVisibility = useTransform(scrollYProgress, (value) => value >= 0.91 ? "visible" : "hidden");
+  const statsOpacity = useTransform(scrollYProgress, [0, 0.92, 0.98, 1], [0, 0, 1, 1]);
 
   const heading = (
     <header>
@@ -344,7 +365,7 @@ export default function GlobalPresence() {
   }
 
   return (
-    <section ref={sectionRef} aria-labelledby={titleId} className="h-[320svh] bg-[#09090b] text-white">
+    <section ref={sectionRef} aria-labelledby={titleId} className="h-[400svh] bg-[#09090b] text-white">
       <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
         <div className="mx-auto grid h-full min-h-[32rem] max-w-7xl grid-rows-[auto_minmax(0,1fr)_auto_auto] gap-4 px-6 py-6 sm:px-10 md:gap-5 md:px-16 md:py-9">
           {heading}
