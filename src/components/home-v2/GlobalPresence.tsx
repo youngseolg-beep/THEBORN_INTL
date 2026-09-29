@@ -1,6 +1,7 @@
-import { useId, useRef } from "react";
+import { createContext, useContext, useId, useLayoutEffect, useRef } from "react";
 import {
   motion,
+  useMotionValue,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -121,6 +122,30 @@ const operatingCountries = [
 
 type AnimatedColor = string | MotionValue<string>;
 
+// Share the rendered map scale so light widths remain consistent during zoom.
+const EffectsScaleContext = createContext<MotionValue<number> | null>(null);
+
+function useEffectsScale(): MotionValue<number> {
+  const scale = useContext(EffectsScaleContext);
+  if (!scale) throw new Error("Map effects require an EffectsScaleContext");
+  return scale;
+}
+
+// Projected bounds only determine mask coverage; the country paths stay intact.
+const revealRadiusByDestination = new Map(destinations.map((destination) => {
+  const point = destination.point ?? koreaPoint;
+  const distances = destination.countryIds.flatMap((id) => {
+    const country = countries.features.find((item) => String(item.id).padStart(3, "0") === id);
+    const geometry = id === "840" ? contiguousUnitedStates : country;
+    if (!geometry) return [];
+    const [[left, top], [right, bottom]] = path.bounds(geometry);
+    return [[left, top], [right, top], [left, bottom], [right, bottom]]
+      .map(([x, y]) => Math.hypot(x - point[0], y - point[1]));
+  });
+  // Overscan puts every edge inside the mask's fully opaque inner 82%.
+  return [destination.key, (Math.max(8, ...distances) + 3) / 0.82];
+}));
+
 function DestinationGeometry({
   destination,
   fill,
@@ -205,6 +230,14 @@ function AnimatedDestination({ destination, progress, glowFilterId }: {
   progress: MotionValue<number>;
   glowFilterId: string;
 }) {
+  const maskId = `destination-${useId().replace(/:/g, "")}`;
+  const gradientId = `${maskId}-edge`;
+  const point = destination.point ?? koreaPoint;
+  const revealRadius = useTransform(
+    progress,
+    [destination.activationStart, destination.activationEnd],
+    [0, revealRadiusByDestination.get(destination.key) ?? 12],
+  );
   const activationMidpoint = destination.activationStart
     + (destination.activationEnd - destination.activationStart) * 0.58;
   const fill = useTransform(
@@ -228,17 +261,32 @@ function AnimatedDestination({ destination, progress, glowFilterId }: {
       destination.activationEnd + 0.05,
       1,
     ],
-    [0, 0, 0.28, 0.82, 0.4, 0.18, 0.18],
+    [0, 0, 0.45, 0.95, 0.3, 0.08, 0.08],
   );
 
   return (
-    <DestinationGeometry
-      destination={destination}
-      fill={fill}
-      stroke={stroke}
-      glowOpacity={glowOpacity}
-      glowFilterId={glowFilterId}
-    />
+    <>
+      <defs>
+        <radialGradient id={gradientId}>
+          <stop offset="0.82" stopColor="white" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
+        </radialGradient>
+        <mask id={maskId} maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse"
+          x="-50" y="-50" width="1100" height="624" style={{ maskType: "alpha" }}>
+          <motion.circle cx={point[0]} cy={point[1]} r={revealRadius}
+            fill={`url(#${gradientId})`} />
+        </mask>
+      </defs>
+      <g mask={`url(#${maskId})`}>
+        <DestinationGeometry
+          destination={destination}
+          fill={fill}
+          stroke={stroke}
+          glowOpacity={glowOpacity}
+          glowFilterId={glowFilterId}
+        />
+      </g>
+    </>
   );
 }
 
@@ -253,40 +301,66 @@ function GlowingRoute({
   opacity: MotionValue<number>;
   glowFilterId: string;
 }) {
+  const measurementRef = useRef<SVGPathElement>(null);
+  const samples = useMotionValue<[number, number][]>([koreaPoint]);
+  const effectsScale = useEffectsScale();
+  const outerWidth = useTransform(effectsScale, (scale) => 12 / scale);
+  const middleWidth = useTransform(effectsScale, (scale) => 4.5 / scale);
+  const coreWidth = useTransform(effectsScale, (scale) => 1.8 / scale);
+  const headScale = useTransform(effectsScale, (scale) => 1 / scale);
+
+  useLayoutEffect(() => {
+    const element = measurementRef.current;
+    if (!element) return;
+    const length = element.getTotalLength();
+    // Sample once per path, not once per frame. Scroll only interpolates two points.
+    samples.set(Array.from({ length: 257 }, (_, index) => {
+      const point = element.getPointAtLength(length * index / 256);
+      return [point.x, point.y] as [number, number];
+    }));
+  }, [d, samples]);
+
+  const headTransform = useTransform(() => {
+    const points = samples.get();
+    const cursor = Math.min(1, Math.max(0, pathLength.get())) * (points.length - 1);
+    const index = Math.floor(cursor);
+    const next = points[Math.min(index + 1, points.length - 1)];
+    const blend = cursor - index;
+    const x = points[index][0] + (next[0] - points[index][0]) * blend;
+    const y = points[index][1] + (next[1] - points[index][1]) * blend;
+    return `translate(${x}px, ${y}px)`;
+  });
+  // Highlight the last 18% of the revealed route as a short luminous tail.
+  const tailLength = useTransform(pathLength, (value) => Math.min(0.18, value));
+  const tailOffset = useTransform(pathLength, (value) => Math.max(0, value - 0.18));
+  const headOpacity = useTransform([pathLength, opacity], ([drawn, visible]: number[]) =>
+    Math.min(1, drawn / 0.025) * Math.pow(visible, 3));
+
   return (
-    <motion.g style={{ opacity }}>
-      <motion.path
-        d={d}
-        fill="none"
-        stroke="#ed2028"
-        strokeWidth="6"
-        strokeLinecap="round"
-        opacity="0.2"
-        filter={`url(#${glowFilterId})`}
-        vectorEffect="non-scaling-stroke"
-        style={{ pathLength }}
-      />
-      <motion.path
-        d={d}
-        fill="none"
-        stroke="#ff3b42"
-        strokeWidth="2.8"
-        strokeLinecap="round"
-        opacity="0.58"
-        vectorEffect="non-scaling-stroke"
-        style={{ pathLength }}
-      />
-      <motion.path
-        d={d}
-        fill="none"
-        stroke="#ffd2d4"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        opacity="0.96"
-        vectorEffect="non-scaling-stroke"
-        style={{ pathLength }}
-      />
-    </motion.g>
+    <>
+      <motion.g style={{ opacity }}>
+        <path ref={measurementRef} d={d} fill="none" stroke="none" />
+        {/* Scale-compensated widths preserve dash/head alignment at every zoom.
+            Non-scaling-stroke changes normalized dash lengths in some browsers. */}
+        <motion.path d={d} fill="none" stroke="#ed2028" strokeLinecap="round"
+          opacity="0.38" filter={`url(#${glowFilterId})`}
+          style={{ pathLength, strokeWidth: outerWidth }} />
+        <motion.path d={d} fill="none" stroke="#fa2632" strokeLinecap="round"
+          opacity="0.78" style={{ pathLength, strokeWidth: middleWidth }} />
+        <motion.path d={d} fill="none" stroke="#ffd4d6" strokeLinecap="round"
+          opacity="0.62" style={{ pathLength, strokeWidth: coreWidth }} />
+        <motion.path d={d} fill="none" stroke="#fff2ee" strokeLinecap="round"
+          style={{ pathLength: tailLength, pathOffset: tailOffset, strokeWidth: coreWidth }} />
+      </motion.g>
+      <motion.g style={{ transform: headTransform, transformBox: "view-box",
+        originX: 0, originY: 0, opacity: headOpacity }}>
+        <motion.g style={{ scale: headScale, transformBox: "view-box", originX: 0, originY: 0 }}>
+          <circle r="13" fill={`url(#${glowFilterId}-light)`} opacity="0.85" />
+          <circle r="4" fill="#ff3342" opacity="0.82" />
+          <circle r="1.9" fill="#fff5ee" />
+        </motion.g>
+      </motion.g>
+    </>
   );
 }
 
@@ -301,18 +375,19 @@ function DestinationPulse({
   radius: MotionValue<number>;
   glowFilterId: string;
 }) {
+  const effectsScale = useEffectsScale();
+  const transform = useTransform(() =>
+    `translate(${point[0]}px, ${point[1]}px) scale(${1 / effectsScale.get()})`);
+  const bloomRadius = useTransform(radius, (value) => 8 + value * 2.2);
+  const haloRadius = useTransform(radius, (value) => value * 1.15);
+  const centerOpacity = useTransform(opacity, (value) => value * value);
+
   return (
-    <motion.circle
-      cx={point[0]}
-      cy={point[1]}
-      r={radius}
-      fill="#ff555b"
-      stroke="#ffd2d4"
-      strokeWidth="0.8"
-      filter={`url(#${glowFilterId})`}
-      vectorEffect="non-scaling-stroke"
-      style={{ opacity }}
-    />
+    <motion.g style={{ transform, transformBox: "view-box", originX: 0, originY: 0, opacity }}>
+      <motion.circle r={bloomRadius} fill={`url(#${glowFilterId}-light)`} />
+      <motion.circle r={haloRadius} fill="#ff3542" fillOpacity="0.22" />
+      <motion.circle r="2.5" fill="#fff4ed" style={{ opacity: centerOpacity }} />
+    </motion.g>
   );
 }
 
@@ -448,6 +523,35 @@ function WorldMap({
   originRadius,
   staticActive = false,
 }: WorldMapProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const viewportScale = useMotionValue(1);
+  const effectsScale = useTransform(() => {
+    const transform = typeof cameraTransform === "string" ? cameraTransform : cameraTransform.get();
+    const zoom = Number(transform.match(/scale\(([^)]+)\)/)?.[1] ?? 1);
+    return Math.max(0.01, viewportScale.get() * zoom);
+  });
+  const routeBlur = useTransform(effectsScale, (scale) => 6 / scale);
+  const countryBlur = useTransform(effectsScale, (scale) => 3 / scale);
+  const originHaloRadius = useTransform(() => {
+    const radius = typeof originRadius === "number" ? originRadius : originRadius.get();
+    const value = progress?.get() ?? 1;
+    const pulse = value < 0.12 ? 1 + 0.12 * Math.sin(value / 0.12 * Math.PI * 2) : 1;
+    return radius * 3.8 * pulse;
+  });
+
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const measure = () => {
+      const box = svg.getBoundingClientRect();
+      viewportScale.set(Math.min(box.width / 1000, box.height / 524));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(svg);
+    return () => observer.disconnect();
+  }, [viewportScale]);
+
   const id = useId().replace(/:/g, "");
   const titleId = `${id}-title`;
   const routeGlowId = `${id}-route-glow`;
@@ -455,6 +559,7 @@ function WorldMap({
 
   return (
     <svg
+      ref={svgRef}
       viewBox="0 0 1000 524"
       role="img"
       aria-labelledby={titleId}
@@ -465,21 +570,27 @@ function WorldMap({
         World map showing THEBORN expansion from South Korea to its overseas destinations.
       </title>
       <defs aria-hidden="true">
-        <filter id={routeGlowId} x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="2.2" result="routeBlur" />
-          <feMerge>
-            <feMergeNode in="routeBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <radialGradient id={`${routeGlowId}-light`}>
+          <stop offset="0" stopColor="#fff2e9" stopOpacity="0.98" />
+          <stop offset="0.18" stopColor="#ff7277" stopOpacity="0.9" />
+          <stop offset="0.42" stopColor="#ff2635" stopOpacity="0.58" />
+          <stop offset="1" stopColor="#ed2028" stopOpacity="0" />
+        </radialGradient>
+        {/* User-space regions keep short/nearly horizontal routes from clipping. */}
+        <filter id={routeGlowId} filterUnits="userSpaceOnUse"
+          x="-100" y="-100" width="1200" height="724" colorInterpolationFilters="sRGB">
+          <motion.feGaussianBlur stdDeviation={routeBlur} />
         </filter>
-        <filter id={destinationGlowId} x="-35%" y="-35%" width="170%" height="170%">
-          <feGaussianBlur stdDeviation="2.6" result="destinationBlur" />
+        <filter id={destinationGlowId} x="-35%" y="-35%" width="170%" height="170%"
+          colorInterpolationFilters="sRGB">
+          <motion.feGaussianBlur stdDeviation={countryBlur} result="destinationBlur" />
           <feMerge>
             <feMergeNode in="destinationBlur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
       </defs>
+      <EffectsScaleContext.Provider value={effectsScale}>
       <motion.g
         aria-hidden="true"
         strokeLinejoin="round"
@@ -526,7 +637,7 @@ function WorldMap({
             destination={destination}
             fill="#ed2028"
             stroke="#ff6b70"
-            glowOpacity={0.18}
+            glowOpacity={0.08}
             glowFilterId={destinationGlowId}
           />
         ))}
@@ -551,22 +662,29 @@ function WorldMap({
         <motion.circle
           cx={koreaPoint[0]}
           cy={koreaPoint[1]}
+          r={originHaloRadius}
+          fill={`url(#${routeGlowId}-light)`}
+          style={{ opacity: originOpacity }}
+        />
+        <motion.circle
+          cx={koreaPoint[0]}
+          cy={koreaPoint[1]}
           r={originRadius}
           fill="none"
           stroke="#ed2028"
           strokeWidth="1.2"
-          filter={`url(#${routeGlowId})`}
           vectorEffect="non-scaling-stroke"
           style={{ opacity: originOpacity }}
         />
         <motion.circle
           cx={koreaPoint[0]}
           cy={koreaPoint[1]}
-          r="1.8"
-          fill="#ed2028"
+          r="0.85"
+          fill="#fff2ec"
           style={{ opacity: originOpacity }}
         />
       </motion.g>
+      </EffectsScaleContext.Provider>
     </svg>
   );
 }
