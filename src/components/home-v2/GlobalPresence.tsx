@@ -69,10 +69,30 @@ function createGeodesicRoute(destination: Position): string {
   return path(geometry) ?? "";
 }
 
+function createPacificUnitedStatesRoute(): string {
+  const pacificEast = projection([179.5, 43])!;
+  const pacificWest = projection([-179.5, 43])!;
+  const westernUnitedStates = projection([-122.4, 37.7])!;
+
+  // Two ordered subpaths cross the projection seam: Korea travels toward the
+  // right edge, then resumes at the left edge and arrives in the western U.S.
+  return [
+    `M ${koreaPoint[0]} ${koreaPoint[1]}`,
+    `C ${koreaPoint[0] + 38} ${koreaPoint[1] - 42}, ${pacificEast[0] - 35} ${pacificEast[1] - 20}, ${pacificEast[0]} ${pacificEast[1]}`,
+    `M ${pacificWest[0]} ${pacificWest[1]}`,
+    `C ${pacificWest[0] + 38} ${pacificWest[1] - 18}, ${westernUnitedStates[0] - 42} ${westernUnitedStates[1] - 28}, ${westernUnitedStates[0]} ${westernUnitedStates[1]}`,
+  ].join(" ");
+}
+
 function createDestination(
   destination: Omit<Destination, "route">,
 ): Destination {
-  return { ...destination, route: createGeodesicRoute(destination.coordinate) };
+  return {
+    ...destination,
+    route: destination.key === "United States"
+      ? createPacificUnitedStatesRoute()
+      : createGeodesicRoute(destination.coordinate),
+  };
 }
 
 // Each destination owns its route and arrival threshold. The order is the story order.
@@ -90,7 +110,7 @@ const destinations: Destination[] = [
   createDestination({ key: "Germany", countryId: "276", region: "europe", coordinate: [10.4515, 51.1657], start: 0.52, arrival: 0.57, fadeEnd: 0.602 }),
   createDestination({ key: "Netherlands", countryId: "528", region: "europe", coordinate: [5.2913, 52.1326], start: 0.59, arrival: 0.64, fadeEnd: 0.675 }),
   createDestination({ key: "Australia", countryId: "036", region: "oceania", coordinate: [133.7751, -25.2744], start: 0.66, arrival: 0.755, fadeEnd: 0.79 }),
-  createDestination({ key: "United States", countryId: "840", region: "northAmerica", coordinate: [-98.5795, 39.8283], start: 0.78, arrival: 0.895, fadeEnd: 0.925 }),
+  createDestination({ key: "United States", countryId: "840", region: "northAmerica", coordinate: [-122.4, 37.7], start: 0.78, arrival: 0.895, fadeEnd: 0.925 }),
 ];
 
 function DestinationGeometry({ destination, opacity }: {
