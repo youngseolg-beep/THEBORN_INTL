@@ -22,108 +22,157 @@ const countryPaths = countries.features.map((country, index) => ({
   id: country.id == null ? `unassigned-${index}` : String(country.id).padStart(3, "0"),
   d: path(country) ?? "",
 }));
+const countryPathById = new Map(countryPaths.map((country) => [country.id, country.d]));
 
-// ISO 3166-1 numeric identifiers supplied by world-atlas.
-const operatingCountryIds = new Set([
-  "840", // United States
-  "156", // China
-  "392", // Japan
-  "360", // Indonesia
-  "608", // Philippines
-  "158", // Taiwan
-  "458", // Malaysia
-  "496", // Mongolia
-  "528", // Netherlands
-  "276", // Germany
-  "036", // Australia
-  "764", // Thailand
-  "116", // Cambodia
-]);
+const korea: [number, number] = [127.7669, 35.9078];
+const koreaPoint = projection(korea)!;
+const singaporeCoordinate: [number, number] = [103.8198, 1.3521];
+const singaporePoint = projection(singaporeCoordinate)!;
 
-const regionalCountryIds = {
-  asia: new Set(["156", "392", "360", "608", "158", "458", "496", "764", "116"]),
-  europe: new Set(["528", "276"]),
-  oceania: new Set(["036"]),
-  northAmerica: new Set(["840"]),
+type RegionKey = "asia" | "europe" | "oceania" | "northAmerica";
+type Destination = {
+  key: string;
+  countryId?: string;
+  region: RegionKey;
+  coordinate: [number, number];
+  start: number;
+  arrival: number;
+  fadeEnd: number;
+  route: string;
 };
 
-const korea: Position = [127.7669, 35.9078];
-const singaporeCoordinate: Position = [103.8198, 1.3521];
-const singapore = projection(singaporeCoordinate)!;
-const koreaPoint = projection(korea)!;
-
-type RegionKey = keyof typeof regionalCountryIds;
-type Route = { d: string; mobilePriority: boolean };
-
 function createGeodesicRoute(destination: Position): string {
-  const interpolate = geoInterpolate(korea as [number, number], destination as [number, number]);
+  const interpolate = geoInterpolate(korea, destination as [number, number]);
   const coordinates = Array.from({ length: 41 }, (_, index) => interpolate(index / 40));
   const geometry: LineString = { type: "LineString", coordinates };
   return path(geometry) ?? "";
 }
 
-// Routes use sampled great-circle interpolation before entering the map's projection.
-const regionalRoutes: Record<RegionKey, Route[]> = {
-  asia: [
-    { d: createGeodesicRoute([104.1954, 35.8617]), mobilePriority: true }, // China
-    { d: createGeodesicRoute([138.2529, 36.2048]), mobilePriority: true }, // Japan
-    { d: createGeodesicRoute([120.9605, 23.6978]), mobilePriority: false }, // Taiwan
-    { d: createGeodesicRoute([103.8467, 46.8625]), mobilePriority: false }, // Mongolia
-    { d: createGeodesicRoute([100.9925, 15.87]), mobilePriority: true }, // Thailand
-    { d: createGeodesicRoute([104.991, 12.5657]), mobilePriority: false }, // Cambodia
-    { d: createGeodesicRoute([101.9758, 4.2105]), mobilePriority: false }, // Malaysia
-    { d: createGeodesicRoute(singaporeCoordinate), mobilePriority: false }, // Singapore
-    { d: createGeodesicRoute([113.9213, -0.7893]), mobilePriority: true }, // Indonesia
-    { d: createGeodesicRoute([121.774, 12.8797]), mobilePriority: false }, // Philippines
-  ],
-  europe: [
-    { d: createGeodesicRoute([10.4515, 51.1657]), mobilePriority: true }, // Germany
-    { d: createGeodesicRoute([5.2913, 52.1326]), mobilePriority: true }, // Netherlands
-  ],
-  oceania: [
-    { d: createGeodesicRoute([133.7751, -25.2744]), mobilePriority: true }, // Australia
-  ],
-  northAmerica: [
-    { d: createGeodesicRoute([-98.5795, 39.8283]), mobilePriority: true }, // United States
-  ],
-};
+function createDestination(
+  destination: Omit<Destination, "route">,
+): Destination {
+  return { ...destination, route: createGeodesicRoute(destination.coordinate) };
+}
 
-type AnimatedValue = number | MotionValue<number>;
-type RegionMotion = {
-  emphasis: AnimatedValue;
-  pathLength: AnimatedValue;
-  routeOpacity: AnimatedValue;
-};
-type MapProps = {
-  regions: Record<RegionKey, RegionMotion>;
-  originOpacity: AnimatedValue;
-  originRadius: AnimatedValue;
-};
+// Each destination owns its route and arrival threshold. The order is the story order.
+const destinations: Destination[] = [
+  createDestination({ key: "Japan", countryId: "392", region: "asia", coordinate: [138.2529, 36.2048], start: 0.1, arrival: 0.13, fadeEnd: 0.17 }),
+  createDestination({ key: "China", countryId: "156", region: "asia", coordinate: [104.1954, 35.8617], start: 0.14, arrival: 0.17, fadeEnd: 0.21 }),
+  createDestination({ key: "Taiwan", countryId: "158", region: "asia", coordinate: [120.9605, 23.6978], start: 0.18, arrival: 0.21, fadeEnd: 0.25 }),
+  createDestination({ key: "Mongolia", countryId: "496", region: "asia", coordinate: [103.8467, 46.8625], start: 0.22, arrival: 0.25, fadeEnd: 0.29 }),
+  createDestination({ key: "Thailand", countryId: "764", region: "asia", coordinate: [100.9925, 15.87], start: 0.26, arrival: 0.29, fadeEnd: 0.33 }),
+  createDestination({ key: "Cambodia", countryId: "116", region: "asia", coordinate: [104.991, 12.5657], start: 0.3, arrival: 0.33, fadeEnd: 0.37 }),
+  createDestination({ key: "Malaysia", countryId: "458", region: "asia", coordinate: [101.9758, 4.2105], start: 0.34, arrival: 0.37, fadeEnd: 0.41 }),
+  createDestination({ key: "Singapore", region: "asia", coordinate: singaporeCoordinate, start: 0.38, arrival: 0.41, fadeEnd: 0.45 }),
+  createDestination({ key: "Indonesia", countryId: "360", region: "asia", coordinate: [113.9213, -0.7893], start: 0.42, arrival: 0.45, fadeEnd: 0.49 }),
+  createDestination({ key: "Philippines", countryId: "608", region: "asia", coordinate: [121.774, 12.8797], start: 0.46, arrival: 0.49, fadeEnd: 0.53 }),
+  createDestination({ key: "Germany", countryId: "276", region: "europe", coordinate: [10.4515, 51.1657], start: 0.5, arrival: 0.56, fadeEnd: 0.6 }),
+  createDestination({ key: "Netherlands", countryId: "528", region: "europe", coordinate: [5.2913, 52.1326], start: 0.57, arrival: 0.63, fadeEnd: 0.67 }),
+  createDestination({ key: "Australia", countryId: "036", region: "oceania", coordinate: [133.7751, -25.2744], start: 0.65, arrival: 0.73, fadeEnd: 0.78 }),
+  createDestination({ key: "United States", countryId: "840", region: "northAmerica", coordinate: [-98.5795, 39.8283], start: 0.75, arrival: 0.86, fadeEnd: 0.9 }),
+];
 
-function RegionRoutes({ region, motionState }: {
-  region: RegionKey;
-  motionState: RegionMotion;
+function DestinationGeometry({ destination, opacity }: {
+  destination: Destination;
+  opacity: number | MotionValue<number>;
 }) {
-  return (
-    <g>
-      {regionalRoutes[region].map((route, index) => (
-        <motion.path
-          key={`${region}-${index}`}
-          d={route.d}
-          className={route.mobilePriority ? undefined : "hidden sm:block"}
-          fill="none"
-          stroke="#ed2028"
-          strokeWidth="0.85"
-          strokeLinecap="round"
+  if (!destination.countryId) {
+    return (
+      <motion.g style={{ opacity }}>
+        <circle
+          cx={singaporePoint[0]}
+          cy={singaporePoint[1]}
+          r="2.6"
+          fill="#ed2028"
+          stroke="#ff6b70"
+          strokeWidth="1"
           vectorEffect="non-scaling-stroke"
-          style={{ opacity: motionState.routeOpacity, pathLength: motionState.pathLength }}
         />
-      ))}
-    </g>
+        <circle
+          cx={singaporePoint[0]}
+          cy={singaporePoint[1]}
+          r="4.5"
+          fill="none"
+          stroke="#ff6b70"
+          strokeWidth="0.7"
+          opacity="0.65"
+          vectorEffect="non-scaling-stroke"
+        />
+      </motion.g>
+    );
+  }
+
+  return (
+    <motion.path
+      d={countryPathById.get(destination.countryId) ?? ""}
+      fill="#ed2028"
+      stroke="#ff6b70"
+      strokeWidth="0.7"
+      vectorEffect="non-scaling-stroke"
+      style={{ opacity }}
+    />
   );
 }
 
-function WorldMap({ regions, originOpacity, originRadius }: MapProps) {
+function AnimatedDestination({ destination, progress }: {
+  destination: Destination;
+  progress: MotionValue<number>;
+}) {
+  // The destination begins changing only when its route is almost complete.
+  const activationOpacity = useTransform(
+    progress,
+    [0, destination.arrival - 0.006, destination.arrival + 0.012, 1],
+    [0, 0, 1, 1],
+  );
+
+  return <DestinationGeometry destination={destination} opacity={activationOpacity} />;
+}
+
+function AnimatedRoute({ destination, progress }: {
+  destination: Destination;
+  progress: MotionValue<number>;
+}) {
+  const pathLength = useTransform(
+    progress,
+    [0, destination.start, destination.arrival, 1],
+    [0, 0, 1, 1],
+  );
+  const opacity = useTransform(
+    progress,
+    [
+      0,
+      destination.start,
+      destination.start + 0.005,
+      destination.arrival,
+      destination.arrival + 0.012,
+      destination.fadeEnd,
+      destination.fadeEnd + 0.012,
+      1,
+    ],
+    [0, 0, 0.72, 0.72, 0.18, 0.12, 0, 0],
+  );
+
+  return (
+    <motion.path
+      d={destination.route}
+      fill="none"
+      stroke="#ed2028"
+      strokeWidth="0.85"
+      strokeLinecap="round"
+      vectorEffect="non-scaling-stroke"
+      style={{ opacity, pathLength }}
+    />
+  );
+}
+
+type WorldMapProps = {
+  progress?: MotionValue<number>;
+  originOpacity: number | MotionValue<number>;
+  originRadius: number | MotionValue<number>;
+  staticActive?: boolean;
+};
+
+function WorldMap({ progress, originOpacity, originRadius, staticActive = false }: WorldMapProps) {
   const id = useId();
 
   return (
@@ -135,7 +184,7 @@ function WorldMap({ regions, originOpacity, originRadius }: MapProps) {
       preserveAspectRatio="xMidYMid meet"
     >
       <title id={id}>
-        World map showing all current operating countries and regional connections from South Korea.
+        World map showing THEBORN expansion from South Korea to fourteen overseas operating markets.
       </title>
       <g aria-hidden="true" strokeLinejoin="round">
         {countryPaths.map((country) => (
@@ -149,84 +198,34 @@ function WorldMap({ regions, originOpacity, originRadius }: MapProps) {
           />
         ))}
 
-        {/* Every operating market remains visible throughout the complete scroll sequence. */}
-        <g opacity="0.76">
-          {countryPaths
-            .filter((country) => operatingCountryIds.has(country.id))
-            .map((country) => (
-              <path
-                key={country.id}
-                d={country.d}
-                fill="#b5161d"
-                stroke="#d63a40"
-                strokeWidth="0.5"
-                vectorEffect="non-scaling-stroke"
-              />
-            ))}
-          {/* Accurate coordinate fallback for Singapore, absent at 1:110m. */}
-          <circle
-            cx={singapore[0]}
-            cy={singapore[1]}
-            r="2.6"
-            fill="#b5161d"
-            stroke="#d63a40"
-            strokeWidth="1"
-            vectorEffect="non-scaling-stroke"
-          />
-          <circle
-            cx={singapore[0]}
-            cy={singapore[1]}
-            r="4.5"
-            fill="none"
-            stroke="#d63a40"
-            strokeWidth="0.6"
-            opacity="0.55"
-            vectorEffect="non-scaling-stroke"
-          />
-        </g>
+        {/* Singapore is absent from the 1:110m geometry, so it begins as a neutral marker. */}
+        <circle
+          cx={singaporePoint[0]}
+          cy={singaporePoint[1]}
+          r="2.6"
+          fill="#303238"
+          stroke="#676970"
+          strokeWidth="1"
+          vectorEffect="non-scaling-stroke"
+        />
 
-        {(Object.keys(regionalCountryIds) as RegionKey[]).map((region) => (
-          <motion.g key={region} style={{ opacity: regions[region].emphasis }}>
-            {countryPaths
-              .filter((country) => regionalCountryIds[region].has(country.id))
-              .map((country) => (
-                <path
-                  key={country.id}
-                  d={country.d}
-                  fill="#ed2028"
-                  stroke="#ff6b70"
-                  strokeWidth="0.7"
-                  vectorEffect="non-scaling-stroke"
-                />
-              ))}
-            {region === "asia" && (
-              <>
-                <circle
-                  cx={singapore[0]}
-                  cy={singapore[1]}
-                  r="2.6"
-                  fill="#ed2028"
-                  stroke="#ff6b70"
-                  strokeWidth="1"
-                  vectorEffect="non-scaling-stroke"
-                />
-                <circle
-                  cx={singapore[0]}
-                  cy={singapore[1]}
-                  r="4.5"
-                  fill="none"
-                  stroke="#ff6b70"
-                  strokeWidth="0.7"
-                  opacity="0.65"
-                  vectorEffect="non-scaling-stroke"
-                />
-              </>
-            )}
-          </motion.g>
+        {progress && destinations.map((destination) => (
+          <AnimatedDestination
+            key={destination.key}
+            destination={destination}
+            progress={progress}
+          />
+        ))}
+        {staticActive && destinations.map((destination) => (
+          <DestinationGeometry key={destination.key} destination={destination} opacity={1} />
         ))}
 
-        {(Object.keys(regionalRoutes) as RegionKey[]).map((region) => (
-          <RegionRoutes key={region} region={region} motionState={regions[region]} />
+        {progress && destinations.map((destination) => (
+          <AnimatedRoute
+            key={destination.key}
+            destination={destination}
+            progress={progress}
+          />
         ))}
 
         <motion.circle
@@ -261,60 +260,33 @@ export default function GlobalPresence() {
     offset: ["start start", "end end"],
   });
 
-  const mapOpacity = useTransform(scrollYProgress, [0, 0.15, 0.86, 1], [0.68, 1, 1, 0.88]);
-  // Continuous restrained framing changes keep the scroll track visually active.
+  const mapOpacity = useTransform(scrollYProgress, [0, 0.1, 0.88, 1], [0.72, 1, 1, 0.9]);
   const mapScale = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.38, 0.52, 0.66, 0.75, 0.86, 1],
-    [0.97, 0.985, 1, 0.992, 1, 0.994, 1, 0.985],
+    [0, 0.1, 0.5, 0.65, 0.75, 0.88, 1],
+    [0.97, 0.985, 1, 0.993, 1, 0.996, 0.985],
   );
-
-  const asiaEmphasis = useTransform(scrollYProgress, [0, 0.15, 0.24, 0.36, 0.52, 1], [0, 0, 0.34, 0.34, 0, 0]);
-  const asiaPathLength = useTransform(scrollYProgress, [0, 0.15, 0.36, 1], [0, 0, 1, 1]);
-  const asiaRouteOpacity = useTransform(scrollYProgress, [0, 0.15, 0.2, 0.36, 0.52, 1], [0, 0, 0.58, 0.58, 0, 0]);
-
-  const europeEmphasis = useTransform(scrollYProgress, [0, 0.52, 0.58, 0.64, 0.69, 1], [0, 0, 0.34, 0.34, 0, 0]);
-  const europePathLength = useTransform(scrollYProgress, [0, 0.52, 0.64, 1], [0, 0, 1, 1]);
-  const europeRouteOpacity = useTransform(scrollYProgress, [0, 0.52, 0.56, 0.64, 0.69, 1], [0, 0, 0.62, 0.62, 0, 0]);
-
-  const oceaniaEmphasis = useTransform(scrollYProgress, [0, 0.66, 0.7, 0.74, 0.78, 1], [0, 0, 0.34, 0.34, 0, 0]);
-  const oceaniaPathLength = useTransform(scrollYProgress, [0, 0.66, 0.74, 1], [0, 0, 1, 1]);
-  const oceaniaRouteOpacity = useTransform(scrollYProgress, [0, 0.66, 0.69, 0.74, 0.78, 1], [0, 0, 0.62, 0.62, 0, 0]);
-
-  const northAmericaEmphasis = useTransform(scrollYProgress, [0, 0.75, 0.79, 0.84, 0.89, 1], [0, 0, 0.34, 0.34, 0, 0]);
-  const northAmericaPathLength = useTransform(scrollYProgress, [0, 0.75, 0.84, 1], [0, 0, 1, 1]);
-  const northAmericaRouteOpacity = useTransform(scrollYProgress, [0, 0.75, 0.78, 0.84, 0.89, 1], [0, 0, 0.62, 0.62, 0, 0]);
-
   const originOpacity = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.19, 0.38, 0.48, 0.52, 0.56, 0.84, 0.89, 1],
-    [0, 0, 0.62, 0.62, 0, 0, 0.56, 0.56, 0, 0],
+    [0, 0.04, 0.1, 0.86, 0.9, 1],
+    [0, 0.45, 0.62, 0.62, 0, 0],
   );
   const originRadius = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.38, 0.52, 0.66, 0.75, 0.86, 1],
-    [3.8, 3.8, 6, 3.8, 5.5, 4.2, 5.5, 3.8],
+    [0, 0.1, 0.3, 0.5, 0.65, 0.75, 0.88, 1],
+    [3.8, 5.5, 4.2, 5.5, 4.3, 5.4, 4.2, 3.8],
   );
 
   const regionLabelOpacities = {
-    asia: useTransform(scrollYProgress, [0, 0.15, 0.2, 0.36, 0.43, 1], [0, 0, 1, 1, 0, 0]),
-    europe: useTransform(scrollYProgress, [0, 0.52, 0.56, 0.64, 0.68, 1], [0, 0, 1, 1, 0, 0]),
-    oceania: useTransform(scrollYProgress, [0, 0.66, 0.69, 0.74, 0.77, 1], [0, 0, 1, 1, 0, 0]),
-    northAmerica: useTransform(scrollYProgress, [0, 0.75, 0.78, 0.84, 0.88, 1], [0, 0, 1, 1, 0, 0]),
+    asia: useTransform(scrollYProgress, [0, 0.09, 0.12, 0.48, 0.51, 1], [0, 0, 1, 1, 0, 0]),
+    europe: useTransform(scrollYProgress, [0, 0.49, 0.52, 0.63, 0.66, 1], [0, 0, 1, 1, 0, 0]),
+    oceania: useTransform(scrollYProgress, [0, 0.64, 0.67, 0.73, 0.76, 1], [0, 0, 1, 1, 0, 0]),
+    northAmerica: useTransform(scrollYProgress, [0, 0.74, 0.77, 0.86, 0.89, 1], [0, 0, 1, 1, 0, 0]),
   };
 
-  const directCopyOpacity = useTransform(scrollYProgress, [0, 0.1, 0.16, 0.34, 0.42, 1], [0, 0, 1, 1, 0, 0]);
-  const masterCopyOpacity = useTransform(scrollYProgress, [0, 0.48, 0.54, 0.8, 0.86, 1], [0, 0, 1, 1, 0, 0]);
-  const directVisibility = useTransform(scrollYProgress, (value) => value >= 0.1 && value < 0.43 ? "visible" : "hidden");
-  const masterVisibility = useTransform(scrollYProgress, (value) => value >= 0.48 && value < 0.87 ? "visible" : "hidden");
-  const statsOpacity = useTransform(scrollYProgress, [0, 0.86, 0.94, 1], [0, 0, 1, 1]);
-
-  const regions: Record<RegionKey, RegionMotion> = {
-    asia: { emphasis: asiaEmphasis, pathLength: asiaPathLength, routeOpacity: asiaRouteOpacity },
-    europe: { emphasis: europeEmphasis, pathLength: europePathLength, routeOpacity: europeRouteOpacity },
-    oceania: { emphasis: oceaniaEmphasis, pathLength: oceaniaPathLength, routeOpacity: oceaniaRouteOpacity },
-    northAmerica: { emphasis: northAmericaEmphasis, pathLength: northAmericaPathLength, routeOpacity: northAmericaRouteOpacity },
-  };
+  const businessCopyOpacity = useTransform(scrollYProgress, [0, 0.87, 0.93, 1], [0, 0, 1, 1]);
+  const businessCopyVisibility = useTransform(scrollYProgress, (value) => value >= 0.87 ? "visible" : "hidden");
+  const statsOpacity = useTransform(scrollYProgress, [0, 0.9, 0.96, 1], [0, 0, 1, 1]);
 
   const heading = (
     <header>
@@ -350,13 +322,6 @@ export default function GlobalPresence() {
   );
 
   if (reduceMotion) {
-    const staticRegions: Record<RegionKey, RegionMotion> = {
-      asia: { emphasis: 0, pathLength: 0, routeOpacity: 0 },
-      europe: { emphasis: 0, pathLength: 0, routeOpacity: 0 },
-      oceania: { emphasis: 0, pathLength: 0, routeOpacity: 0 },
-      northAmerica: { emphasis: 0, pathLength: 0, routeOpacity: 0 },
-    };
-
     return (
       <section
         ref={sectionRef}
@@ -366,7 +331,7 @@ export default function GlobalPresence() {
         <div className="mx-auto max-w-6xl">
           {heading}
           <div className="my-8 aspect-[1000/524]">
-            <WorldMap regions={staticRegions} originOpacity={0} originRadius={3.8} />
+            <WorldMap staticActive originOpacity={0} originRadius={3.8} />
           </div>
           <div className="grid gap-8 md:grid-cols-2">
             {directCopy}
@@ -379,12 +344,16 @@ export default function GlobalPresence() {
   }
 
   return (
-    <section ref={sectionRef} aria-labelledby={titleId} className="h-[240svh] bg-[#09090b] text-white">
+    <section ref={sectionRef} aria-labelledby={titleId} className="h-[320svh] bg-[#09090b] text-white">
       <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
         <div className="mx-auto grid h-full min-h-[32rem] max-w-7xl grid-rows-[auto_minmax(0,1fr)_auto_auto] gap-4 px-6 py-6 sm:px-10 md:gap-5 md:px-16 md:py-9">
           {heading}
           <motion.div className="relative min-h-0 min-w-0" style={{ opacity: mapOpacity, scale: mapScale }}>
-            <WorldMap regions={regions} originOpacity={originOpacity} originRadius={originRadius} />
+            <WorldMap
+              progress={scrollYProgress}
+              originOpacity={originOpacity}
+              originRadius={originRadius}
+            />
             <div className="pointer-events-none absolute right-0 top-1 grid text-right sm:top-3">
               <motion.p className="col-start-1 row-start-1 text-[10px] font-semibold tracking-[0.28em] text-zinc-300 sm:text-xs" style={{ opacity: regionLabelOpacities.asia }}>
                 ASIA
@@ -400,14 +369,13 @@ export default function GlobalPresence() {
               </motion.p>
             </div>
           </motion.div>
-          <div className="grid min-w-0">
-            <motion.div className="col-start-1 row-start-1" style={{ opacity: directCopyOpacity, visibility: directVisibility }}>
-              {directCopy}
-            </motion.div>
-            <motion.div className="col-start-1 row-start-1" style={{ opacity: masterCopyOpacity, visibility: masterVisibility }}>
-              {masterCopy}
-            </motion.div>
-          </div>
+          <motion.div
+            className="grid gap-3 md:grid-cols-2 md:gap-8"
+            style={{ opacity: businessCopyOpacity, visibility: businessCopyVisibility }}
+          >
+            {directCopy}
+            {masterCopy}
+          </motion.div>
           <motion.p className="max-w-xl text-xs leading-relaxed text-zinc-400 sm:text-sm" style={{ opacity: statsOpacity }}>
             {globalPresence.overseasSummary}
           </motion.p>
