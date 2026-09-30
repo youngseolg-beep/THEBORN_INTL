@@ -199,27 +199,6 @@ function DestinationGeometry({
             style={{ fill, stroke }}
           />
         ))}
-        {destination.includesSingapore && (
-          <>
-            <motion.circle
-              cx={singaporePoint[0]}
-              cy={singaporePoint[1]}
-              r="2.6"
-              strokeWidth="1"
-              vectorEffect="non-scaling-stroke"
-              style={{ fill, stroke }}
-            />
-            <motion.circle
-              cx={singaporePoint[0]}
-              cy={singaporePoint[1]}
-              r="4.5"
-              fill="none"
-              strokeWidth="0.8"
-              vectorEffect="non-scaling-stroke"
-              style={{ stroke }}
-            />
-          </>
-        )}
       </g>
       <motion.g
         filter={`url(#${glowFilterId})`}
@@ -236,18 +215,6 @@ function DestinationGeometry({
             vectorEffect="non-scaling-stroke"
           />
         ))}
-        {destination.includesSingapore && (
-          <circle
-            cx={singaporePoint[0]}
-            cy={singaporePoint[1]}
-            r="4.8"
-            fill="#ed2028"
-            fillOpacity="0.24"
-            stroke="#ff4148"
-            strokeWidth="1.2"
-            vectorEffect="non-scaling-stroke"
-          />
-        )}
       </motion.g>
     </>
   );
@@ -536,6 +503,29 @@ function StaticCountryList() {
   );
 }
 
+function OverseasSummaryCopy() {
+  return (
+    <>
+      <span className="md:block">Overseas operations currently span</span>{" "}
+      <span className="md:block">
+        <strong className="font-bold text-[#ed2028]">15</strong> countries with
+      </span>{" "}
+      <span className="md:block">
+        approximately <strong className="font-bold text-[#ed2028]">160</strong> stores.
+      </span>
+    </>
+  );
+}
+
+function SummaryAccent() {
+  return (
+    <span
+      aria-hidden="true"
+      className="mx-auto mb-4 block h-px w-12 bg-[#ed2028]/85 md:mb-5"
+    />
+  );
+}
+
 type WorldMapProps = {
   progress?: MotionValue<number>;
   cameraTransform?: string | MotionValue<string>;
@@ -639,17 +629,6 @@ function WorldMap({
             vectorEffect="non-scaling-stroke"
           />
         ))}
-
-        {/* Singapore is absent from the 1:110m geometry, so it begins as a neutral marker. */}
-        <circle
-          cx={singaporePoint[0]}
-          cy={singaporePoint[1]}
-          r="2.6"
-          fill="#303238"
-          stroke="#676970"
-          strokeWidth="1"
-          vectorEffect="non-scaling-stroke"
-        />
 
         {progress && destinations.map((destination) => (
           <AnimatedDestination
@@ -772,8 +751,11 @@ export default function GlobalPresence() {
     cameraStages,
     [1.45, 1.5, 1.6, 1.75, 1.95, 2.15, 2.15, 2.15],
   );
-  const summaryOpacity = useTransform(scrollYProgress, (value) =>
-    rangeProgress(value, 0.68, 0.75));
+  const summaryOpacity = useTransform(scrollYProgress, (value) => {
+    const reveal = rangeProgress(value, 0.68, 0.75);
+    const exit = rangeProgress(value, 0.82, 0.88);
+    return reveal * (1 - exit);
+  });
   const summaryY = useTransform(scrollYProgress, (value) => {
     const reveal = rangeProgress(value, 0.68, 0.75);
     const settle = rangeProgress(value, 0.80, 0.88);
@@ -810,9 +792,12 @@ export default function GlobalPresence() {
             <WorldMap staticActive originOpacity={0} originRadius={3.8} />
           </div>
           <div className="mx-auto max-w-7xl px-6 sm:px-10 md:px-16">
-            <p className="mx-auto max-w-5xl text-center text-3xl font-semibold leading-[1.08] tracking-[-0.04em] text-[#f7f3ec] sm:text-4xl md:text-5xl lg:text-6xl">
-              {globalPresence.overseasSummary}
-            </p>
+            <div className="mx-auto max-w-5xl text-center">
+              <SummaryAccent />
+              <p className="text-3xl font-semibold leading-[1.08] tracking-[-0.04em] text-[#f7f3ec] [text-shadow:0_2px_16px_rgba(0,0,0,0.42)] sm:text-4xl md:text-5xl lg:text-6xl">
+                <OverseasSummaryCopy />
+              </p>
+            </div>
             <div className="mt-10 md:mt-14">
               <StaticCountryList />
             </div>
@@ -844,12 +829,19 @@ export default function GlobalPresence() {
               </motion.div>
 
               <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-8 lg:px-16">
-                <motion.p
-                  className="max-w-[68rem] text-center text-[clamp(3rem,4vw,4rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#f7f3ec] [text-shadow:0_2px_18px_rgba(0,0,0,0.58)]"
+                <motion.div
+                  className="relative isolate w-full max-w-[68rem] text-center"
                   style={{ opacity: summaryOpacity, y: summaryY, scale: summaryScale }}
                 >
-                  {globalPresence.overseasSummary}
-                </motion.p>
+                  <span
+                    aria-hidden="true"
+                    className="absolute -inset-x-16 -inset-y-10 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.48)_0%,rgba(0,0,0,0.24)_42%,rgba(0,0,0,0)_74%)]"
+                  />
+                  <SummaryAccent />
+                  <p className="text-[clamp(3rem,4vw,4rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#f7f3ec] [text-shadow:0_2px_18px_rgba(0,0,0,0.58)]">
+                    <OverseasSummaryCopy />
+                  </p>
+                </motion.div>
               </div>
 
               <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 px-10 lg:bottom-8 lg:px-16">
