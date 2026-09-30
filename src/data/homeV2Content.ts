@@ -100,6 +100,7 @@ export type HomeV2ContactEntry = {
 
 export type HomeV2ContactInformation = {
   title: "Contact";
+  internationalInquiryGuidance: string;
   entries: readonly HomeV2ContactEntry[];
 };
 
@@ -341,6 +342,8 @@ export const homeV2Content = {
   },
   contact: {
     title: "Contact",
+    internationalInquiryGuidance:
+      "For franchise inquiries outside of USA, China, and Japan, please contact international@theborn.co.kr.",
     entries: [
       {
         category: "Master Franchise",

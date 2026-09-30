@@ -5,6 +5,8 @@ const { contact } = homeV2Content;
 const primaryContact = contact.entries[0];
 const regionalContacts = contact.entries.slice(1);
 const [primaryLocalPart, primaryDomainPart] = primaryContact.email.split("@");
+const [guidanceBeforeEmail, guidanceAfterEmail] =
+  contact.internationalInquiryGuidance.split(primaryContact.email);
 
 export default function ContactCTA() {
   const reduceMotion = Boolean(useReducedMotion());
@@ -89,6 +91,24 @@ export default function ContactCTA() {
             </motion.li>
           ))}
         </ul>
+
+        <motion.p
+          id="home-v2-international-guidance"
+          className="max-w-3xl pt-10 text-base leading-relaxed text-zinc-400 sm:pt-12 sm:text-xl"
+          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {guidanceBeforeEmail}
+          <a
+            href={`mailto:${primaryContact.email}`}
+            className="text-zinc-200 underline decoration-white/30 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-[#ed2028] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-2 focus-visible:ring-offset-[#090a0c]"
+          >
+            {primaryContact.email}
+          </a>
+          {guidanceAfterEmail}
+        </motion.p>
       </div>
     </section>
   );
