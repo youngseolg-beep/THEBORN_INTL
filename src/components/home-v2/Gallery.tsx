@@ -183,7 +183,7 @@ export default function Gallery() {
             >
               <h3
                 id={`gallery-heading-${collection.id}`}
-                className="mb-5 text-center text-sm font-semibold uppercase tracking-[0.16em] text-[#f7f3ec] sm:mb-6 sm:text-base"
+                className="mb-5 text-center text-[22px] font-semibold uppercase tracking-[0.1em] text-[#f7f3ec] sm:mb-6 sm:text-2xl md:text-[26px] xl:text-[30px]"
               >
                 {collection.label}
               </h3>
