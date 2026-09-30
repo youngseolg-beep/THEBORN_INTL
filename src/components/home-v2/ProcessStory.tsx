@@ -1,8 +1,240 @@
-export default function ProcessStory() {
+import { useEffect, useRef, useState } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  type MotionValue,
+} from "motion/react";
+import { homeV2Content } from "../../data/homeV2Content";
+
+const { process } = homeV2Content;
+
+const stepBoundaries = [0, 0.1, 0.21, 0.32, 0.43, 0.54, 0.65, 0.76, 0.87, 1] as const;
+const transitionWidth = 0.018;
+
+function clamp(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function interpolate(value: number, start: number, end: number) {
+  if (end === start) return value >= end ? 1 : 0;
+  return clamp((value - start) / (end - start));
+}
+
+function getStepState(index: number, progress: number) {
+  const start = stepBoundaries[index];
+  const end = stepBoundaries[index + 1];
+  const enterStart = index === 0 ? 0 : start - transitionWidth;
+  const enterEnd = index === 0 ? 0 : start + transitionWidth;
+  const exitStart = index === process.steps.length - 1 ? 1 : end - transitionWidth;
+  const exitEnd = index === process.steps.length - 1 ? 1 : end + transitionWidth;
+  const entering = index === 0 ? 1 : interpolate(progress, enterStart, enterEnd);
+  const exiting = index === process.steps.length - 1
+    ? 0
+    : interpolate(progress, exitStart, exitEnd);
+
+  return {
+    opacity: entering * (1 - exiting),
+    y: 35 * (1 - entering) - 35 * exiting,
+  };
+}
+
+type AnimatedStepProps = {
+  key?: number;
+  index: number;
+  number: string;
+  title: string;
+  progress: MotionValue<number>;
+};
+
+function AnimatedStep({ index, number, title, progress }: AnimatedStepProps) {
+  const opacity = useTransform(progress, (value) => getStepState(index, value).opacity);
+  const y = useTransform(progress, (value) => getStepState(index, value).y);
+
   return (
-    <section aria-labelledby="home-v2-process-story-title">
-      <h2 id="home-v2-process-story-title">Process</h2>
-      <p>Process story placeholder</p>
+    <motion.li
+      className="absolute inset-0 flex items-center"
+      style={{ opacity, y }}
+    >
+      <h3 className="max-w-[13ch] text-[clamp(2.5rem,4.7vw,5.5rem)] font-medium leading-[1.02] tracking-[-0.055em] text-[#f7f3ec]">
+        <span className="sr-only">Step {number} of 09: </span>
+        {title}
+      </h3>
+    </motion.li>
+  );
+}
+
+function AnimatedNumber({
+  index,
+  number,
+  progress,
+}: Omit<AnimatedStepProps, "title">) {
+  const opacity = useTransform(progress, (value) => getStepState(index, value).opacity);
+  const y = useTransform(progress, (value) => getStepState(index, value).y * 0.7);
+
+  return (
+    <motion.span
+      aria-hidden="true"
+      className="absolute inset-0 flex items-center text-[clamp(8rem,18vw,18rem)] font-medium leading-none tracking-[-0.08em] text-[#ed2028]"
+      style={{ opacity, y }}
+    >
+      {number}
+    </motion.span>
+  );
+}
+
+function ProgressCountStep({
+  index,
+  number,
+  progress,
+}: Omit<AnimatedStepProps, "title">) {
+  const opacity = useTransform(progress, (value) => getStepState(index, value).opacity);
+  const y = useTransform(progress, (value) => getStepState(index, value).y * 0.2);
+
+  return (
+    <motion.span
+      className="absolute inset-0 whitespace-nowrap"
+      style={{ opacity, y }}
+    >
+      {number} / 09
+    </motion.span>
+  );
+}
+
+function ProgressCount({ progress }: { progress: MotionValue<number> }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="relative h-5 w-14 overflow-hidden text-xs font-semibold tracking-[0.2em] text-[#ed2028]"
+    >
+      {process.steps.map(({ step }, index) => (
+        <ProgressCountStep
+          key={step}
+          index={index}
+          number={String(step).padStart(2, "0")}
+          progress={progress}
+        />
+      ))}
+    </div>
+  );
+}
+
+function StaticProcess() {
+  return (
+    <div className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24 lg:px-16">
+      <h2
+        id="home-v2-process-story-title"
+        className="text-xs font-medium uppercase tracking-[0.26em] text-zinc-300 sm:text-sm"
+      >
+        {process.title}
+      </h2>
+      <ol className="mt-10 border-b border-white/12 sm:mt-14">
+        {process.steps.map(({ step, title }) => {
+          const number = String(step).padStart(2, "0");
+
+          return (
+            <li
+              key={step}
+              className="grid grid-cols-[3.25rem_1fr] border-t border-white/12 py-6 sm:grid-cols-[4.5rem_1fr] sm:py-8"
+            >
+              <span
+                aria-hidden="true"
+                className="pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base"
+              >
+                {number}
+              </span>
+              <h3 className="max-w-4xl text-[clamp(1.75rem,5.8vw,3.75rem)] font-medium leading-[1.05] tracking-[-0.045em] text-[#f7f3ec]">
+                <span className="sr-only">Step {number} of 09: </span>
+                {title}
+              </h3>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+export default function ProcessStory() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const reduceMotion = Boolean(useReducedMotion());
+  const [immersiveViewport, setImmersiveViewport] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px) and (min-height: 700px)");
+    const update = () => setImmersiveViewport(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  const immersive = immersiveViewport && !reduceMotion;
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  const progressScale = useTransform(scrollYProgress, [0, 1], [1 / 9, 1]);
+
+  return (
+    <section
+      ref={sectionRef}
+      aria-labelledby="home-v2-process-story-title"
+      className="relative bg-[#0d0e10] text-[#f7f3ec]"
+      style={{ height: immersive ? "260svh" : "auto" }}
+    >
+      {immersive ? (
+        <div className="sticky top-0 h-svh overflow-hidden">
+          <div className="mx-auto flex h-full max-w-[96rem] flex-col px-[5%] py-[clamp(2rem,5vh,3.5rem)]">
+            <header className="shrink-0">
+              <h2
+                id="home-v2-process-story-title"
+                className="text-xs font-medium uppercase tracking-[0.26em] text-zinc-300 sm:text-sm"
+              >
+                {process.title}
+              </h2>
+            </header>
+
+            <div className="grid min-h-0 flex-1 grid-cols-[0.42fr_0.58fr] gap-[clamp(2rem,6vw,8rem)]">
+              <div className="relative min-h-0" aria-hidden="true">
+                {process.steps.map(({ step }, index) => (
+                  <AnimatedNumber
+                    key={step}
+                    index={index}
+                    number={String(step).padStart(2, "0")}
+                    progress={scrollYProgress}
+                  />
+                ))}
+              </div>
+
+              <ol className="relative min-h-0">
+                {process.steps.map(({ step, title }, index) => (
+                  <AnimatedStep
+                    key={step}
+                    index={index}
+                    number={String(step).padStart(2, "0")}
+                    title={title}
+                    progress={scrollYProgress}
+                  />
+                ))}
+              </ol>
+            </div>
+
+            <div className="grid shrink-0 grid-cols-[0.42fr_0.58fr] gap-[clamp(2rem,6vw,8rem)] border-t border-white/12 pt-5">
+              <ProgressCount progress={scrollYProgress} />
+              <div className="relative h-px self-center overflow-hidden bg-white/15">
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute inset-0 origin-left bg-[#ed2028]"
+                  style={{ scaleX: progressScale }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <StaticProcess />
+      )}
     </section>
   );
 }
