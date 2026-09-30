@@ -112,6 +112,10 @@ const localRevealWindows = scaleWindows(0.04, 0.96);
 const tabletBorngaWindows = scaleWindows(0.03, 0.48);
 const tabletSaemaeulWindows = scaleWindows(0.52, 0.97);
 
+function revealProgress(value: number, [start, end]: RevealWindow) {
+  return Math.min(1, Math.max(0, (value - start) / (end - start)));
+}
+
 function useTabletLayout() {
   const [tabletLayout, setTabletLayout] = useState(false);
 
@@ -184,15 +188,15 @@ function ScrollReveal({
   className?: string;
   children: ReactNode;
 }) {
-  const opacity = useTransform(progress, revealWindow, [0, 1]);
-  const y = useTransform(progress, revealWindow, [24, 0]);
-  const scale = useTransform(progress, revealWindow, [0.99, 1]);
+  const reveal = useTransform(progress, (value) => revealProgress(value, revealWindow));
+  const y = useTransform(reveal, (value) => 24 * (1 - value));
+  const scale = useTransform(reveal, (value) => 0.99 + value * 0.01);
 
   return (
     <motion.div
       className={className}
       style={{
-        opacity: reduceMotion ? 1 : opacity,
+        opacity: reduceMotion ? 1 : reveal,
         y: reduceMotion ? 0 : y,
         scale: reduceMotion ? 1 : scale,
       }}
@@ -206,7 +210,7 @@ function BrandLogo({ presentation }: { presentation: BrandPresentation }) {
   const { brand, logoClassName, logoFilterClassName } = presentation;
 
   return (
-    <div className="flex h-28 items-center justify-center overflow-hidden sm:h-32">
+    <div className="flex h-40 items-center justify-center overflow-hidden sm:h-44 lg:h-40 xl:h-44">
       <img
         src={brand.media.logo.src}
         alt={brand.media.logo.alt}
@@ -227,18 +231,6 @@ function BrandIdentity({ presentation }: { presentation: BrandPresentation }) {
         {brand.englishName}
       </h3>
       <BrandLogo presentation={presentation} />
-      <div className="mt-5 flex min-h-14 flex-col items-center justify-start text-center sm:mt-6">
-        {brand.koreanName ? (
-          <p className="text-xs tracking-[0.08em] text-zinc-500">
-            {brand.koreanName}
-          </p>
-        ) : null}
-        {brand.tagline ? (
-          <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-400 sm:text-xs">
-            {brand.tagline}
-          </p>
-        ) : null}
-      </div>
     </>
   );
 }
@@ -300,12 +292,12 @@ function BrandColumn({
     >
       <BrandIdentity presentation={presentation} />
 
-      <div className="mt-6 space-y-3">
+      <div className="mt-6 space-y-5">
         <ScrollReveal
           progress={progress}
           revealWindow={revealWindows[0]}
           reduceMotion={reduceMotion}
-          className="aspect-[3/2] max-h-[17.5rem] overflow-hidden bg-zinc-900"
+          className="mx-auto aspect-[3/2] w-full max-w-[26rem] overflow-hidden bg-zinc-900"
         >
           <img
             src={exterior.src}
@@ -321,7 +313,7 @@ function BrandColumn({
           progress={progress}
           revealWindow={revealWindows[1]}
           reduceMotion={reduceMotion}
-          className="mx-auto w-[88%] max-w-[25rem]"
+          className="mx-auto w-full max-w-[26rem]"
         >
           <iframe
             src={brand.media.videoEmbedUrl}
@@ -372,11 +364,10 @@ function DesktopBrandColumn({
   revealWindows: RevealWindows;
   reduceMotion: boolean;
 }) {
-  const columnY = useTransform(
-    progress,
-    [revealWindows[2][0], revealWindows[6][1]],
-    ["0%", "-43%"],
+  const columnProgress = useTransform(progress, (value) =>
+    revealProgress(value, [revealWindows[2][0], revealWindows[6][1]]),
   );
+  const columnY = useTransform(columnProgress, (value) => `${value * -43}%`);
 
   return (
     <BrandColumn
