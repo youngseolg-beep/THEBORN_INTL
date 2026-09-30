@@ -11,6 +11,7 @@ export type HomeV2BrandMedia = {
   logo: HomeV2Image;
   primary: HomeV2Image;
   secondary: readonly HomeV2Image[];
+  videoEmbedUrl: string;
 };
 
 export type HomeV2Brand = {
@@ -205,6 +206,7 @@ export const homeV2Content = {
             alt: "Grilled meat wrapped in lettuce at BORNGA",
           },
         ],
+        videoEmbedUrl: "https://www.youtube.com/embed/L4JR9SuM8hQ",
       },
     },
     SAEMAEUL: {
@@ -249,6 +251,7 @@ export const homeV2Content = {
             alt: "SAEMAEUL restaurant storefront",
           },
         ],
+        videoEmbedUrl: "https://www.youtube.com/embed/80X0DF6MTKA",
       },
     },
     PAIKS_NOODLE: {
@@ -290,6 +293,7 @@ export const homeV2Content = {
             alt: "PAIK'S NOODLE noodles lifted with chopsticks",
           },
         ],
+        videoEmbedUrl: "https://www.youtube.com/embed/2OHtdE98h8I",
       },
     },
   },

@@ -1,245 +1,196 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { homeV2Content, type HomeV2Brand, type HomeV2Image } from "../../data/homeV2Content";
+import { motion, useReducedMotion } from "motion/react";
+import {
+  homeV2Content,
+  type HomeV2Brand,
+  type HomeV2Image,
+} from "../../data/homeV2Content";
 
-type BrandChapter = {
+type BrandPresentation = {
   brand: HomeV2Brand;
-  food: HomeV2Image;
-  reverse: boolean;
-  background: string;
-  crop: string;
-  start: number;
-  end: number;
-  drift: number;
+  exterior: HomeV2Image;
+  logoClassName: string;
+  logoFilterClassName?: string;
 };
 
 const { BORNGA, SAEMAEUL, PAIKS_NOODLE } = homeV2Content.brands;
 
-// Use approved food assets without changing the shared data layer's media choices.
-const chapters: readonly BrandChapter[] = [
+const brandPresentations: readonly BrandPresentation[] = [
   {
     brand: BORNGA,
-    food: BORNGA.media.secondary[1],
-    reverse: false,
-    background: "#15120f",
-    crop: "48% 52%",
-    start: 0,
-    end: 0.39,
-    drift: -1.5,
+    exterior: BORNGA.media.secondary[0],
+    logoClassName: "max-w-[17rem] sm:max-w-[18rem] lg:max-w-full",
+    logoFilterClassName: "invert grayscale",
   },
   {
     brand: SAEMAEUL,
-    food: SAEMAEUL.media.secondary[0],
-    reverse: true,
-    background: "#17100f",
-    crop: "50% 57%",
-    start: 0.31,
-    end: 0.67,
-    drift: 2.5,
+    exterior: SAEMAEUL.media.secondary[2],
+    logoClassName: "max-w-[14rem] sm:max-w-[15rem] lg:max-w-[13rem] xl:max-w-[15rem]",
   },
   {
     brand: PAIKS_NOODLE,
-    food: {
-      src: "/assets/home-v2-assets/paiks-noodle/image-08.jpg",
-      alt: "PAIK'S NOODLE dishes arranged on a table",
-    },
-    reverse: false,
-    background: "#101112",
-    crop: "51% 50%",
-    start: 0.59,
-    end: 1,
-    drift: -1,
+    exterior: PAIKS_NOODLE.media.primary,
+    logoClassName: "max-w-[13rem] scale-[1.55] sm:max-w-[14rem] lg:max-w-[12rem] xl:max-w-[14rem]",
   },
 ];
 
-function ramp(value: number, start: number, end: number) {
-  return Math.min(1, Math.max(0, (value - start) / (end - start)));
-}
-
-function sampleTimeline(value: number, times: number[], values: number[]) {
-  for (let index = 1; index < times.length; index += 1) {
-    if (value <= times[index]) {
-      return values[index - 1] + (values[index] - values[index - 1])
-        * ramp(value, times[index - 1], times[index]);
-    }
-  }
-  return values[values.length - 1];
-}
-
-function BrandCopy({ chapter, headingId }: { chapter: BrandChapter; headingId: string }) {
-  const { brand } = chapter;
+function BrandLogo({ presentation }: { presentation: BrandPresentation }) {
+  const { brand, logoClassName, logoFilterClassName } = presentation;
 
   return (
-    <div className="max-w-md">
-      {/* A light ground keeps the original dark/red logo artwork legible, without recoloring it. */}
+    <div className="flex h-28 items-center justify-center overflow-hidden sm:h-32">
       <img
         src={brand.media.logo.src}
         alt={brand.media.logo.alt}
-        className={`mb-7 h-14 w-40 bg-[#f1eee8] px-3 py-2 lg:mb-9 lg:h-16 lg:w-44 ${brand.key === "PAIKS_NOODLE" ? "object-cover" : "object-contain"}`}
+        className={`h-full w-full object-contain ${logoClassName} ${logoFilterClassName ?? ""}`}
         loading="lazy"
         decoding="async"
       />
-      <h3 id={headingId} className="text-[clamp(2.5rem,4.1vw,4.5rem)] font-medium leading-[0.98] tracking-[-0.065em] text-[#f7f3ec]">
-        {brand.englishName}
-      </h3>
-      {brand.tagline && (
-        <p className="mt-4 text-xs font-medium uppercase tracking-[0.16em] text-[#e3b9a3]">
-          {brand.tagline}
-        </p>
-      )}
-      <p className="mt-6 max-w-sm text-lg leading-relaxed tracking-[-0.025em] text-zinc-200 lg:text-xl">
-        {brand.concept}
-      </p>
-      <p className="mt-7 max-w-sm text-xs font-medium leading-6 tracking-[0.025em] text-[#eee0d2] lg:text-sm">
-        {brand.signatureMenu.slice(0, 3).join(" · ")}
-      </p>
-      <p className="mt-3 max-w-sm text-sm leading-relaxed text-zinc-400">
-        {brand.operations}
-      </p>
     </div>
   );
 }
 
-function ScrollChapter({ chapter, index, progress }: {
-  chapter: BrandChapter;
+function BrandInformation({ brand }: { brand: HomeV2Brand }) {
+  const information = [
+    { label: "CONCEPT", value: brand.concept },
+    { label: "TARGET", value: brand.target },
+    { label: "OPERATION", value: brand.operations },
+    { label: "SCALE", value: brand.recommendedStoreSize.join(" · ") },
+  ] as const;
+
+  return (
+    <dl className="mt-9">
+      {information.map(({ label, value }) => (
+        <div key={label} className="border-t border-white/10 py-4">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#ed2028]">
+            {label}
+          </dt>
+          <dd className="mt-2 text-sm leading-relaxed text-zinc-300">
+            {value}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function BrandColumn({
+  presentation,
+  index,
+  reduceMotion,
+}: {
+  key?: string;
+  presentation: BrandPresentation;
   index: number;
-  progress: MotionValue<number>;
+  reduceMotion: boolean;
 }) {
-  const { start, end, reverse } = chapter;
-  const first = index === 0;
-  const last = index === chapters.length - 1;
-  // Only the incoming composition fades over the fully lit outgoing image.
-  // The old copy clears first; two readable text blocks never crossfade together.
-  // Callback transforms explicitly clamp chapter subranges; the installed Motion
-  // version's accelerated timeline otherwise remaps them across the whole track.
-  const sceneOpacity = useTransform(progress, (value) => first ? 1 : ramp(value, start, start + 0.08));
-  const copyTimes = first ? [0, 0.08, 0.29, 0.335] : last ? [0.63, 0.675, 1] : [0.35, 0.395, 0.57, 0.615];
-  const copyOpacity = useTransform(progress, (value) => sampleTimeline(
-    value, copyTimes, first ? [0.65, 1, 1, 0] : last ? [0, 1, 1] : [0, 1, 1, 0],
-  ));
-  const copyY = useTransform(progress, (value) => sampleTimeline(
-    value, copyTimes, first ? [18, 0, 0, -20] : last ? [22, 0, -8] : [26, 0, 0, -22],
-  ));
-  const imageScale = useTransform(progress, (value) => index === 1
-    ? 1.085 - 0.025 * ramp(value, start, end) : 1.04 + 0.065 * ramp(value, start, end));
-  const imageX = useTransform(progress, (value) => `${chapter.drift * (2 * ramp(value, start, end) - 1)}%`);
-  const imageY = useTransform(progress, (value) => `${(index === 1 ? 2 : 1) * (1 - 2 * ramp(value, start, end))}%`);
+  const { brand, exterior } = presentation;
+  const headingId = `brand-story-${brand.key}`;
 
   return (
     <motion.article
-      aria-labelledby={`brand-story-${chapter.brand.key}`}
-      className="absolute inset-0 overflow-hidden"
-      style={{ backgroundColor: chapter.background, opacity: sceneOpacity }}
+      aria-labelledby={headingId}
+      className={index === 2 ? "sm:col-span-2 lg:col-span-1" : undefined}
+      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.08 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.58,
+        delay: reduceMotion ? 0 : index * 0.08,
+        ease: [0.22, 1, 0.36, 1],
+      }}
     >
-      <div className={`absolute bottom-[6svh] top-[14svh] w-[61%] overflow-hidden ${reverse ? "right-0" : "left-0"}`}>
-        <motion.img
-          src={chapter.food.src}
-          alt={chapter.food.alt}
-          className="h-full w-full object-cover"
-          style={{ objectPosition: chapter.crop, scale: imageScale, x: imageX, y: imageY }}
-          loading="eager"
-          decoding="async"
-          fetchPriority="low"
-        />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0"
-          style={{ background: `linear-gradient(${reverse ? "90deg" : "270deg"}, ${chapter.background} 0%, transparent 18%)` }} />
+      <BrandLogo presentation={presentation} />
+
+      <div className="mt-6 min-h-24 text-center sm:mt-7">
+        <h3
+          id={headingId}
+          className="text-[clamp(1.5rem,2.1vw,2.25rem)] font-medium uppercase leading-tight tracking-[-0.045em] text-[#f7f3ec]"
+        >
+          {brand.englishName}
+        </h3>
+        {brand.koreanName ? (
+          <p className="mt-2 text-xs tracking-[0.08em] text-zinc-500">
+            {brand.koreanName}
+          </p>
+        ) : null}
+        {brand.tagline ? (
+          <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-400 sm:text-xs">
+            {brand.tagline}
+          </p>
+        ) : null}
       </div>
-      <motion.div
-        className={`absolute bottom-[6svh] top-[14svh] flex w-[36%] items-center ${reverse ? "left-[5%] pr-6" : "right-[3%] pl-5 pr-4"}`}
-        style={{ opacity: copyOpacity, y: copyY }}
-      >
-        <BrandCopy chapter={chapter} headingId={`brand-story-${chapter.brand.key}`} />
-      </motion.div>
+
+      <div className="mt-7 space-y-3">
+        <div className="aspect-[4/3] overflow-hidden bg-zinc-900">
+          <img
+            src={exterior.src}
+            alt={exterior.alt}
+            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <iframe
+          src={brand.media.videoEmbedUrl}
+          title={`${brand.englishName} brand film`}
+          className="aspect-video w-full border-0"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+
+      <p className="mt-8 text-base leading-relaxed tracking-[-0.015em] text-zinc-200">
+        {brand.concept}
+      </p>
+
+      <div className="mt-9 border-t border-white/10 pt-5">
+        <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">
+          Signature Menu
+        </h4>
+        <div className="mt-4 space-y-2">
+          {brand.signatureMenu.map((menuItem) => (
+            <p key={menuItem} className="text-sm leading-relaxed text-[#f7f3ec]">
+              {menuItem}
+            </p>
+          ))}
+        </div>
+      </div>
+
+      <BrandInformation brand={brand} />
     </motion.article>
   );
 }
 
-function FlowChapter({ chapter, reduceMotion }: { chapter: BrandChapter; reduceMotion: boolean }) {
-  const chapterRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: chapterRef, offset: ["start end", "end start"] });
-  const scale = useTransform(scrollYProgress, (value) => 1.02 + 0.025 * ramp(value, 0, 1));
-  const y = useTransform(scrollYProgress, (value) => `${-ramp(value, 0, 1)}%`);
-
-  return (
-    <article
-      ref={chapterRef}
-      aria-labelledby={`brand-story-${chapter.brand.key}`}
-      className={`grid gap-8 pb-16 lg:items-center lg:gap-14 lg:px-16 lg:py-16 ${chapter.reverse ? "lg:grid-cols-[0.8fr_1.2fr]" : "lg:grid-cols-[1.2fr_0.8fr]"}`}
-      style={{ backgroundColor: chapter.background }}
-    >
-      <div className={`relative h-[52svh] min-h-64 max-h-[38rem] overflow-hidden lg:h-[65svh] ${chapter.reverse ? "lg:order-2" : ""}`}>
-        <motion.img
-          src={chapter.food.src}
-          alt={chapter.food.alt}
-          className="h-full w-full object-cover"
-          style={{ objectPosition: chapter.crop, scale: reduceMotion ? 1 : scale, y: reduceMotion ? 0 : y }}
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-      <div className="px-6 sm:px-10 lg:px-0">
-        <BrandCopy chapter={chapter} headingId={`brand-story-${chapter.brand.key}`} />
-      </div>
-    </article>
-  );
-}
-
 export default function BrandStory() {
-  const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
-  const [immersiveViewport, setImmersiveViewport] = useState(false);
-
-  useEffect(() => {
-    // Natural document scrolling keeps narrow/short screens readable, including zoomed text.
-    const query = window.matchMedia("(min-width: 1024px) and (min-height: 700px)");
-    const update = () => setImmersiveViewport(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
-
-  const immersive = immersiveViewport && !reduceMotion;
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
-  const introY = useTransform(scrollYProgress, (value) => 10 * (1 - ramp(value, 0, 0.08)));
-  const heading = (
-    <header className="flex items-center justify-between gap-6 px-6 py-7 sm:px-10 lg:px-[5%] lg:py-9">
-      <h2 id="home-v2-brand-story-title" className="text-xs font-medium uppercase tracking-[0.24em] text-zinc-200 sm:text-sm">
-        OUR BRANDS
-      </h2>
-      <p className="text-[10px] font-semibold tracking-[0.26em] text-[#ed2028] sm:text-xs">
-        {homeV2Content.corporate.name}
-      </p>
-    </header>
-  );
 
   return (
     <section
-      ref={sectionRef}
       aria-labelledby="home-v2-brand-story-title"
-      className="relative bg-[#15120f] text-white"
-      style={{ height: immersive ? "320svh" : "auto" }}
+      className="bg-[#101112] px-[5%] py-20 text-white sm:py-28 lg:px-[6%] lg:py-36"
     >
-      {immersive ? (
-        <div className="sticky top-0 h-svh overflow-hidden">
-          <motion.div className="pointer-events-none absolute inset-x-0 top-0 z-10" style={{ y: introY }}>
-            {heading}
-          </motion.div>
-          {chapters.map((chapter, index) => (
-            <div key={chapter.brand.key}>
-              <ScrollChapter chapter={chapter} index={index} progress={scrollYProgress} />
-            </div>
+      <div className="mx-auto max-w-[1600px]">
+        <header className="border-b border-white/10 pb-7 sm:pb-9">
+          <h2
+            id="home-v2-brand-story-title"
+            className="text-xs font-medium uppercase tracking-[0.24em] text-zinc-300 sm:text-sm"
+          >
+            Our Brands
+          </h2>
+        </header>
+
+        <div className="mt-12 grid grid-cols-1 items-start gap-x-6 gap-y-24 sm:mt-16 sm:grid-cols-2 sm:gap-y-28 lg:grid-cols-3 lg:gap-x-8 xl:gap-x-10">
+          {brandPresentations.map((presentation, index) => (
+            <BrandColumn
+              key={presentation.brand.key}
+              presentation={presentation}
+              index={index}
+              reduceMotion={reduceMotion}
+            />
           ))}
         </div>
-      ) : (
-        <>
-          {heading}
-          {chapters.map((chapter) => (
-            <div key={chapter.brand.key}>
-              <FlowChapter chapter={chapter} reduceMotion={reduceMotion} />
-            </div>
-          ))}
-        </>
-      )}
+      </div>
     </section>
   );
 }
