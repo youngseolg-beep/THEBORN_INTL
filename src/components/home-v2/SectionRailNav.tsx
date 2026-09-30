@@ -5,6 +5,7 @@ export const homeV2NavItems = [
   { id: "home", label: "HOME" },
   { id: "global-presence", label: "GLOBAL" },
   { id: "brand-story", label: "BRANDS" },
+  { id: "gallery", label: "GALLERY" },
   { id: "partnership", label: "PARTNERSHIP" },
   { id: "qualifications", label: "QUALIFICATIONS" },
   { id: "process", label: "PROCESS" },
