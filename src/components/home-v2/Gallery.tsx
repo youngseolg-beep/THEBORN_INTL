@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type KeyboardEvent as ReactKeyboardEvent,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 type GalleryBrand = "bornga" | "saemaeul" | "paiks-noodle";
@@ -17,6 +12,11 @@ type GalleryCollection = {
   id: GalleryBrand;
   label: string;
   images: GalleryImage[];
+};
+
+type LightboxSelection = {
+  brandId: GalleryBrand;
+  imageIndex: number;
 };
 
 const galleryCollections: GalleryCollection[] = [
@@ -61,15 +61,9 @@ const galleryCollections: GalleryCollection[] = [
   },
 ];
 
-const gridLayouts = [
-  "sm:col-span-2 lg:col-span-7 lg:aspect-[16/10]",
-  "lg:col-span-5 lg:aspect-[4/5]",
-  "lg:col-span-5 lg:aspect-[4/3]",
-  "lg:col-span-7 lg:aspect-[16/9]",
-  "sm:col-span-2 lg:col-span-8 lg:aspect-[16/10]",
-  "lg:col-span-4 lg:aspect-[3/4]",
-  "sm:col-span-2 lg:col-span-12 lg:aspect-[21/9]",
-] as const;
+const galleryCollectionsById = new Map<GalleryBrand, GalleryCollection>(
+  galleryCollections.map((collection) => [collection.id, collection]),
+);
 
 function getFocusableElements(container: HTMLElement) {
   return Array.from(
@@ -81,26 +75,39 @@ function getFocusableElements(container: HTMLElement) {
 
 export default function Gallery() {
   const reduceMotion = Boolean(useReducedMotion());
-  const [activeBrand, setActiveBrand] = useState<GalleryBrand>(galleryCollections[0].id);
-  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+  const [lightbox, setLightbox] = useState<LightboxSelection | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
-  const collection = galleryCollections.find(({ id }) => id === activeBrand) ?? galleryCollections[0];
-  const lightboxOpen = activeImageIndex !== null;
-  const activeImage = activeImageIndex === null ? null : collection.images[activeImageIndex];
+  const selectedCollection = lightbox
+    ? galleryCollectionsById.get(lightbox.brandId)
+    : undefined;
+  const activeImage = lightbox && selectedCollection
+    ? selectedCollection.images[lightbox.imageIndex]
+    : undefined;
+  const lightboxOpen = lightbox !== null;
 
-  const closeLightbox = () => setActiveImageIndex(null);
+  const closeLightbox = () => setLightbox(null);
   const showPrevious = () => {
-    setActiveImageIndex((current) => {
-      if (current === null) return null;
-      return (current - 1 + collection.images.length) % collection.images.length;
+    setLightbox((current) => {
+      if (!current) return null;
+      const imageCount = galleryCollectionsById.get(current.brandId)?.images.length ?? 0;
+      if (imageCount === 0) return null;
+      return {
+        ...current,
+        imageIndex: (current.imageIndex - 1 + imageCount) % imageCount,
+      };
     });
   };
   const showNext = () => {
-    setActiveImageIndex((current) => {
-      if (current === null) return null;
-      return (current + 1) % collection.images.length;
+    setLightbox((current) => {
+      if (!current) return null;
+      const imageCount = galleryCollectionsById.get(current.brandId)?.images.length ?? 0;
+      if (imageCount === 0) return null;
+      return {
+        ...current,
+        imageIndex: (current.imageIndex + 1) % imageCount,
+      };
     });
   };
 
@@ -153,29 +160,7 @@ export default function Gallery() {
       document.body.style.paddingRight = previousPaddingRight;
       window.requestAnimationFrame(() => lastTriggerRef.current?.focus());
     };
-  }, [lightboxOpen, collection.images.length]);
-
-  const handleBrandKeyDown = (
-    event: ReactKeyboardEvent<HTMLButtonElement>,
-    currentIndex: number,
-  ) => {
-    let nextIndex = currentIndex;
-    if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % galleryCollections.length;
-    else if (event.key === "ArrowLeft") {
-      nextIndex = (currentIndex - 1 + galleryCollections.length) % galleryCollections.length;
-    } else if (event.key === "Home") nextIndex = 0;
-    else if (event.key === "End") nextIndex = galleryCollections.length - 1;
-    else return;
-
-    event.preventDefault();
-    const nextBrand = galleryCollections[nextIndex].id;
-    setActiveBrand(nextBrand);
-    document.getElementById(`gallery-tab-${nextBrand}`)?.focus();
-  };
-
-  const handleDialogKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" && event.target === event.currentTarget) closeLightbox();
-  };
+  }, [lightboxOpen]);
 
   return (
     <section
@@ -183,104 +168,72 @@ export default function Gallery() {
       className="relative overflow-hidden bg-[#08090b] px-5 py-20 text-[#f7f3ec] sm:px-10 sm:py-28 lg:px-[7%] lg:py-36"
     >
       <div className="mx-auto max-w-[1600px]">
-        <div className="flex flex-col gap-8 border-b border-white/10 pb-8 lg:flex-row lg:items-end lg:justify-between">
-          <h2
-            id="home-v2-gallery-title"
-            className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#ed2028] sm:text-xs"
-          >
-            Gallery
-          </h2>
+        <h2 id="home-v2-gallery-title" className="sr-only">
+          Gallery
+        </h2>
 
-          <div
-            role="tablist"
-            aria-label="Gallery brands"
-            className="flex max-w-full gap-x-6 gap-y-3 overflow-x-auto pb-1 sm:flex-wrap sm:gap-x-9 lg:mr-24 xl:mr-32"
-          >
-            {galleryCollections.map(({ id, label }, index) => {
-              const selected = activeBrand === id;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  role="tab"
-                  id={`gallery-tab-${id}`}
-                  aria-selected={selected}
-                  aria-controls="gallery-panel"
-                  tabIndex={selected ? 0 : -1}
-                  onClick={() => setActiveBrand(id)}
-                  onKeyDown={(event) => handleBrandKeyDown(event, index)}
-                  className={`shrink-0 border-b py-2 text-xs font-semibold uppercase tracking-[0.18em] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-4 focus-visible:ring-offset-[#08090b] sm:text-sm ${
-                    selected
-                      ? "border-[#ed2028] text-white"
-                      : "border-transparent text-zinc-500 hover:text-zinc-200"
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div
-          id="gallery-panel"
-          role="tabpanel"
-          aria-labelledby={`gallery-tab-${activeBrand}`}
-          className="pt-8 sm:pt-12"
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={activeBrand}
-              className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-12 lg:gap-5"
-              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
-              transition={{ duration: reduceMotion ? 0 : 0.28, ease: "easeOut" }}
+        <div className="grid grid-cols-1 items-start gap-y-16 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-20 lg:grid-cols-3 lg:gap-x-5 xl:gap-x-6">
+          {galleryCollections.map((collection, brandIndex) => (
+            <article
+              key={collection.id}
+              aria-labelledby={`gallery-heading-${collection.id}`}
+              className={brandIndex === 2
+                ? "sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.5rem)] lg:col-span-1 lg:mx-0 lg:w-auto"
+                : undefined}
             >
-              {collection.images.map((image, index) => (
-                <motion.button
-                  key={image.src}
-                  type="button"
-                  className={`group relative aspect-[4/3] w-full overflow-hidden bg-zinc-900 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-4 focus-visible:ring-offset-[#08090b] ${gridLayouts[index]}`}
-                  onClick={(event) => {
-                    lastTriggerRef.current = event.currentTarget;
-                    setActiveImageIndex(index);
-                  }}
-                  aria-label={`Open ${collection.label} image ${index + 1} of ${collection.images.length}`}
-                  initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.14 }}
-                  transition={{
-                    duration: reduceMotion ? 0 : 0.5,
-                    delay: reduceMotion ? 0 : Math.min(index * 0.045, 0.2),
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="h-full w-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.025]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/10"
-                  />
-                </motion.button>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+              <h3
+                id={`gallery-heading-${collection.id}`}
+                className="mb-5 text-center text-sm font-semibold uppercase tracking-[0.16em] text-[#f7f3ec] sm:mb-6 sm:text-base"
+              >
+                {collection.label}
+              </h3>
+
+              <div className="flex flex-col gap-3 sm:gap-4">
+                {collection.images.map((image, imageIndex) => (
+                  <motion.button
+                    key={image.src}
+                    type="button"
+                    className="group relative w-full overflow-hidden bg-zinc-900 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-4 focus-visible:ring-offset-[#08090b]"
+                    onClick={(event) => {
+                      lastTriggerRef.current = event.currentTarget;
+                      setLightbox({ brandId: collection.id, imageIndex });
+                    }}
+                    aria-label={`Open ${collection.label} image ${imageIndex + 1} of ${collection.images.length}`}
+                    initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.08 }}
+                    transition={{
+                      duration: reduceMotion ? 0 : 0.48,
+                      delay: reduceMotion ? 0 : Math.min(imageIndex * 0.035, 0.16),
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="h-auto w-full transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/10"
+                    />
+                  </motion.button>
+                ))}
+              </div>
+            </article>
+          ))}
         </div>
       </div>
 
       <AnimatePresence>
-        {activeImage && activeImageIndex !== null ? (
+        {activeImage && lightbox && selectedCollection ? (
           <motion.div
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
-            aria-label={`${collection.label} image ${activeImageIndex + 1} of ${collection.images.length}`}
+            aria-label={`${selectedCollection.label} image ${lightbox.imageIndex + 1} of ${selectedCollection.images.length}`}
             className="fixed inset-0 z-[80] flex items-center justify-center bg-black/95 px-4 py-16 sm:px-10"
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -289,7 +242,6 @@ export default function Gallery() {
             onMouseDown={(event) => {
               if (event.target === event.currentTarget) closeLightbox();
             }}
-            onKeyDown={handleDialogKeyDown}
           >
             <button
               ref={closeButtonRef}
@@ -331,7 +283,7 @@ export default function Gallery() {
             </button>
 
             <p className="absolute bottom-5 left-5 text-[10px] font-medium tracking-[0.2em] text-white/45 sm:bottom-8 sm:left-1/2 sm:-translate-x-1/2 sm:text-xs">
-              {String(activeImageIndex + 1).padStart(2, "0")} / {String(collection.images.length).padStart(2, "0")}
+              {String(lightbox.imageIndex + 1).padStart(2, "0")} / {String(selectedCollection.images.length).padStart(2, "0")}
             </p>
           </motion.div>
         ) : null}
