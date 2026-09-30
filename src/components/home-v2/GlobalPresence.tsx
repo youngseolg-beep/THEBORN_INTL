@@ -1,4 +1,12 @@
-import { createContext, useContext, useId, useLayoutEffect, useRef } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   motion,
   useMotionValue,
@@ -119,6 +127,26 @@ const operatingCountries = [
   "Netherlands",
   "Australia",
 ];
+
+const mapCompletionProgress = 2 / 3;
+
+function rangeProgress(value: number, start: number, end: number) {
+  return Math.min(1, Math.max(0, (value - start) / (end - start)));
+}
+
+function useDesktopStory() {
+  const [desktopStory, setDesktopStory] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 768px)");
+    const update = () => setDesktopStory(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return desktopStory;
+}
 
 type AnimatedColor = string | MotionValue<string>;
 
@@ -480,15 +508,15 @@ function AnimatedCountryName({ country, index, progress }: {
   index: number;
   progress: MotionValue<number>;
 }) {
-  const revealStart = 0.89 + index * 0.004;
-  const revealEnd = revealStart + 0.012;
+  const revealStart = 0.85 + index * 0.005;
+  const revealEnd = revealStart + 0.035;
   const opacity = useTransform(progress, (value) =>
-    Math.min(1, Math.max(0, (value - revealStart) / (revealEnd - revealStart))));
-  const y = useTransform(opacity, (value) => 10 * (1 - value));
+    rangeProgress(value, revealStart, revealEnd));
+  const y = useTransform(opacity, (value) => 14 * (1 - value));
 
   return (
     <motion.li
-      className="text-center text-[11px] tracking-[0.08em] text-zinc-300 sm:text-xs"
+      className="text-center text-sm font-medium tracking-[0.06em] text-zinc-200 md:text-[15px]"
       style={{ opacity, y }}
     >
       {country}
@@ -498,9 +526,9 @@ function AnimatedCountryName({ country, index, progress }: {
 
 function StaticCountryList() {
   return (
-    <ul className="mx-auto grid max-w-4xl grid-cols-2 gap-x-5 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
+    <ul className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
       {operatingCountries.map((country) => (
-        <li key={country} className="text-center text-[11px] tracking-[0.08em] text-zinc-300 sm:text-xs">
+        <li key={country} className="text-center text-sm font-medium tracking-[0.06em] text-zinc-200 md:text-[15px]">
           {country}
         </li>
       ))}
@@ -692,12 +720,15 @@ function WorldMap({
 export default function GlobalPresence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
-  const reduceMotion = useReducedMotion();
-  const { corporate, globalPresence, partnership } = homeV2Content;
+  const reduceMotion = Boolean(useReducedMotion());
+  const desktopStory = useDesktopStory();
+  const { corporate, globalPresence } = homeV2Content;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+  const mapProgress = useTransform(scrollYProgress, (value) =>
+    rangeProgress(value, 0, mapCompletionProgress));
 
   const cameraStages = [0, 0.12, 0.25, 0.48, 0.64, 0.76, 0.88, 1];
   const cameraScaleValues = [5.4, 4.6, 3.2, 2, 1.3, 1, 1, 1];
@@ -722,7 +753,7 @@ export default function GlobalPresence() {
     0,
   ];
   const cameraTransform = useTransform(
-    scrollYProgress,
+    mapProgress,
     cameraStages,
     cameraScaleValues.map((scale, index) => {
       const x = cameraXValues[index];
@@ -730,17 +761,29 @@ export default function GlobalPresence() {
       return `translate(${x}px, ${y}px) scale(${scale})`;
     }),
   );
-  const mapOpacity = useTransform(scrollYProgress, [0, 0.04, 1], [0.9, 1, 1]);
+  const mapOpacity = useTransform(mapProgress, [0, 0.04, 1], [0.9, 1, 1]);
   const originOpacity = useTransform(
-    scrollYProgress,
+    mapProgress,
     cameraStages,
     [1, 0.95, 0.86, 0.7, 0.52, 0.38, 0.3, 0.28],
   );
   const originRadius = useTransform(
-    scrollYProgress,
+    mapProgress,
     cameraStages,
     [1.45, 1.5, 1.6, 1.75, 1.95, 2.15, 2.15, 2.15],
   );
+  const summaryOpacity = useTransform(scrollYProgress, (value) =>
+    rangeProgress(value, 0.68, 0.75));
+  const summaryY = useTransform(scrollYProgress, (value) => {
+    const reveal = rangeProgress(value, 0.68, 0.75);
+    const settle = rangeProgress(value, 0.80, 0.88);
+    return 20 * (1 - reveal) + 170 * settle;
+  });
+  const summaryScale = useTransform(scrollYProgress, (value) => {
+    const reveal = rangeProgress(value, 0.68, 0.75);
+    const settle = rangeProgress(value, 0.80, 0.88);
+    return 0.98 + reveal * 0.02 - settle * 0.22;
+  });
 
   const heading = (
     <header>
@@ -752,46 +795,28 @@ export default function GlobalPresence() {
       </h2>
     </header>
   );
-  const directCopy = (
-    <div>
-      <h3 className="mb-2 text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-500 sm:text-xs">
-        Direct Operations
-      </h3>
-      <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm font-medium tracking-tight text-zinc-200 sm:text-base">
-        {globalPresence.localEntities.map((entity) => (
-          <li key={entity.market}>{entity.entityName}</li>
-        ))}
-      </ul>
-    </div>
-  );
-  const masterCopy = (
-    <div>
-      <h3 className="mb-2 text-base font-medium tracking-tight text-zinc-200 sm:text-lg">
-        {globalPresence.otherMarketsModel}
-      </h3>
-      <p className="max-w-xl text-xs leading-relaxed text-zinc-500 sm:text-sm">
-        {partnership.description}
-      </p>
-    </div>
-  );
 
-  if (reduceMotion) {
+  if (reduceMotion || !desktopStory) {
     return (
       <section
         aria-labelledby={titleId}
-        className="min-h-svh bg-[#09090b] px-6 py-12 text-white sm:px-10 md:px-16"
+        className="min-h-svh bg-[#09090b] py-12 text-white md:py-16"
       >
-        <div ref={sectionRef} className="mx-auto max-w-6xl">
-          {heading}
-          <div className="my-8 aspect-[1000/524]">
+        <div ref={sectionRef}>
+          <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 md:px-16">
+            {heading}
+          </div>
+          <div className="mx-auto my-8 aspect-[1000/524] w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] md:w-[min(96vw,150svh)]">
             <WorldMap staticActive originOpacity={0} originRadius={3.8} />
           </div>
-          <StaticCountryList />
-          <div className="grid gap-8 md:grid-cols-2">
-            {directCopy}
-            {masterCopy}
+          <div className="mx-auto max-w-7xl px-6 sm:px-10 md:px-16">
+            <p className="mx-auto max-w-5xl text-center text-3xl font-semibold leading-[1.08] tracking-[-0.04em] text-[#f7f3ec] sm:text-4xl md:text-5xl lg:text-6xl">
+              {globalPresence.overseasSummary}
+            </p>
+            <div className="mt-10 md:mt-14">
+              <StaticCountryList />
+            </div>
           </div>
-          <p className="mt-8 text-sm text-zinc-400">{globalPresence.overseasSummary}</p>
         </div>
       </section>
     );
@@ -799,46 +824,49 @@ export default function GlobalPresence() {
 
   return (
     <section aria-labelledby={titleId} className="bg-[#09090b] text-white">
-      <div ref={sectionRef} className="h-[300svh]">
+      <div ref={sectionRef} className="h-[400svh]">
         <div className="sticky top-0 h-svh overflow-x-clip overflow-y-auto bg-[#09090b]">
-          <div className="mx-auto flex h-full min-h-[32rem] max-w-7xl flex-col px-6 py-5 sm:px-10 md:px-16 md:py-6">
-            <div className="relative z-10 shrink-0">
+          <div className="flex h-full min-h-[32rem] w-full flex-col py-5 md:py-6">
+            <div className="relative z-10 mx-auto w-full max-w-7xl shrink-0 px-6 sm:px-10 md:px-16">
               {heading}
             </div>
-            <div className="mt-3 flex min-h-0 flex-1 items-center justify-center md:mt-4">
+            <div className="relative mt-3 flex min-h-0 w-full flex-1 items-center justify-center md:mt-4">
               <motion.div
-                className="aspect-[1000/524] w-full shrink-0 md:w-[min(90vw,140svh)] md:max-w-none"
+                className="aspect-[1000/524] w-[calc(100vw-3rem)] shrink-0 sm:w-[calc(100vw-5rem)] md:w-[min(96vw,150svh)]"
                 style={{ opacity: mapOpacity }}
               >
                 <WorldMap
-                  progress={scrollYProgress}
+                  progress={mapProgress}
                   cameraTransform={cameraTransform}
                   originOpacity={originOpacity}
                   originRadius={originRadius}
                 />
               </motion.div>
+
+              <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-8 lg:px-16">
+                <motion.p
+                  className="max-w-[68rem] text-center text-[clamp(3rem,4vw,4rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#f7f3ec] [text-shadow:0_2px_18px_rgba(0,0,0,0.58)]"
+                  style={{ opacity: summaryOpacity, y: summaryY, scale: summaryScale }}
+                >
+                  {globalPresence.overseasSummary}
+                </motion.p>
+              </div>
+
+              <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 px-10 lg:bottom-8 lg:px-16">
+                <ul className="mx-auto grid w-full max-w-5xl grid-cols-3 gap-x-7 gap-y-3 lg:grid-cols-5 lg:gap-x-10">
+                {operatingCountries.map((country, index) => (
+                  <AnimatedCountryName
+                    key={country}
+                    country={country}
+                    index={index}
+                    progress={scrollYProgress}
+                  />
+                ))}
+                </ul>
+              </div>
             </div>
-            <ul className="mx-auto mt-2 grid w-full max-w-4xl shrink-0 grid-cols-2 gap-x-5 gap-y-2 sm:grid-cols-3 lg:grid-cols-5">
-              {operatingCountries.map((country, index) => (
-                <AnimatedCountryName
-                  key={country}
-                  country={country}
-                  index={index}
-                  progress={scrollYProgress}
-                />
-              ))}
-            </ul>
           </div>
         </div>
-      </div>
-      <div className="mx-auto max-w-7xl px-6 py-16 sm:px-10 md:px-16 md:py-20">
-        <div className="grid gap-8 md:grid-cols-2">
-          {directCopy}
-          {masterCopy}
-        </div>
-        <p className="mt-8 max-w-xl text-sm leading-relaxed text-zinc-400">
-          {globalPresence.overseasSummary}
-        </p>
       </div>
     </section>
   );

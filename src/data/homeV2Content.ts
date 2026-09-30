@@ -138,14 +138,14 @@ export const homeV2Content = {
     overview:
       "THEBORN operates more than 20 restaurant brands and approximately 3,200 directly operated and franchised stores domestically and internationally.",
     overseasSummary:
-      "Overseas operations currently span 13 countries with approximately 160 stores.",
+      "Overseas operations currently span 15 countries with approximately 160 stores.",
     restaurantBrands: { moreThan: 20 },
     totalStores: {
       approximate: 3200,
       scope: "domestic and international",
     },
     overseasOperations: {
-      countries: 13,
+      countries: 15,
       approximateStores: 160,
     },
     localEntities: [
