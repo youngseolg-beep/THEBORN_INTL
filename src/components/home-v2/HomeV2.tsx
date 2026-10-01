@@ -45,6 +45,9 @@ export default function HomeV2() {
         <div id="contact" data-home-v2-nav-section="contact">
           <SectionTransition number="08" title="CONTACT" />
           <ContactCTA />
+        </div>
+        <div id="why-the-born" data-home-v2-nav-section="why-the-born">
+          <SectionTransition number="09" title="WHY THE BORN" />
           <WhyTheBorn />
         </div>
       </main>

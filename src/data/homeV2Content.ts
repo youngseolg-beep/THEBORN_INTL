@@ -92,7 +92,6 @@ export type HomeV2ClosingStory = {
   title: string;
   paragraphs: readonly string[];
   closingMessage: string;
-  media: HomeV2Image;
 };
 
 export type HomeV2QualificationRequirement = {
@@ -419,9 +418,5 @@ export const homeV2Content = {
       "That is the direction THE BORN pursues as a global restaurant brand.",
     ],
     closingMessage: "THANK YOU FOR YOUR INTEREST.",
-    media: {
-      src: "/assets/home-v2-assets/bornga/image-05.png",
-      alt: "BORNGA staff member serving guests at a Korean BBQ table",
-    },
   },
 } as const satisfies HomeV2Content;

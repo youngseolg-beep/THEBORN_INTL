@@ -10,6 +10,7 @@ export const homeV2NavItems = [
   { id: "qualifications", label: "QUALIFICATIONS" },
   { id: "process", label: "PROCESS" },
   { id: "contact", label: "CONTACT" },
+  { id: "why-the-born", label: "WHY THE BORN" },
 ] as const;
 
 type SectionId = (typeof homeV2NavItems)[number]["id"];
