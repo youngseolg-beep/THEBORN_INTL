@@ -130,11 +130,11 @@ function useTabletLayout() {
   return tabletLayout;
 }
 
-function useDesktopLayout() {
+function useImmersiveDesktopLayout() {
   const [desktopLayout, setDesktopLayout] = useState(false);
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 1024px)");
+    const query = window.matchMedia("(min-width: 1024px) and (min-height: 900px)");
     const update = () => setDesktopLayout(query.matches);
     update();
     query.addEventListener("change", update);
@@ -404,7 +404,7 @@ function DesktopBrandColumn({
   const columnProgress = useTransform(progress, (value) =>
     revealProgress(value, [revealWindows[2][0], revealWindows[6][1]]),
   );
-  const columnY = useTransform(columnProgress, (value) => `${value * -43}%`);
+  const columnY = useTransform(columnProgress, (value) => `${value * -48}%`);
 
   return (
     <BrandColumn
@@ -491,7 +491,7 @@ function NaturalFlowBrands({ reduceMotion }: { reduceMotion: boolean }) {
 export default function BrandStory() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
-  const desktopLayout = useDesktopLayout();
+  const desktopLayout = useImmersiveDesktopLayout();
   const useDesktopStory = desktopLayout && !reduceMotion;
   const { scrollYProgress } = useScroll({
     target: sectionRef,

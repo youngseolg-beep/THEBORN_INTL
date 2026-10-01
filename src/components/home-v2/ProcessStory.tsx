@@ -140,7 +140,7 @@ function ProgressCountStep({
 
   return (
     <motion.span
-      className="absolute inset-0 whitespace-nowrap"
+      className="absolute inset-0 flex items-center whitespace-nowrap leading-none"
       style={{ opacity, y }}
     >
       {number} / 09
@@ -152,7 +152,7 @@ function ProgressCount({ progress }: { progress: MotionValue<number> }) {
   return (
     <div
       aria-hidden="true"
-      className="relative h-5 w-14 overflow-hidden text-xs font-semibold tracking-[0.2em] text-[#ed2028]"
+      className="relative h-7 w-16 overflow-hidden text-xs font-semibold leading-none tracking-[0.2em] text-[#ed2028]"
     >
       {process.steps.map(({ step }, index) => (
         <ProgressCountStep
@@ -254,7 +254,7 @@ export default function ProcessStory() {
   const [immersiveViewport, setImmersiveViewport] = useState(false);
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 1024px) and (min-height: 700px)");
+    const query = window.matchMedia("(min-width: 1024px) and (min-height: 800px)");
     const update = () => setImmersiveViewport(query.matches);
     update();
     query.addEventListener("change", update);
@@ -279,7 +279,7 @@ export default function ProcessStory() {
       >
         {immersive ? (
           <div className="sticky top-0 h-svh overflow-hidden">
-            <div className="mx-auto flex h-full max-w-[96rem] flex-col py-[clamp(2rem,5vh,3.5rem)] pl-[5%] pr-[5%] lg:pr-[clamp(7rem,10vw,11rem)]">
+            <div className="mx-auto flex h-full max-w-[96rem] flex-col pt-[clamp(2rem,5vh,3.5rem)] pb-[max(1.25rem,5vh,env(safe-area-inset-bottom))] pl-[5%] pr-[5%] lg:pr-[clamp(7rem,10vw,11rem)]">
               <header className="shrink-0">
                 <h2
                   id="home-v2-process-story-title"
@@ -314,7 +314,7 @@ export default function ProcessStory() {
                 </ol>
               </div>
 
-              <div className="grid shrink-0 grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] gap-[clamp(1.5rem,4vw,5rem)] border-t border-white/12 pt-5">
+              <div className="grid min-h-12 shrink-0 grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] items-center gap-[clamp(1.5rem,4vw,5rem)] border-t border-white/12 pt-5">
                 <ProgressCount progress={scrollYProgress} />
                 <div className="relative h-px self-center overflow-hidden bg-white/15">
                   <motion.div
