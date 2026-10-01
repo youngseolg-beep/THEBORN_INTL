@@ -58,6 +58,11 @@ export default function Partnership() {
   const leftX = useTransform(scrollYProgress, (value) => -36 * (1 - ramp(value, 0.28, 0.62)));
   const rightX = useTransform(scrollYProgress, (value) => 36 * (1 - ramp(value, 0.28, 0.62)));
   const lineScale = useTransform(scrollYProgress, (value) => ramp(value, 0.34, 0.57));
+  const partnerColor = useTransform(
+    scrollYProgress,
+    [0, 0.535, 0.57, 1],
+    ["#f7f3ec", "#f7f3ec", "#ed2028", "#ed2028"],
+  );
   const modelOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.62, 0.68));
   const modelY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.62, 0.7, 0.88, 1], [20, 0, 0, -12]));
   // The outgoing paragraph clears before the next begins; never crossfade two readable blocks.
@@ -118,12 +123,12 @@ export default function Partnership() {
             className="absolute inset-0 flex items-center justify-center px-[8%]"
             style={{ opacity: relationshipOpacity }}
           >
-            <div className="flex w-full max-w-6xl items-center gap-[4vw]">
-              <motion.p className="shrink-0 text-[clamp(2rem,4.3vw,4.5rem)] font-medium tracking-[-0.055em]" style={{ x: leftX }}>
+            <div className="flex w-full max-w-6xl items-center gap-0">
+              <motion.p className="mr-[clamp(1.5rem,3vw,3.5rem)] shrink-0 text-[clamp(2rem,4.3vw,4.5rem)] font-medium tracking-[-0.055em]" style={{ x: leftX }}>
                 {partnership.relationship.brand}
               </motion.p>
               <motion.div aria-hidden="true" className="h-px min-w-12 flex-1 origin-left bg-[#ed2028]" style={{ scaleX: lineScale }} />
-              <motion.p className="shrink-0 text-[clamp(2rem,4.3vw,4.5rem)] font-medium tracking-[-0.055em]" style={{ x: rightX }}>
+              <motion.p className="ml-[clamp(0.75rem,1vw,1.25rem)] shrink-0 text-[clamp(2rem,4.3vw,4.5rem)] font-medium tracking-[-0.055em]" style={{ x: rightX, color: partnerColor }}>
                 {partnership.relationship.partner}
               </motion.p>
             </div>
@@ -170,7 +175,7 @@ export default function Partnership() {
           <div className="my-16 flex flex-wrap items-center gap-4 text-[clamp(1rem,3.5vw,2rem)] font-medium tracking-[-0.04em] sm:my-20 sm:gap-8">
             <p>{partnership.relationship.brand}</p>
             <div aria-hidden="true" className="h-px min-w-4 max-w-32 flex-1 bg-[#ed2028]" />
-            <p>{partnership.relationship.partner}</p>
+            <p className="text-[#ed2028]">{partnership.relationship.partner}</p>
           </div>
           <div className="max-w-3xl pb-6">
             <h3 className="text-[clamp(1.75rem,4vw,3.5rem)] font-medium uppercase leading-tight tracking-[-0.05em]">

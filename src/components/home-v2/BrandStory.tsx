@@ -148,12 +148,16 @@ function VMark() {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 20 16"
-      className="h-4 w-5 shrink-0"
+      viewBox="0 0 18 16"
+      className="h-4 w-[18px] shrink-0"
+      fill="none"
     >
       <path
-        d="M1 1.5h4.25L10 9.4l4.75-7.9H19L10 16 1 1.5Z"
-        fill="#ed2028"
+        d="m2 8.25 4.25 4.25L16 2.75"
+        stroke="#ed2028"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
