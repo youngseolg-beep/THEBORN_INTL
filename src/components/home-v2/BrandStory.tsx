@@ -149,13 +149,13 @@ function VMark() {
     <svg
       aria-hidden="true"
       viewBox="0 0 18 16"
-      className="h-4 w-[18px] shrink-0"
+      className="h-[15px] w-4 shrink-0"
       fill="none"
     >
       <path
         d="m2 8.25 4.25 4.25L16 2.75"
         stroke="#ed2028"
-        strokeWidth="3.5"
+        strokeWidth="3.25"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -165,9 +165,9 @@ function VMark() {
 
 function StepLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2.5">
       <VMark />
-      <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#ed2028] sm:text-xs">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ed2028] sm:text-[11px]">
         {children}
       </span>
     </div>
@@ -237,11 +237,16 @@ function BrandIdentity({ presentation }: { presentation: BrandPresentation }) {
 
 function SignatureMenu({ brand }: { brand: HomeV2Brand }) {
   return (
-    <div className="border-t border-white/10 pt-5">
+    <div className="border-b border-white/[0.09] pb-7 sm:pb-8">
       <StepLabel>SIGNATURE MENU</StepLabel>
-      <div className="mt-4 space-y-2">
+      <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
         {brand.signatureMenu.map((menuItem) => (
-          <p key={menuItem} className="text-[15px] uppercase leading-relaxed tracking-[0.035em] text-[#f7f3ec] sm:text-base">
+          <p
+            key={menuItem}
+            className={`text-[14px] font-medium uppercase leading-[1.45] tracking-[0.025em] text-[#f7f3ec] sm:text-[15px] ${
+              menuItem.length > 28 ? "sm:col-span-2" : ""
+            }`}
+          >
             {menuItem}
           </p>
         ))}
@@ -254,20 +259,30 @@ function InformationStep({
   label,
   value,
   description,
+  featured = false,
 }: {
   label: string;
   value: string;
   description?: string;
+  featured?: boolean;
 }) {
   return (
     <>
       <dt>
         <StepLabel>{label}</StepLabel>
       </dt>
-      <dd className="mt-2 text-[15px] uppercase leading-relaxed tracking-[0.035em] text-zinc-300 sm:text-base">
-        {value}
+      <dd className="mt-3 uppercase">
+        <p
+          className={
+            featured
+              ? "max-w-[32rem] text-balance text-[clamp(1.25rem,1.55vw,1.7rem)] font-medium leading-[1.16] tracking-[-0.025em] text-[#f7f3ec]"
+              : "max-w-[34rem] text-pretty text-[14px] font-normal leading-[1.55] tracking-[0.02em] text-zinc-200 sm:text-[15px]"
+          }
+        >
+          {value}
+        </p>
         {description ? (
-          <p className="mt-3 text-sm leading-relaxed text-zinc-400 sm:text-[15px]">
+          <p className="mt-4 max-w-[36rem] text-pretty text-[13px] leading-[1.65] tracking-[0.025em] text-zinc-400 sm:text-sm">
             {description}
           </p>
         ) : null}
@@ -347,21 +362,26 @@ function BrandColumn({
         progress={progress}
         revealWindow={revealWindows[2]}
         reduceMotion={reduceMotion}
-        className="mt-9"
+        className="mt-9 sm:mt-10"
       >
         <SignatureMenu brand={brand} />
       </ScrollReveal>
 
-      <dl className="mt-9">
+      <dl className="mt-8 sm:mt-9">
         {information.map(({ label, value, description }, index) => (
           <ScrollReveal
             key={label}
             progress={progress}
             revealWindow={revealWindows[index + 3]}
             reduceMotion={reduceMotion}
-            className="border-t border-white/10 py-4"
+            className={index === 0 ? "border-b border-white/[0.09] pb-8 sm:pb-9" : "pt-6 sm:pt-7"}
           >
-            <InformationStep label={label} value={value} description={description} />
+            <InformationStep
+              label={label}
+              value={value}
+              description={description}
+              featured={index === 0}
+            />
           </ScrollReveal>
         ))}
       </dl>

@@ -210,7 +210,7 @@ export const homeV2Content = {
         "Doenjang Jjigae",
         "Dolsot Bibimbap",
       ],
-      recommendedStoreSize: ["Approximately 100–200 pyeong", "150+ seats"],
+      recommendedStoreSize: ["APPROX. 331–661 M²", "150+ SEATS"],
       media: {
         logo: {
           src: "/assets/home-v2-assets/bornga/logo.png",
@@ -257,7 +257,7 @@ export const homeV2Content = {
         "Old-Fashioned Lunchbox",
         "Baekbap",
       ],
-      recommendedStoreSize: ["60+ pyeong", "Approximately 100 seats"],
+      recommendedStoreSize: ["198+ M²", "APPROX. 100 SEATS"],
       media: {
         logo: {
           src: "/assets/home-v2-assets/saemaeul/logo.png",
@@ -298,9 +298,9 @@ export const homeV2Content = {
       operations: "Compact store model optimized for delivery and takeaway",
       signatureMenu: ["Jjajangmyeon", "Jjamppong", "Tangsuyuk"],
       recommendedStoreSize: [
-        "Approximately 15–25 pyeong",
-        "Under 20 seats",
-        "Compact dine-in + delivery/takeaway model",
+        "APPROX. 50–83 M²",
+        "UNDER 20 SEATS",
+        "COMPACT DINE-IN + DELIVERY/TAKEAWAY MODEL",
       ],
       media: {
         logo: {
