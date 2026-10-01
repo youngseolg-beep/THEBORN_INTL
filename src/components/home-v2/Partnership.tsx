@@ -54,7 +54,7 @@ export default function Partnership() {
   const imageOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0, 0.24, 0.4, 0.62], [1, 1, 0.12, 0]));
   const openingOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0, 0.08, 0.24, 0.32], [0.75, 1, 1, 0]));
   const openingY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0, 0.08, 0.24, 0.32], [16, 0, 0, -18]));
-  const relationshipOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.32, 0.39, 0.55, 0.62], [0, 1, 1, 0]));
+  const relationshipOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.32, 0.39, 0.63, 0.69], [0, 1, 1, 0]));
   const leftX = useTransform(scrollYProgress, (value) => -36 * (1 - ramp(value, 0.28, 0.62)));
   const rightX = useTransform(scrollYProgress, (value) => 36 * (1 - ramp(value, 0.28, 0.62)));
   const lineScale = useTransform(scrollYProgress, (value) => ramp(value, 0.34, 0.57));
@@ -63,7 +63,7 @@ export default function Partnership() {
     [0, 0.535, 0.57, 1],
     ["#f7f3ec", "#f7f3ec", "#ed2028", "#ed2028"],
   );
-  const modelOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.62, 0.68));
+  const modelOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.69, 0.75));
   const modelY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.62, 0.7, 0.88, 1], [20, 0, 0, -12]));
   // The outgoing paragraph clears before the next begins; never crossfade two readable blocks.
   const policyOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.64, 0.69, 0.76, 0.8], [0, 1, 1, 0]));
