@@ -88,7 +88,7 @@ export default function HeroStory() {
     : isMobile
       ? mobileImageY
       : desktopImageY;
-  const movement = reduceMotion ? 1 : ramp(heroProgress, 0.18, 0.62);
+  const movement = reduceMotion ? 1 : ramp(heroProgress, 0.15, 0.5);
   const finalScale = isMobile ? 0.82 : 0.72;
   const anchorLeft = viewport.width * (isMobile ? 0.075 : 0.06);
   const anchorBottom = viewport.height * (isMobile ? 0.07 : 0.1);
@@ -99,14 +99,14 @@ export default function HeroStory() {
   const copyScale = mix(1, finalScale, movement);
   const textOpacity = reduceMotion ? 1 : timeline(heroProgress, [0, 0.82, 0.94, 1], [1, 1, 0.72, 0.25]);
   const sceneOpacity = reduceMotion ? 1 : timeline(heroProgress, [0, 0.82, 0.92, 1], [1, 1, 0.88, 0.55]);
-  const colorProgress = reduceMotion ? 1 : ramp(heroProgress, 0.48, 0.68);
+  const colorProgress = reduceMotion ? 1 : ramp(heroProgress, 0.4, 0.55);
   const heroTitleColor = `rgb(${Math.round(mix(247, 237, colorProgress))}, ${Math.round(mix(243, 32, colorProgress))}, ${Math.round(mix(236, 40, colorProgress))})`;
 
   return (
     <section
       ref={sectionRef}
       aria-labelledby="home-v2-hero-title"
-      className={reduceMotion ? "min-h-svh bg-black" : "h-[150svh] bg-black"}
+      className={reduceMotion ? "min-h-svh bg-black" : "h-[175svh] bg-black"}
     >
       <motion.div
         className="sticky top-0 h-svh overflow-hidden bg-black"

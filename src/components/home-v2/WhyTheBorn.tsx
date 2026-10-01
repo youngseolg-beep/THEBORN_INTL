@@ -99,10 +99,16 @@ export default function WhyTheBorn() {
   const centeredTextWidth = isMobile
     ? Math.max(288, viewport.width - 32)
     : Math.min(viewport.width * 0.9, 1000);
+  const initialImageWidth = Math.min(viewport.width * 0.38, 496);
+  const initialGap = 64;
+  const initialGroupWidth = initialImageWidth + initialGap + initialTextWidth;
+  const initialGroupLeft = (viewport.width - initialGroupWidth) / 2;
+  const initialImageLeft = initialGroupLeft;
+  const initialTextCenter = initialGroupLeft + initialImageWidth + initialGap + initialTextWidth / 2;
   const moveProgress = ramp(storyProgress, 0.22, 0.58);
   const initialTitleSize = isMobile ? 34 : Math.min(Math.max(viewport.width * 0.04, 40), 52);
   const finalTitleSize = isMobile ? 48 : Math.min(Math.max(viewport.width * 0.06, 56), 104);
-  const textX = mix(isMobile ? 0 : viewport.width * 0.25, 0, moveProgress);
+  const textX = mix(isMobile ? 0 : initialTextCenter - viewport.width / 2, 0, moveProgress);
   const textY = mix(isMobile ? viewport.height * 0.19 : 0, 0, moveProgress);
   const textWidth = mix(initialTextWidth, centeredTextWidth, moveProgress);
   const titleSize = mix(initialTitleSize, finalTitleSize, moveProgress);
@@ -121,9 +127,9 @@ export default function WhyTheBorn() {
         aria-labelledby="home-v2-why-the-born-title"
         className="bg-[#090a0c] px-[5%] pb-[clamp(7rem,14svh,11rem)] text-[#f7f3ec]"
       >
-        <div className="mx-auto grid max-w-7xl gap-12 border-t border-white/10 pt-[clamp(5rem,11svh,8rem)] lg:grid-cols-[minmax(0,0.44fr)_minmax(0,0.56fr)] lg:items-center lg:gap-[clamp(4rem,7vw,7rem)]">
+        <div className="mx-auto grid max-w-7xl gap-12 border-t border-white/10 pt-[clamp(5rem,11svh,8rem)] lg:grid-cols-[minmax(0,0.44fr)_minmax(0,0.56fr)] lg:items-center lg:gap-16">
           <StoryImage className="aspect-[4/5] w-full" />
-          <div>
+          <div className="text-center">
             <ManifestoCopy compact />
           </div>
         </div>
@@ -143,7 +149,11 @@ export default function WhyTheBorn() {
       <div className="sticky top-0 h-svh overflow-hidden border-t border-white/10">
         <motion.div
           className="absolute left-1/2 top-[5svh] h-[26svh] w-[min(58vw,15rem)] -translate-x-1/2 sm:top-[4svh] md:left-[5%] md:top-1/2 md:aspect-[4/5] md:h-auto md:w-[min(38vw,31rem)] md:-translate-x-0 md:-translate-y-1/2"
-          style={{ opacity: imageOpacity, transform: `scale(${imageScale})` }}
+          style={{
+            left: isMobile ? undefined : initialImageLeft,
+            opacity: imageOpacity,
+            transform: `scale(${imageScale})`,
+          }}
         >
           <StoryImage className="h-full w-full" />
         </motion.div>
@@ -154,7 +164,7 @@ export default function WhyTheBorn() {
               width: textWidth,
               transform: `translate3d(${textX}px, ${textY}px, 0)`,
               opacity: manifestoOpacity,
-              textAlign: storyProgress >= 0.4 ? "center" : "left",
+              textAlign: "center",
               fontSize: bodySize,
             }}
           >

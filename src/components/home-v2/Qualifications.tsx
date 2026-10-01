@@ -6,7 +6,10 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { homeV2Content } from "../../data/homeV2Content";
+import {
+  homeV2Content,
+  type HomeV2QualificationRequirement,
+} from "../../data/homeV2Content";
 
 const { qualifications } = homeV2Content;
 
@@ -16,7 +19,7 @@ function ramp(value: number, start: number, end: number) {
 
 type RequirementRowProps = {
   number: string;
-  requirement: string;
+  requirement: HomeV2QualificationRequirement;
   progress: MotionValue<number>;
   enterStart: number;
   enterEnd: number;
@@ -24,6 +27,24 @@ type RequirementRowProps = {
   dimEnd?: number;
   animate: boolean;
 };
+
+function RequirementText({ requirement }: { requirement: HomeV2QualificationRequirement }) {
+  const emphasisStart = requirement.text.indexOf(requirement.emphasis);
+
+  if (emphasisStart === -1) return requirement.text;
+
+  const emphasisEnd = emphasisStart + requirement.emphasis.length;
+
+  return (
+    <>
+      {requirement.text.slice(0, emphasisStart)}
+      <span className="font-semibold text-[#ed2028]">
+        {requirement.text.slice(emphasisStart, emphasisEnd)}
+      </span>
+      {requirement.text.slice(emphasisEnd)}
+    </>
+  );
+}
 
 function RequirementRow({
   number,
@@ -56,8 +77,8 @@ function RequirementRow({
       <span aria-hidden="true" className="self-start pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base">
         {number}
       </span>
-      <p className="max-w-5xl text-[clamp(1.75rem,3.35vw,4rem)] font-medium leading-[1.04] tracking-[-0.05em] text-[#f7f3ec]">
-        {requirement}
+      <p className="max-w-5xl text-[clamp(1.75rem,3.35vw,4rem)] font-medium uppercase leading-[1.04] tracking-[-0.05em] text-[#f7f3ec]">
+        <RequirementText requirement={requirement} />
       </p>
     </motion.li>
   );
@@ -77,7 +98,7 @@ function Documents({ animatedStyle }: {
             <span aria-hidden="true" className="text-[10px] font-semibold tracking-[0.2em] text-zinc-500">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <p className="mt-2 max-w-xs text-sm leading-relaxed text-zinc-300 sm:text-base">
+            <p className="mt-2 max-w-xs text-sm uppercase leading-relaxed text-zinc-300 sm:text-base">
               {document}
             </p>
           </li>

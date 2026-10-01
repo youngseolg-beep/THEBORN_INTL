@@ -95,9 +95,14 @@ export type HomeV2ClosingStory = {
   media: HomeV2Image;
 };
 
+export type HomeV2QualificationRequirement = {
+  text: string;
+  emphasis: string;
+};
+
 export type HomeV2Qualifications = {
   title: "Qualifications";
-  requirements: readonly string[];
+  requirements: readonly HomeV2QualificationRequirement[];
   requiredDocuments: readonly string[];
 };
 
@@ -254,7 +259,7 @@ export const homeV2Content = {
       signatureMenu: [
         "Yeoltan Bulgogi",
         "7-Minute Pork Kimchi",
-        "Samgyeopsal / Moksal / Pork Skin",
+        "Samgyeopsal",
         "Old-Fashioned Lunchbox",
         "Baekbap",
       ],
@@ -351,9 +356,18 @@ export const homeV2Content = {
   qualifications: {
     title: "Qualifications",
     requirements: [
-      "Local company with at least 3 years of F&B or related business experience",
-      "Sufficient capital for direct-store expansion",
-      "Franchise business experience preferred",
+      {
+        text: "Local company with at least 3 years of F&B or related business experience",
+        emphasis: "at least 3 years",
+      },
+      {
+        text: "Sufficient capital for direct-store expansion",
+        emphasis: "direct-store expansion",
+      },
+      {
+        text: "Franchise business experience preferred",
+        emphasis: "Franchise business experience",
+      },
     ],
     requiredDocuments: [
       "Business registration",

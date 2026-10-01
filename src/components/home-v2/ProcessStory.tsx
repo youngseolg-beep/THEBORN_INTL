@@ -57,7 +57,7 @@ function AnimatedStep({ index, number, title, progress }: AnimatedStepProps) {
       className="absolute inset-0 flex items-center"
       style={{ opacity, y }}
     >
-      <h3 className="max-w-[13ch] text-[clamp(2.5rem,4.7vw,5.5rem)] font-medium leading-[1.02] tracking-[-0.055em] text-[#f7f3ec]">
+      <h3 className="max-w-[13ch] text-[clamp(2.5rem,4.7vw,5.5rem)] font-medium uppercase leading-[1.02] tracking-[-0.055em] text-[#f7f3ec]">
         <span className="sr-only">Step {number} of 09: </span>
         {title}
       </h3>
@@ -144,7 +144,7 @@ function StaticProcess() {
               >
                 {number}
               </span>
-              <h3 className="max-w-4xl text-[clamp(1.75rem,5.8vw,3.75rem)] font-medium leading-[1.05] tracking-[-0.045em] text-[#f7f3ec]">
+              <h3 className="max-w-4xl text-[clamp(1.75rem,5.8vw,3.75rem)] font-medium uppercase leading-[1.05] tracking-[-0.045em] text-[#f7f3ec]">
                 <span className="sr-only">Step {number} of 09: </span>
                 {title}
               </h3>

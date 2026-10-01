@@ -65,11 +65,11 @@ export default function Partnership() {
   );
   const modelOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.76, 0.82));
   const modelY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.62, 0.7, 0.88, 1], [20, 0, 0, -12]));
-  // The outgoing paragraph clears before the next begins; never crossfade two readable blocks.
-  const policyOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.64, 0.69, 0.76, 0.8], [0, 1, 1, 0]));
-  const policyY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.64, 0.69, 0.76, 0.8], [12, 0, 0, -12]));
-  const selectionOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.81, 0.88));
-  const selectionY = useTransform(scrollYProgress, (value) => 14 * (1 - ramp(value, 0.81, 1)));
+  // The policy holds at full opacity before clearing completely for the selection statement.
+  const policyOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.81, 0.86, 0.92, 0.95], [0, 1, 1, 0]));
+  const policyY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.81, 0.86, 0.92, 0.95], [12, 0, 0, -12]));
+  const selectionOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.95, 1));
+  const selectionY = useTransform(scrollYProgress, (value) => 14 * (1 - ramp(value, 0.95, 1)));
   const finalLineScale = useTransform(scrollYProgress, (value) => 0.35 + 0.65 * ramp(value, 0.62, 1));
 
   const eyebrow = (
