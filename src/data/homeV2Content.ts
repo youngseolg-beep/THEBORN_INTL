@@ -91,6 +91,7 @@ export type HomeV2ClosingStory = {
   eyebrow: string;
   title: string;
   paragraphs: readonly string[];
+  closingMessage: string;
   media: HomeV2Image;
 };
 
@@ -403,6 +404,7 @@ export const homeV2Content = {
       "Even within the fast-paced energy of Korean dining culture, we believe warmth and hospitality should always remain.",
       "That is the direction THE BORN pursues as a global restaurant brand.",
     ],
+    closingMessage: "THANK YOU FOR YOUR INTEREST.",
     media: {
       src: "/assets/home-v2-assets/bornga/image-05.png",
       alt: "BORNGA staff member serving guests at a Korean BBQ table",
