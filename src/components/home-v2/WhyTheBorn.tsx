@@ -173,11 +173,12 @@ export default function WhyTheBorn() {
           <StoryImage className="h-full w-full" />
         </motion.div>
 
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0">
           <motion.div
+            className="absolute left-1/2 top-1/2"
             style={{
               width: initialTextWidth,
-              transform: `translate3d(${textX}px, ${textY}px, 0)`,
+              transform: `translate3d(calc(-50% + ${textX}px), calc(-50% + ${textY}px), 0)`,
               opacity: manifestoOpacity,
               textAlign: "center",
               fontSize: isMobile ? 12.5 : 18,
