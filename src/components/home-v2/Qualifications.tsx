@@ -28,20 +28,49 @@ type RequirementRowProps = {
   animate: boolean;
 };
 
-function RequirementText({ requirement }: { requirement: HomeV2QualificationRequirement }) {
-  const emphasisStart = requirement.text.indexOf(requirement.emphasis);
+const requirementBreaks = [
+  ["at least 3 years", "of F&B or related"],
+  ["direct-store"],
+  ["Franchise business experience"],
+] as const;
 
-  if (emphasisStart === -1) return requirement.text;
+function splitAfterPhrases(text: string, phrases: readonly string[]) {
+  const lines: string[] = [];
+  let lineStart = 0;
 
-  const emphasisEnd = emphasisStart + requirement.emphasis.length;
+  phrases.forEach((phrase) => {
+    const phraseStart = text.indexOf(phrase, lineStart);
+    if (phraseStart === -1) return;
+    const lineEnd = phraseStart + phrase.length;
+    lines.push(text.slice(lineStart, lineEnd).trim());
+    lineStart = lineEnd;
+  });
+
+  const remainder = text.slice(lineStart).trim();
+  if (remainder) lines.push(remainder);
+  return lines;
+}
+
+function RequirementLine({
+  text,
+  emphasis,
+}: {
+  text: string;
+  emphasis: string;
+}) {
+  const emphasisStart = text.indexOf(emphasis);
+
+  if (emphasisStart === -1) return text;
+
+  const emphasisEnd = emphasisStart + emphasis.length;
 
   return (
     <>
-      {requirement.text.slice(0, emphasisStart)}
+      {text.slice(0, emphasisStart)}
       <span className="font-semibold text-[#ed2028]">
-        {requirement.text.slice(emphasisStart, emphasisEnd)}
+        {text.slice(emphasisStart, emphasisEnd)}
       </span>
-      {requirement.text.slice(emphasisEnd)}
+      {text.slice(emphasisEnd)}
     </>
   );
 }
@@ -56,6 +85,11 @@ function RequirementRow({
   dimEnd,
   animate,
 }: RequirementRowProps) {
+  const requirementIndex = Number(number) - 1;
+  const lines = splitAfterPhrases(
+    requirement.text,
+    requirementBreaks[requirementIndex] ?? [],
+  );
   const opacity = useTransform(progress, (value) => {
     const entered = 0.34 + 0.66 * ramp(value, enterStart, enterEnd);
     if (dimStart === undefined || dimEnd === undefined) return entered;
@@ -78,7 +112,14 @@ function RequirementRow({
         {number}
       </span>
       <p className="max-w-5xl text-[clamp(1.75rem,3.35vw,4rem)] font-medium uppercase leading-[1.04] tracking-[-0.05em] text-[#f7f3ec]">
-        <RequirementText requirement={requirement} />
+        <span className="sr-only">{requirement.text}</span>
+        <span aria-hidden="true">
+          {lines.map((line) => (
+            <span key={line} className="block lg:whitespace-nowrap">
+              <RequirementLine text={line} emphasis={requirement.emphasis} />
+            </span>
+          ))}
+        </span>
       </p>
     </motion.li>
   );

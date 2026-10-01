@@ -8,6 +8,11 @@ import {
 import { homeV2Content } from "../../data/homeV2Content";
 
 const { whyTheBorn } = homeV2Content;
+const manifestoTitleWords = whyTheBorn.title.split(" ");
+const manifestoTitleLines = [
+  manifestoTitleWords.slice(0, 3).join(" "),
+  manifestoTitleWords.slice(3).join(" "),
+];
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -33,6 +38,21 @@ function StoryImage({ className = "" }: { className?: string }) {
   );
 }
 
+function ManifestoTitle() {
+  return (
+    <>
+      <span className="sr-only">{whyTheBorn.title}</span>
+      <span aria-hidden="true">
+        {manifestoTitleLines.map((line) => (
+          <span key={line} className="block whitespace-nowrap">
+            {line}
+          </span>
+        ))}
+      </span>
+    </>
+  );
+}
+
 function ManifestoCopy({ compact = false }: { compact?: boolean }) {
   return (
     <>
@@ -47,7 +67,7 @@ function ManifestoCopy({ compact = false }: { compact?: boolean }) {
             : "mt-5 font-medium uppercase leading-[0.98] tracking-[-0.055em] text-white"
         }
       >
-        {whyTheBorn.title}
+        <ManifestoTitle />
       </h2>
       <div className={`${compact ? "mt-8 sm:mt-10" : "mt-7 sm:mt-9"} space-y-4 leading-[1.7] text-zinc-300 sm:space-y-5`}>
         {whyTheBorn.paragraphs.map((paragraph) => (
@@ -96,9 +116,6 @@ export default function WhyTheBorn() {
   const initialTextWidth = isMobile
     ? Math.max(272, viewport.width - 40)
     : Math.min(viewport.width * 0.44, 640);
-  const centeredTextWidth = isMobile
-    ? Math.max(288, viewport.width - 32)
-    : Math.min(viewport.width * 0.9, 1000);
   const initialImageWidth = Math.min(viewport.width * 0.38, 496);
   const initialGap = 64;
   const initialGroupWidth = initialImageWidth + initialGap + initialTextWidth;
@@ -110,9 +127,7 @@ export default function WhyTheBorn() {
   const finalTitleSize = isMobile ? 48 : Math.min(Math.max(viewport.width * 0.06, 56), 104);
   const textX = mix(isMobile ? 0 : initialTextCenter - viewport.width / 2, 0, moveProgress);
   const textY = mix(isMobile ? viewport.height * 0.19 : 0, 0, moveProgress);
-  const textWidth = mix(initialTextWidth, centeredTextWidth, moveProgress);
   const titleSize = mix(initialTitleSize, finalTitleSize, moveProgress);
-  const bodySize = mix(isMobile ? 12.5 : 18, isMobile ? 15 : 20, moveProgress);
   const manifestoOpacity = 1 - ramp(storyProgress, 0.72, 0.82);
   const imageProgress = ramp(storyProgress, 0.18, 0.42);
   const imageOpacity = 1 - imageProgress;
@@ -161,11 +176,11 @@ export default function WhyTheBorn() {
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
             style={{
-              width: textWidth,
+              width: initialTextWidth,
               transform: `translate3d(${textX}px, ${textY}px, 0)`,
               opacity: manifestoOpacity,
               textAlign: "center",
-              fontSize: bodySize,
+              fontSize: isMobile ? 12.5 : 18,
             }}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#ed2028] sm:text-sm">
@@ -176,7 +191,7 @@ export default function WhyTheBorn() {
               className="mt-4 font-medium uppercase leading-[0.98] tracking-[-0.055em] text-white sm:mt-5"
               style={{ fontSize: titleSize }}
             >
-              {whyTheBorn.title}
+              <ManifestoTitle />
             </motion.h2>
             <div className="mt-5 space-y-3 leading-[1.65] text-zinc-300 sm:mt-7 sm:space-y-4">
               {whyTheBorn.paragraphs.map((paragraph) => (

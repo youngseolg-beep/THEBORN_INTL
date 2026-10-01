@@ -65,11 +65,11 @@ export default function Partnership() {
   );
   const modelOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.76, 0.82));
   const modelY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.62, 0.7, 0.88, 1], [20, 0, 0, -12]));
-  // The policy holds at full opacity before clearing completely for the selection statement.
-  const policyOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.81, 0.86, 0.92, 0.95], [0, 1, 1, 0]));
-  const policyY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.81, 0.86, 0.92, 0.95], [12, 0, 0, -12]));
-  const selectionOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.95, 1));
-  const selectionY = useTransform(scrollYProgress, (value) => 14 * (1 - ramp(value, 0.95, 1)));
+  // Keep the policy fully readable, then use a short complementary crossfade so the scene never goes blank.
+  const policyOpacity = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.8, 0.85, 0.94, 0.98], [0, 1, 1, 0]));
+  const policyY = useTransform(scrollYProgress, (value) => sampleTimeline(value, [0.8, 0.85, 0.94, 0.98], [12, 0, 0, -12]));
+  const selectionOpacity = useTransform(scrollYProgress, (value) => ramp(value, 0.94, 0.98));
+  const selectionY = useTransform(scrollYProgress, (value) => 14 * (1 - ramp(value, 0.94, 0.98)));
   const finalLineScale = useTransform(scrollYProgress, (value) => 0.35 + 0.65 * ramp(value, 0.62, 1));
 
   const eyebrow = (
@@ -83,7 +83,7 @@ export default function Partnership() {
       ref={sectionRef}
       aria-labelledby="home-v2-partnership-title"
       className="relative bg-[#101112] text-[#f7f3ec]"
-      style={{ height: immersive ? "190svh" : "auto" }}
+      style={{ height: immersive ? "220svh" : "auto" }}
     >
       {immersive ? (
         <div className="sticky top-0 h-svh overflow-hidden">
@@ -142,7 +142,7 @@ export default function Partnership() {
               {partnership.model}
             </h3>
             <motion.div aria-hidden="true" className="my-9 h-px w-24 bg-[#ed2028]" style={{ scaleX: finalLineScale }} />
-            <div className="grid w-full max-w-2xl text-xl leading-relaxed tracking-[-0.015em] text-zinc-300 xl:text-2xl">
+            <div className="grid w-full max-w-2xl text-xl leading-relaxed tracking-[-0.015em] text-[#f7f3ec] xl:text-2xl">
               <motion.p className="col-start-1 row-start-1" style={{ opacity: policyOpacity, y: policyY }}>
                 {partnership.managementPolicy}
               </motion.p>
@@ -181,7 +181,7 @@ export default function Partnership() {
             <h3 className="text-[clamp(1.75rem,4vw,3.5rem)] font-medium uppercase leading-tight tracking-[-0.05em]">
               {partnership.model}
             </h3>
-            <p className="mt-7 max-w-2xl text-base leading-relaxed text-zinc-300 sm:text-xl">
+            <p className="mt-7 max-w-2xl text-base leading-relaxed text-[#f7f3ec] sm:text-xl">
               {partnership.managementPolicy}
             </p>
             <p className="mt-8 max-w-2xl text-base leading-relaxed text-zinc-100 sm:text-xl">

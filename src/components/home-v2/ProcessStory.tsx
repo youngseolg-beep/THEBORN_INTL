@@ -48,6 +48,52 @@ type AnimatedStepProps = {
   progress: MotionValue<number>;
 };
 
+const processStepBreaks: Record<number, readonly string[]> = {
+  1: ["application"],
+  2: ["qualification"],
+  3: ["business"],
+  4: ["feasibility"],
+  5: ["business"],
+  6: [],
+  7: ["sharing", "plan"],
+  8: ["agreement"],
+  9: ["including", "training,"],
+};
+
+function splitAfterPhrases(text: string, phrases: readonly string[]) {
+  const lines: string[] = [];
+  let lineStart = 0;
+
+  phrases.forEach((phrase) => {
+    const phraseStart = text.indexOf(phrase, lineStart);
+    if (phraseStart === -1) return;
+    const lineEnd = phraseStart + phrase.length;
+    lines.push(text.slice(lineStart, lineEnd).trim());
+    lineStart = lineEnd;
+  });
+
+  const remainder = text.slice(lineStart).trim();
+  if (remainder) lines.push(remainder);
+  return lines;
+}
+
+function ProcessStepTitle({ step, title }: { step: number; title: string }) {
+  const lines = splitAfterPhrases(title, processStepBreaks[step] ?? []);
+
+  return (
+    <>
+      <span className="sr-only">{title}</span>
+      <span aria-hidden="true">
+        {lines.map((line) => (
+          <span key={line} className="block lg:whitespace-nowrap">
+            {line}
+          </span>
+        ))}
+      </span>
+    </>
+  );
+}
+
 function AnimatedStep({ index, number, title, progress }: AnimatedStepProps) {
   const opacity = useTransform(progress, (value) => getStepState(index, value).opacity);
   const y = useTransform(progress, (value) => getStepState(index, value).y);
@@ -57,9 +103,9 @@ function AnimatedStep({ index, number, title, progress }: AnimatedStepProps) {
       className="absolute inset-0 flex items-center"
       style={{ opacity, y }}
     >
-      <h3 className="max-w-[13ch] text-[clamp(2.5rem,4.7vw,5.5rem)] font-medium uppercase leading-[1.02] tracking-[-0.055em] text-[#f7f3ec]">
+      <h3 className="max-w-[15ch] text-[clamp(2.15rem,3.8vw,4.5rem)] font-medium uppercase leading-[1.08] tracking-[-0.045em] text-[#f7f3ec]">
         <span className="sr-only">Step {number} of 09: </span>
-        {title}
+        <ProcessStepTitle step={index + 1} title={title} />
       </h3>
     </motion.li>
   );
@@ -144,9 +190,9 @@ function StaticProcess() {
               >
                 {number}
               </span>
-              <h3 className="max-w-4xl text-[clamp(1.75rem,5.8vw,3.75rem)] font-medium uppercase leading-[1.05] tracking-[-0.045em] text-[#f7f3ec]">
+              <h3 className="max-w-4xl text-[clamp(1.6rem,5vw,3.25rem)] font-medium uppercase leading-[1.1] tracking-[-0.04em] text-[#f7f3ec]">
                 <span className="sr-only">Step {number} of 09: </span>
-                {title}
+                <ProcessStepTitle step={step} title={title} />
               </h3>
             </li>
           );
