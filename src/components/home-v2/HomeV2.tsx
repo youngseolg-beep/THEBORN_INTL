@@ -8,6 +8,7 @@ import ProcessStory from "./ProcessStory";
 import Qualifications from "./Qualifications";
 import SectionRailNav from "./SectionRailNav";
 import SectionTransition from "./SectionTransition";
+import WhyTheBorn from "./WhyTheBorn";
 
 export default function HomeV2() {
   return (
@@ -18,15 +19,15 @@ export default function HomeV2() {
           <HeroStory />
         </div>
         <div id="global-presence" data-home-v2-nav-section="global-presence">
-          <SectionTransition number="02" title="GLOBAL PRESENCE" />
+          <SectionTransition number="02" title="GLOBAL" />
           <GlobalPresence />
         </div>
         <div id="brand-story" data-home-v2-nav-section="brand-story">
-          <SectionTransition number="03" title="BRAND STORY" />
+          <SectionTransition number="03" title="OUR BRANDS" />
           <BrandStory />
         </div>
         <div id="gallery" data-home-v2-nav-section="gallery">
-          <SectionTransition number="04" title="GALLERY" />
+          <SectionTransition number="04" title="BRAND GALLERY" />
           <Gallery />
         </div>
         <div id="partnership" data-home-v2-nav-section="partnership">
@@ -44,6 +45,7 @@ export default function HomeV2() {
         <div id="contact" data-home-v2-nav-section="contact">
           <SectionTransition number="08" title="CONTACT" />
           <ContactCTA />
+          <WhyTheBorn />
         </div>
       </main>
     </>

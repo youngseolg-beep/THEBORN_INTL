@@ -238,7 +238,7 @@ function BrandIdentity({ presentation }: { presentation: BrandPresentation }) {
 function SignatureMenu({ brand }: { brand: HomeV2Brand }) {
   return (
     <div className="border-t border-white/10 pt-5">
-      <StepLabel>Signature Menu</StepLabel>
+      <StepLabel>SIGNATURE MENU</StepLabel>
       <div className="mt-4 space-y-2">
         {brand.signatureMenu.map((menuItem) => (
           <p key={menuItem} className="text-[15px] leading-relaxed text-[#f7f3ec] sm:text-base">
@@ -250,7 +250,15 @@ function SignatureMenu({ brand }: { brand: HomeV2Brand }) {
   );
 }
 
-function InformationStep({ label, value }: { label: string; value: string }) {
+function InformationStep({
+  label,
+  value,
+  description,
+}: {
+  label: string;
+  value: string;
+  description?: string;
+}) {
   return (
     <>
       <dt>
@@ -258,6 +266,11 @@ function InformationStep({ label, value }: { label: string; value: string }) {
       </dt>
       <dd className="mt-2 text-[15px] leading-relaxed text-zinc-300 sm:text-base">
         {value}
+        {description ? (
+          <p className="mt-3 text-sm leading-relaxed text-zinc-400 sm:text-[15px]">
+            {description}
+          </p>
+        ) : null}
       </dd>
     </>
   );
@@ -278,8 +291,12 @@ function BrandColumn({
   columnY?: MotionValue<string>;
 }) {
   const { brand, exterior, exteriorObjectPosition } = presentation;
-  const information = [
-    { label: "CONCEPT", value: brand.concept },
+  const information: readonly {
+    label: string;
+    value: string;
+    description?: string;
+  }[] = [
+    { label: "CONCEPT", value: brand.concept, description: brand.experience },
     { label: "TARGET", value: brand.target },
     { label: "OPERATION", value: brand.operations },
     { label: "SCALE", value: brand.recommendedStoreSize.join(" · ") },
@@ -336,7 +353,7 @@ function BrandColumn({
       </ScrollReveal>
 
       <dl className="mt-9">
-        {information.map(({ label, value }, index) => (
+        {information.map(({ label, value, description }, index) => (
           <ScrollReveal
             key={label}
             progress={progress}
@@ -344,7 +361,7 @@ function BrandColumn({
             reduceMotion={reduceMotion}
             className="border-t border-white/10 py-4"
           >
-            <InformationStep label={label} value={value} />
+            <InformationStep label={label} value={value} description={description} />
           </ScrollReveal>
         ))}
       </dl>

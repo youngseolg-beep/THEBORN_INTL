@@ -52,11 +52,11 @@ export default function ContactCTA() {
           </a>
         </motion.div>
 
-        <ul className="grid border-b border-white/15 lg:grid-cols-3">
+        <ul className="grid border-b border-white/15 xl:grid-cols-3">
           {regionalContacts.map(({ category, email }, index) => (
             <motion.li
               key={category}
-              className="border-b border-white/15 last:border-b-0 lg:border-b-0 lg:border-r lg:last:border-r-0"
+              className="border-b border-white/15 last:border-b-0 xl:border-b-0 xl:border-r xl:last:border-r-0"
               initial={reduceMotion ? false : { opacity: 0, y: 18 }}
               whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
@@ -69,15 +69,15 @@ export default function ContactCTA() {
               <a
                 href={`mailto:${email}`}
                 aria-label={`Email ${category}: ${email}`}
-                className={`group flex min-h-40 flex-col justify-between gap-8 px-1 py-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#ed2028] sm:min-h-44 sm:py-10 lg:px-8 ${
-                  index === 0 ? "lg:pl-0" : ""
-                } ${index === regionalContacts.length - 1 ? "lg:pr-0" : ""}`}
+                className={`group flex min-h-40 flex-col justify-between gap-8 px-1 py-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#ed2028] sm:min-h-44 sm:py-10 xl:px-8 ${
+                  index === 0 ? "xl:pl-0" : ""
+                } ${index === regionalContacts.length - 1 ? "xl:pr-0" : ""}`}
               >
                 <span className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
                   {category}
                 </span>
                 <span className="flex min-w-0 items-start justify-between gap-3">
-                  <span className="min-w-0 [overflow-wrap:anywhere] text-[clamp(1.35rem,2vw,2rem)] font-medium leading-tight tracking-[-0.035em] text-zinc-200 transition-transform duration-300 ease-out group-hover:translate-x-1.5 group-hover:text-white group-focus-visible:translate-x-1.5 group-focus-visible:text-white">
+                  <span className="min-w-0 whitespace-nowrap text-[clamp(1rem,1.45vw,1.5rem)] font-medium leading-tight tracking-[-0.035em] text-zinc-200 transition-transform duration-300 ease-out group-hover:translate-x-1.5 group-hover:text-white group-focus-visible:translate-x-1.5 group-focus-visible:text-white">
                     {email}
                   </span>
                   <span

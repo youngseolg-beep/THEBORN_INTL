@@ -20,12 +20,19 @@ export type HomeV2Brand = {
   koreanName?: string;
   tagline?: string;
   concept: string;
+  experience: string;
   tradeArea: string;
   target: string;
   operations: string;
   signatureMenu: readonly string[];
   recommendedStoreSize: readonly string[];
   media: HomeV2BrandMedia;
+};
+
+export type HomeV2Hero = {
+  eyebrow: string;
+  title: string;
+  description: string;
 };
 
 export type HomeV2Corporate = {
@@ -43,7 +50,7 @@ export type HomeV2GlobalEntity = {
 };
 
 export type HomeV2GlobalPresence = {
-  title: "Global Presence";
+  title: "GLOBAL";
   overview: string;
   overseasSummary: string;
   restaurantBrands: { moreThan: number };
@@ -73,6 +80,17 @@ export type HomeV2Partnership = {
   description: string;
   managementPolicy: string;
   partnerSelection: string;
+  relationship: {
+    brand: "THE BORN";
+    partner: "PARTNER";
+  };
+  media: HomeV2Image;
+};
+
+export type HomeV2ClosingStory = {
+  eyebrow: string;
+  title: string;
+  paragraphs: readonly string[];
   media: HomeV2Image;
 };
 
@@ -106,6 +124,7 @@ export type HomeV2ContactInformation = {
 };
 
 export type HomeV2Content = {
+  hero: HomeV2Hero;
   corporate: HomeV2Corporate;
   globalPresence: HomeV2GlobalPresence;
   brands: Record<HomeV2BrandKey, HomeV2Brand>;
@@ -113,9 +132,16 @@ export type HomeV2Content = {
   qualifications: HomeV2Qualifications;
   process: HomeV2Process;
   contact: HomeV2ContactInformation;
+  whyTheBorn: HomeV2ClosingStory;
 };
 
 export const homeV2Content = {
+  hero: {
+    eyebrow: "Korea's Leading Restaurant Franchise Group",
+    title: "THE BORN",
+    description:
+      "Bringing the energy of Korean dining brands to global markets, built on over 30 years of restaurant operation know-how.",
+  },
   corporate: {
     name: "THEBORN",
     media: {
@@ -134,7 +160,7 @@ export const homeV2Content = {
     },
   },
   globalPresence: {
-    title: "Global Presence",
+    title: "GLOBAL",
     overview:
       "THEBORN operates more than 20 restaurant brands and approximately 3,200 directly operated and franchised stores domestically and internationally.",
     overseasSummary:
@@ -170,6 +196,8 @@ export const homeV2Content = {
       englishName: "BORNGA",
       tagline: "Original Korean Taste",
       concept: "Premium authentic Korean BBQ dining",
+      experience:
+        "Sizzling grills. Shared tables. Warm conversations over premium Korean BBQ. BORNGA delivers a Korean dining experience built around gathering, grilling, and sharing together.",
       tradeArea:
         "Major-city prime commercial areas, high-income customer areas, and tourist districts",
       target:
@@ -214,6 +242,8 @@ export const homeV2Content = {
       englishName: "SAEMAEUL",
       tagline: "The Original Korean BBQ",
       concept: "Casual Korean dining based on direct-fire BBQ",
+      experience:
+        "Late-night energy. Smoky grills. Shared drinks and vibrant tables. SAEMAEUL captures the lively atmosphere of Korean social dining culture.",
       tradeArea:
         "High-traffic commercial districts, station areas, office/residential mixed districts",
       target:
@@ -259,6 +289,8 @@ export const homeV2Content = {
       englishName: "PAIK'S NOODLE",
       koreanName: "홍콩반점0410",
       concept: "Casual Korean-Chinese restaurant with accessible pricing",
+      experience:
+        "Hot flames. Bold wok flavors. Fast and comforting meals made for everyday dining. PAIK'S NOODLE brings the fast-paced energy of Korean-Chinese cuisine to the table.",
       tradeArea:
         "Major-city commercial areas, station areas, and mixed residential/business districts",
       target:
@@ -301,11 +333,15 @@ export const homeV2Content = {
     title: "Master Franchise Partnership",
     model: "Master Franchise",
     description:
-      "Other international markets are primarily developed through the Master Franchise model.",
+      "THE BORN brings proven brands and operating systems. Our partners bring market expertise and execution. Together, we build sustainable growth.",
     managementPolicy:
       "Since 2023, markets outside USA, China, and Japan have been managed primarily through the Master Franchise system.",
     partnerSelection:
       "Master Franchise partners are selected through an internal qualification review.",
+    relationship: {
+      brand: "THE BORN",
+      partner: "PARTNER",
+    },
     media: {
       src: "/assets/home-v2-assets/corporate/ceo-team.png",
       alt: "THEBORN culinary team",
@@ -357,5 +393,19 @@ export const homeV2Content = {
       { category: "China", email: "ihsuh@theborn.cn" },
       { category: "Japan", email: "theborn.japan@theborn.co.kr" },
     ],
+  },
+  whyTheBorn: {
+    eyebrow: "WHY THE BORN",
+    title: "A Brand People Remember",
+    paragraphs: [
+      "THE BORN brands are more than restaurants.",
+      "We create spaces where people gather, share stories, and enjoy warm meals together.",
+      "Even within the fast-paced energy of Korean dining culture, we believe warmth and hospitality should always remain.",
+      "That is the direction THE BORN pursues as a global restaurant brand.",
+    ],
+    media: {
+      src: "/assets/home-v2-assets/bornga/image-05.png",
+      alt: "BORNGA staff member serving guests at a Korean BBQ table",
+    },
   },
 } as const satisfies HomeV2Content;

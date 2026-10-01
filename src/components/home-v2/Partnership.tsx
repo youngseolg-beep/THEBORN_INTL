@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { homeV2Content } from "../../data/homeV2Content";
 
-const { partnership, corporate } = homeV2Content;
+const { partnership } = homeV2Content;
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -120,11 +120,11 @@ export default function Partnership() {
           >
             <div className="flex w-full max-w-6xl items-center gap-[4vw]">
               <motion.p className="shrink-0 text-[clamp(2rem,4.3vw,4.5rem)] font-medium tracking-[-0.055em]" style={{ x: leftX }}>
-                {corporate.name}
+                {partnership.relationship.brand}
               </motion.p>
               <motion.div aria-hidden="true" className="h-px min-w-12 flex-1 origin-left bg-[#ed2028]" style={{ scaleX: lineScale }} />
               <motion.p className="shrink-0 text-[clamp(2rem,4.3vw,4.5rem)] font-medium tracking-[-0.055em]" style={{ x: rightX }}>
-                LOCAL PARTNER
+                {partnership.relationship.partner}
               </motion.p>
             </div>
           </motion.div>
@@ -168,9 +168,9 @@ export default function Partnership() {
             </div>
           </div>
           <div className="my-16 flex flex-wrap items-center gap-4 text-[clamp(1rem,3.5vw,2rem)] font-medium tracking-[-0.04em] sm:my-20 sm:gap-8">
-            <p>{corporate.name}</p>
+            <p>{partnership.relationship.brand}</p>
             <div aria-hidden="true" className="h-px min-w-4 max-w-32 flex-1 bg-[#ed2028]" />
-            <p>LOCAL PARTNER</p>
+            <p>{partnership.relationship.partner}</p>
           </div>
           <div className="max-w-3xl pb-6">
             <h3 className="text-[clamp(1.75rem,4vw,3.5rem)] font-medium uppercase leading-tight tracking-[-0.05em]">

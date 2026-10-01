@@ -11,7 +11,7 @@ export default function HeroStory() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
-  const { corporate } = homeV2Content;
+  const { corporate, hero } = homeV2Content;
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -97,32 +97,33 @@ export default function HeroStory() {
 
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/45"
+          className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/5 to-black/50"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.26)_72%,rgba(0,0,0,0.48)_100%)]"
         />
 
         <motion.div
-          className="relative z-10 flex h-full items-end px-6 pb-14 sm:px-10 sm:pb-16 md:px-16 md:pb-20 lg:px-24 lg:pb-24"
+          className="relative z-10 flex h-full items-center justify-center px-6 text-center sm:px-10 md:px-16 lg:px-24"
           style={{
             opacity: reduceMotion ? 1 : textOpacity,
             y: reduceMotion ? 0 : textY,
           }}
         >
-          <div>
-            <img
-              src={corporate.media.primaryLogo.src}
-              alt={corporate.media.primaryLogo.alt}
-              className="mb-5 h-auto w-28 sm:w-32 md:mb-6 md:w-36"
-            />
+          <div className="mx-auto flex max-w-4xl flex-col items-center">
+            <p className="text-sm font-medium tracking-[0.08em] text-white/85 sm:text-base md:text-lg">
+              {hero.eyebrow}
+            </p>
             <h1
               id="home-v2-hero-title"
-              className="text-5xl font-medium leading-none tracking-[-0.055em] text-white sm:text-6xl md:text-7xl lg:text-8xl"
+              className="mt-5 text-[clamp(4rem,7vw,7rem)] font-semibold leading-[0.92] tracking-[-0.06em] text-white sm:mt-6"
             >
-              {corporate.name}
+              {hero.title}
             </h1>
+            <p className="mt-7 max-w-[48rem] text-base leading-relaxed text-white/85 sm:text-lg md:mt-8 md:text-xl">
+              {hero.description}
+            </p>
           </div>
         </motion.div>
       </motion.div>
