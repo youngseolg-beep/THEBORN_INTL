@@ -30,47 +30,65 @@ type RequirementRowProps = {
 
 const requirementBreaks = [
   ["at least 3 years", "of F&B or related"],
-  ["direct-store"],
+  ["Sufficient capital for"],
   ["Franchise business experience"],
 ] as const;
 
 function splitAfterPhrases(text: string, phrases: readonly string[]) {
-  const lines: string[] = [];
+  const lines: Array<{ text: string; start: number }> = [];
   let lineStart = 0;
 
   phrases.forEach((phrase) => {
     const phraseStart = text.indexOf(phrase, lineStart);
     if (phraseStart === -1) return;
     const lineEnd = phraseStart + phrase.length;
-    lines.push(text.slice(lineStart, lineEnd).trim());
+    const rawLine = text.slice(lineStart, lineEnd);
+    const leadingSpaceCount = rawLine.length - rawLine.trimStart().length;
+    lines.push({
+      text: rawLine.trim(),
+      start: lineStart + leadingSpaceCount,
+    });
     lineStart = lineEnd;
   });
 
-  const remainder = text.slice(lineStart).trim();
-  if (remainder) lines.push(remainder);
+  const rawRemainder = text.slice(lineStart);
+  const remainder = rawRemainder.trim();
+  if (remainder) {
+    lines.push({
+      text: remainder,
+      start: lineStart + rawRemainder.length - rawRemainder.trimStart().length,
+    });
+  }
   return lines;
 }
 
 function RequirementLine({
   text,
-  emphasis,
+  lineStart,
+  requirement,
 }: {
   text: string;
-  emphasis: string;
+  lineStart: number;
+  requirement: HomeV2QualificationRequirement;
 }) {
-  const emphasisStart = text.indexOf(emphasis);
+  const emphasisStart = requirement.text.indexOf(requirement.emphasis);
+  const emphasisEnd = emphasisStart + requirement.emphasis.length;
+  const lineEnd = lineStart + text.length;
+  const overlapStart = Math.max(lineStart, emphasisStart);
+  const overlapEnd = Math.min(lineEnd, emphasisEnd);
 
-  if (emphasisStart === -1) return text;
+  if (emphasisStart === -1 || overlapStart >= overlapEnd) return text;
 
-  const emphasisEnd = emphasisStart + emphasis.length;
+  const relativeStart = overlapStart - lineStart;
+  const relativeEnd = overlapEnd - lineStart;
 
   return (
     <>
-      {text.slice(0, emphasisStart)}
+      {text.slice(0, relativeStart)}
       <span className="font-semibold text-[#ed2028]">
-        {text.slice(emphasisStart, emphasisEnd)}
+        {text.slice(relativeStart, relativeEnd)}
       </span>
-      {text.slice(emphasisEnd)}
+      {text.slice(relativeEnd)}
     </>
   );
 }
@@ -115,8 +133,12 @@ function RequirementRow({
         <span className="sr-only">{requirement.text}</span>
         <span aria-hidden="true">
           {lines.map((line) => (
-            <span key={line} className="block lg:whitespace-nowrap">
-              <RequirementLine text={line} emphasis={requirement.emphasis} />
+            <span key={line.text} className="block lg:whitespace-nowrap">
+              <RequirementLine
+                text={line.text}
+                lineStart={line.start}
+                requirement={requirement}
+              />
             </span>
           ))}
         </span>

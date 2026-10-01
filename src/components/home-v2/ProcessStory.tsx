@@ -53,9 +53,9 @@ const processStepBreaks: Record<number, readonly string[]> = {
   2: ["qualification"],
   3: ["business"],
   4: ["feasibility"],
-  5: ["business"],
+  5: ["franchise"],
   6: [],
-  7: ["sharing", "plan"],
+  7: ["information", "plan"],
   8: ["agreement"],
   9: ["including", "training,"],
 };
@@ -85,7 +85,7 @@ function ProcessStepTitle({ step, title }: { step: number; title: string }) {
       <span className="sr-only">{title}</span>
       <span aria-hidden="true">
         {lines.map((line) => (
-          <span key={line} className="block lg:whitespace-nowrap">
+          <span key={line} className="block xl:whitespace-nowrap">
             {line}
           </span>
         ))}
@@ -103,7 +103,7 @@ function AnimatedStep({ index, number, title, progress }: AnimatedStepProps) {
       className="absolute inset-0 flex items-center"
       style={{ opacity, y }}
     >
-      <h3 className="max-w-[15ch] text-[clamp(2.15rem,3.8vw,4.5rem)] font-medium uppercase leading-[1.08] tracking-[-0.045em] text-[#f7f3ec]">
+      <h3 className="w-full min-w-0 text-[clamp(1.9rem,3vw,3.7rem)] font-medium uppercase leading-[1.1] tracking-[-0.04em] text-[#f7f3ec]">
         <span className="sr-only">Step {number} of 09: </span>
         <ProcessStepTitle step={index + 1} title={title} />
       </h3>
@@ -279,7 +279,7 @@ export default function ProcessStory() {
       >
         {immersive ? (
           <div className="sticky top-0 h-svh overflow-hidden">
-            <div className="mx-auto flex h-full max-w-[96rem] flex-col px-[5%] py-[clamp(2rem,5vh,3.5rem)]">
+            <div className="mx-auto flex h-full max-w-[96rem] flex-col py-[clamp(2rem,5vh,3.5rem)] pl-[5%] pr-[5%] lg:pr-[clamp(7rem,10vw,11rem)]">
               <header className="shrink-0">
                 <h2
                   id="home-v2-process-story-title"
@@ -289,7 +289,7 @@ export default function ProcessStory() {
                 </h2>
               </header>
 
-              <div className="grid min-h-0 flex-1 grid-cols-[0.42fr_0.58fr] gap-[clamp(2rem,6vw,8rem)]">
+              <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] gap-[clamp(1.5rem,4vw,5rem)]">
                 <div className="relative min-h-0" aria-hidden="true">
                   {process.steps.map(({ step }, index) => (
                     <AnimatedNumber
@@ -301,7 +301,7 @@ export default function ProcessStory() {
                   ))}
                 </div>
 
-                <ol className="relative min-h-0">
+                <ol className="relative min-h-0 min-w-0">
                   {process.steps.map(({ step, title }, index) => (
                     <AnimatedStep
                       key={step}
@@ -314,7 +314,7 @@ export default function ProcessStory() {
                 </ol>
               </div>
 
-              <div className="grid shrink-0 grid-cols-[0.42fr_0.58fr] gap-[clamp(2rem,6vw,8rem)] border-t border-white/12 pt-5">
+              <div className="grid shrink-0 grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] gap-[clamp(1.5rem,4vw,5rem)] border-t border-white/12 pt-5">
                 <ProgressCount progress={scrollYProgress} />
                 <div className="relative h-px self-center overflow-hidden bg-white/15">
                   <motion.div
