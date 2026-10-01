@@ -123,9 +123,10 @@ export default function WhyTheBorn() {
   const initialImageLeft = initialGroupLeft;
   const initialTextCenter = initialGroupLeft + initialImageWidth + initialGap + initialTextWidth / 2;
   const moveProgress = ramp(storyProgress, 0.22, 0.58);
+  const horizontalMoveProgress = ramp(storyProgress, 0.22, 0.42);
   const initialTitleSize = isMobile ? 34 : Math.min(Math.max(viewport.width * 0.04, 40), 52);
   const finalTitleSize = isMobile ? 48 : Math.min(Math.max(viewport.width * 0.06, 56), 104);
-  const textX = mix(isMobile ? 0 : initialTextCenter - viewport.width / 2, 0, moveProgress);
+  const textX = mix(isMobile ? 0 : initialTextCenter - viewport.width / 2, 0, horizontalMoveProgress);
   const textY = mix(isMobile ? viewport.height * 0.19 : 0, 0, moveProgress);
   const titleSize = mix(initialTitleSize, finalTitleSize, moveProgress);
   const manifestoOpacity = 1 - ramp(storyProgress, 0.72, 0.82);
