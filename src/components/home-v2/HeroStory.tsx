@@ -105,13 +105,13 @@ export default function HeroStory() {
         />
 
         <motion.div
-          className="relative z-10 flex h-full items-center justify-center px-6 text-center sm:px-10 md:px-16 lg:px-24"
+          className="relative z-10 flex h-full items-end px-6 pb-14 text-left sm:px-10 sm:pb-16 md:px-16 md:pb-20 lg:px-24 lg:pb-24"
           style={{
             opacity: reduceMotion ? 1 : textOpacity,
             y: reduceMotion ? 0 : textY,
           }}
         >
-          <div className="mx-auto flex max-w-4xl flex-col items-center">
+          <div className="flex max-w-3xl flex-col items-start">
             <p className="text-sm font-medium tracking-[0.08em] text-white/85 sm:text-base md:text-lg">
               {hero.eyebrow}
             </p>

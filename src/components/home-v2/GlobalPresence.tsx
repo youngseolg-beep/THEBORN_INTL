@@ -483,7 +483,7 @@ function AnimatedCountryName({ country, index, progress }: {
 
   return (
     <motion.li
-      className="text-center text-sm font-medium tracking-[0.06em] text-zinc-200 md:text-[15px]"
+      className="text-center text-[15px] font-medium uppercase tracking-[0.07em] text-zinc-200 md:text-base"
       style={{ opacity, y }}
     >
       {country}
@@ -495,7 +495,7 @@ function StaticCountryList() {
   return (
     <ul className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
       {operatingCountries.map((country) => (
-        <li key={country} className="text-center text-sm font-medium tracking-[0.06em] text-zinc-200 md:text-[15px]">
+        <li key={country} className="text-center text-[15px] font-medium uppercase tracking-[0.07em] text-zinc-200 md:text-base">
           {country}
         </li>
       ))}

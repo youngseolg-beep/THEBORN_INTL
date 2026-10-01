@@ -44,6 +44,7 @@ const galleryCollections: GalleryCollection[] = [
       { src: "/assets/home-v2-assets/saemaeul/image-06.jpg", alt: "SAEMAEUL gallery image 5" },
       { src: "/assets/home-v2-assets/saemaeul/image-11.png", alt: "SAEMAEUL gallery image 6" },
       { src: "/assets/home-v2-assets/saemaeul/image-12.png", alt: "SAEMAEUL gallery image 7" },
+      { src: "/assets/home-v2-assets/saemaeul/image-02.png", alt: "SAEMAEUL gallery image 8" },
     ],
   },
   {

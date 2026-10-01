@@ -148,16 +148,12 @@ function VMark() {
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 12 9"
-      className="h-[9px] w-3 shrink-0"
-      fill="none"
+      viewBox="0 0 20 16"
+      className="h-4 w-5 shrink-0"
     >
       <path
-        d="M1 1.25 6 7.75 11 1.25"
-        stroke="#ed2028"
-        strokeWidth="1.35"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
+        d="M1 1.5h4.25L10 9.4l4.75-7.9H19L10 16 1 1.5Z"
+        fill="#ed2028"
       />
     </svg>
   );
@@ -165,7 +161,7 @@ function VMark() {
 
 function StepLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-3">
       <VMark />
       <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#ed2028] sm:text-xs">
         {children}
@@ -241,7 +237,7 @@ function SignatureMenu({ brand }: { brand: HomeV2Brand }) {
       <StepLabel>SIGNATURE MENU</StepLabel>
       <div className="mt-4 space-y-2">
         {brand.signatureMenu.map((menuItem) => (
-          <p key={menuItem} className="text-[15px] leading-relaxed text-[#f7f3ec] sm:text-base">
+          <p key={menuItem} className="text-[15px] uppercase leading-relaxed tracking-[0.035em] text-[#f7f3ec] sm:text-base">
             {menuItem}
           </p>
         ))}
@@ -264,7 +260,7 @@ function InformationStep({
       <dt>
         <StepLabel>{label}</StepLabel>
       </dt>
-      <dd className="mt-2 text-[15px] leading-relaxed text-zinc-300 sm:text-base">
+      <dd className="mt-2 text-[15px] uppercase leading-relaxed tracking-[0.035em] text-zinc-300 sm:text-base">
         {value}
         {description ? (
           <p className="mt-3 text-sm leading-relaxed text-zinc-400 sm:text-[15px]">
