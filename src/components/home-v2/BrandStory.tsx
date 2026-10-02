@@ -19,6 +19,7 @@ import {
   type HomeV2Locale,
 } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import { useMobileLayout } from "./useMobileLayout";
 
 type BrandPresentation = {
   brand: HomeV2Brand;
@@ -548,6 +549,7 @@ function NaturalFlowBrands({
   reduceMotion: boolean;
 }) {
   const tabletLayout = useTabletLayout();
+  const { mobile } = useMobileLayout();
 
   return (
     <div className="px-[5%] py-20 sm:py-28 lg:px-[6%] lg:py-36">
@@ -566,7 +568,7 @@ function NaturalFlowBrands({
                 key={presentation.brand.key}
                 presentation={presentation}
                 revealWindows={revealWindows}
-                reduceMotion={reduceMotion}
+                reduceMotion={reduceMotion || mobile}
                 labels={labels}
                 locale={locale}
                 className={index === 2 ? "sm:col-span-2 lg:col-span-1" : undefined}

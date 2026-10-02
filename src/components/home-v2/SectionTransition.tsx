@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useMobileLayout } from "./useMobileLayout";
 
 type SectionTransitionProps = {
   number: string;
@@ -22,6 +23,21 @@ function sampleTimeline(value: number, times: number[], values: number[]) {
 }
 
 export default function SectionTransition({ number, title }: SectionTransitionProps) {
+  const { mobile } = useMobileLayout();
+  if (mobile) {
+    return (
+      <div role="separator" aria-label={`Chapter ${number}: ${title}`} className="bg-[#08090b] text-[#f7f3ec]">
+        <div className="flex flex-col items-center justify-center px-5 text-center" aria-hidden="true">
+          <p className="text-xs font-semibold tracking-[0.32em] text-[#ed2028]">{number}</p>
+          <p className="font-medium uppercase leading-none tracking-[-0.06em]">{title}</p>
+        </div>
+      </div>
+    );
+  }
+  return <DesktopSectionTransition number={number} title={title} />;
+}
+
+function DesktopSectionTransition({ number, title }: SectionTransitionProps) {
   const transitionRef = useRef<HTMLDivElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
   const { scrollYProgress } = useScroll({

@@ -11,13 +11,14 @@ import Qualifications from "./Qualifications";
 import SectionRailNav from "./SectionRailNav";
 import SectionTransition from "./SectionTransition";
 import WhyTheBorn from "./WhyTheBorn";
+import "./HomeV2.mobile.css";
 
 export default function HomeV2() {
   return (
     <HomeV2LocaleProvider>
       <HomeV2LanguageToggle />
       <SectionRailNav />
-      <main aria-label="Home V2">
+      <main aria-label="Home V2" className="home-v2-page">
         <div id="home" data-home-v2-nav-section="home">
           <HeroStory />
         </div>

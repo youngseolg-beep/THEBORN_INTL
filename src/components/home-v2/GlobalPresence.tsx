@@ -25,6 +25,7 @@ import type {
   HomeV2GlobalPresence,
 } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import { useMobileLayout } from "./useMobileLayout";
 
 // Natural Earth 1:110m country geometry, bundled by Vite; no runtime request.
 const topology = countriesData as unknown as Topology<{ countries: GeometryCollection }>;
@@ -728,7 +729,69 @@ function WorldMap({
   );
 }
 
+function MobileGlobalPresence({ storyFits }: { storyFits: boolean }) {
+  const { content, locale } = useHomeV2Locale();
+  const { globalPresence, corporate } = content;
+  const reduceMotion = Boolean(useReducedMotion());
+  const animate = storyFits && !reduceMotion;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] });
+  // All existing routes complete before the summary enters. The list follows outside sticky.
+  const progress = useTransform(scrollYProgress, [0, 0.78, 1], [0, 1, 1]);
+  const camera = useTransform(progress, [0, 0.12, 0.48, 0.76, 1], [
+    `translate(${500 - koreaPoint[0] * 2.7}px, ${262 - koreaPoint[1] * 2.7}px) scale(2.7)`,
+    `translate(${500 - koreaPoint[0] * 2.35}px, ${262 - koreaPoint[1] * 2.35}px) scale(2.35)`,
+    "translate(-180px, -25px) scale(1.3)",
+    "translate(0px, 0px) scale(1)",
+    "translate(0px, 0px) scale(1)",
+  ]);
+  const originOpacity = useTransform(progress, [0, 0.85, 1], [1, 0.45, 0.15]);
+  const summaryOpacity = useTransform(scrollYProgress, value => rangeProgress(value, 0.77, 0.88));
+  const summaryY = useTransform(scrollYProgress, [0.77, 0.95, 1], [18, 0, 0]);
+  const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  return (
+    <section className="mobile-global" aria-labelledby="mobile-global-title">
+      <div ref={trackRef} className={animate ? "mobile-global-track" : ""} data-mobile-story={animate ? "global" : "static-global"}>
+        <div className={animate ? "mobile-global-scene" : "mobile-global-static"}>
+          <header className="mobile-story-heading">
+            <p className="mobile-eyebrow text-[#ed2028]">{corporate.name}</p>
+            <h2 id="mobile-global-title">GLOBAL</h2>
+          </header>
+          <div className="mobile-global-map">
+            <WorldMap
+              ariaLabel={globalPresence.mapAriaLabel}
+              progress={animate ? progress : undefined}
+              staticActive={!animate}
+              cameraTransform={animate ? camera : undefined}
+              originOpacity={animate ? originOpacity : 0}
+              originRadius={3}
+            />
+          </div>
+          <motion.div className="mobile-global-summary" style={{ opacity: animate ? summaryOpacity : 1, y: animate ? summaryY : 0 }}>
+            <SummaryAccent />
+            <p><OverseasSummaryCopy summary={globalPresence.overseasSummary} /></p>
+          </motion.div>
+          {animate ? <div className="mobile-story-progress" aria-hidden="true"><motion.div style={{ scaleX: progressScale }} /></div> : null}
+        </div>
+      </div>
+      <ul className="mobile-global-countries">
+        {operatingCountries.map(country => (
+          <li key={country} className={locale === "ko" ? "" : "uppercase"}>
+            {globalPresence.countryNames[country]}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export default function GlobalPresence() {
+  const { mobile, storyFits } = useMobileLayout();
+  return mobile ? <MobileGlobalPresence storyFits={storyFits} /> : <DesktopGlobalPresence />;
+}
+
+function DesktopGlobalPresence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const reduceMotion = Boolean(useReducedMotion());

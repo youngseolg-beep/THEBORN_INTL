@@ -61,7 +61,8 @@ function ProcessStepTitle({
   return (
     <>
       <span className="sr-only">{title}</span>
-      <span aria-hidden="true">
+      <span aria-hidden="true" className="md:hidden">{title}</span>
+      <span aria-hidden="true" className="hidden md:inline">
         {lineGroups.map((line) => (
           <span key={line} className="block xl:whitespace-nowrap">
             {line}

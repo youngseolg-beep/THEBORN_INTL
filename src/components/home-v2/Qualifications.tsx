@@ -105,7 +105,10 @@ function RequirementRow({
         isKorean ? "tracking-[-0.035em]" : "uppercase tracking-[-0.05em]"
       }`}>
         <span className="sr-only">{requirement.text}</span>
-        <span aria-hidden="true">
+        <span aria-hidden="true" className="md:hidden">
+          <RequirementLine text={requirement.text} lineStart={0} requirement={requirement} />
+        </span>
+        <span aria-hidden="true" className="hidden md:inline">
           {lines.map((line) => (
             <span key={line.text} className="block lg:whitespace-nowrap">
               <RequirementLine

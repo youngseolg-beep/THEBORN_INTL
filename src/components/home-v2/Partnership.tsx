@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import type { HomeV2Partnership } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import { useMobileLayout } from "./useMobileLayout";
+import MobilePartnership from "./MobilePartnership";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -39,6 +41,11 @@ function OpeningTitle({
 }
 
 export default function Partnership() {
+  const { mobile, storyFits } = useMobileLayout();
+  return mobile ? <MobilePartnership storyFits={storyFits} /> : <DesktopPartnership />;
+}
+
+function DesktopPartnership() {
   const { content, locale } = useHomeV2Locale();
   const { partnership } = content;
   const isKorean = locale === "ko";
