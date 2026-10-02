@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import type { HomeV2BrandKey } from "../../data/homeV2Content";
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
 type GalleryBrand = "bornga" | "saemaeul" | "paiks-noodle";
 
@@ -10,7 +12,6 @@ type GalleryImage = {
 
 type GalleryCollection = {
   id: GalleryBrand;
-  label: string;
   images: GalleryImage[];
 };
 
@@ -22,7 +23,6 @@ type LightboxSelection = {
 const galleryCollections: GalleryCollection[] = [
   {
     id: "bornga",
-    label: "BORNGA",
     images: [
       { src: "/assets/home-v2-assets/bornga/image-01.png", alt: "BORNGA gallery image 1" },
       { src: "/assets/home-v2-assets/bornga/image-06.png", alt: "BORNGA gallery image 2" },
@@ -35,7 +35,6 @@ const galleryCollections: GalleryCollection[] = [
   },
   {
     id: "saemaeul",
-    label: "SAEMAEUL",
     images: [
       { src: "/assets/home-v2-assets/saemaeul/image-01.webp", alt: "SAEMAEUL gallery image 1" },
       { src: "/assets/home-v2-assets/saemaeul/image-05.png", alt: "SAEMAEUL gallery image 2" },
@@ -49,7 +48,6 @@ const galleryCollections: GalleryCollection[] = [
   },
   {
     id: "paiks-noodle",
-    label: "PAIK'S NOODLE",
     images: [
       { src: "/assets/home-v2-assets/paiks-noodle/image-02.png", alt: "PAIK'S NOODLE gallery image 1" },
       { src: "/assets/home-v2-assets/paiks-noodle/image-06.png", alt: "PAIK'S NOODLE gallery image 2" },
@@ -66,6 +64,12 @@ const galleryCollectionsById = new Map<GalleryBrand, GalleryCollection>(
   galleryCollections.map((collection) => [collection.id, collection]),
 );
 
+const brandKeyByGalleryId: Record<GalleryBrand, HomeV2BrandKey> = {
+  bornga: "BORNGA",
+  saemaeul: "SAEMAEUL",
+  "paiks-noodle": "PAIKS_NOODLE",
+};
+
 function getFocusableElements(container: HTMLElement) {
   return Array.from(
     container.querySelectorAll<HTMLElement>(
@@ -75,6 +79,8 @@ function getFocusableElements(container: HTMLElement) {
 }
 
 export default function Gallery() {
+  const { content, locale } = useHomeV2Locale();
+  const { gallery } = content;
   const reduceMotion = Boolean(useReducedMotion());
   const [lightbox, setLightbox] = useState<LightboxSelection | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -87,6 +93,11 @@ export default function Gallery() {
     ? selectedCollection.images[lightbox.imageIndex]
     : undefined;
   const lightboxOpen = lightbox !== null;
+  const getBrandLabel = (brandId: GalleryBrand) =>
+    content.brands[brandKeyByGalleryId[brandId]].displayName;
+  const selectedLabel = selectedCollection
+    ? getBrandLabel(selectedCollection.id)
+    : "";
 
   const closeLightbox = () => setLightbox(null);
   const showPrevious = () => {
@@ -170,7 +181,7 @@ export default function Gallery() {
     >
       <div className="mx-auto max-w-[1600px]">
         <h2 id="home-v2-gallery-title" className="sr-only">
-          Gallery
+          {gallery.title}
         </h2>
 
         <div className="grid grid-cols-1 items-start gap-y-16 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-20 lg:grid-cols-3 lg:gap-x-5 xl:gap-x-6">
@@ -184,9 +195,11 @@ export default function Gallery() {
             >
               <h3
                 id={`gallery-heading-${collection.id}`}
-                className="mb-5 text-center text-[22px] font-semibold uppercase tracking-[0.1em] text-[#f7f3ec] sm:mb-6 sm:text-2xl md:text-[26px] xl:text-[30px]"
+                className={`mb-5 text-center text-[22px] font-semibold text-[#f7f3ec] sm:mb-6 sm:text-2xl md:text-[26px] xl:text-[30px] ${
+                  locale === "ko" ? "tracking-[-0.02em]" : "uppercase tracking-[0.1em]"
+                }`}
               >
-                {collection.label}
+                {getBrandLabel(collection.id)}
               </h3>
 
               <div className="flex flex-col gap-3 sm:gap-4">
@@ -199,7 +212,9 @@ export default function Gallery() {
                       lastTriggerRef.current = event.currentTarget;
                       setLightbox({ brandId: collection.id, imageIndex });
                     }}
-                    aria-label={`Open ${collection.label} image ${imageIndex + 1} of ${collection.images.length}`}
+                    aria-label={locale === "ko"
+                      ? `${getBrandLabel(collection.id)} ${gallery.image} ${imageIndex + 1}/${collection.images.length} ${gallery.openImage}`
+                      : `${gallery.openImage} ${getBrandLabel(collection.id)} ${gallery.image} ${imageIndex + 1} ${gallery.of} ${collection.images.length}`}
                     initial={reduceMotion ? false : { opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.08 }}
@@ -234,7 +249,9 @@ export default function Gallery() {
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
-            aria-label={`${selectedCollection.label} image ${lightbox.imageIndex + 1} of ${selectedCollection.images.length}`}
+            aria-label={locale === "ko"
+              ? `${selectedLabel} ${gallery.image} ${lightbox.imageIndex + 1}/${selectedCollection.images.length}`
+              : `${selectedLabel} ${gallery.image} ${lightbox.imageIndex + 1} ${gallery.of} ${selectedCollection.images.length}`}
             className="fixed inset-0 z-[80] flex items-center justify-center bg-black/95 px-4 py-16 sm:px-10"
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -247,7 +264,7 @@ export default function Gallery() {
             <button
               ref={closeButtonRef}
               type="button"
-              aria-label="Close gallery"
+              aria-label={gallery.close}
               onClick={closeLightbox}
               className="absolute right-4 top-4 flex h-12 w-12 items-center justify-center text-3xl font-light text-white/75 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] sm:right-8 sm:top-8"
             >
@@ -256,7 +273,7 @@ export default function Gallery() {
 
             <button
               type="button"
-              aria-label="Previous image"
+              aria-label={gallery.previous}
               onClick={showPrevious}
               className="absolute bottom-4 left-[calc(50%-3.75rem)] flex h-12 w-12 items-center justify-center text-2xl text-white/75 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] sm:bottom-auto sm:left-5 sm:top-1/2 sm:-translate-y-1/2"
             >
@@ -276,7 +293,7 @@ export default function Gallery() {
 
             <button
               type="button"
-              aria-label="Next image"
+              aria-label={gallery.next}
               onClick={showNext}
               className="absolute bottom-4 right-[calc(50%-3.75rem)] flex h-12 w-12 items-center justify-center text-2xl text-white/75 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] sm:bottom-auto sm:right-5 sm:top-1/2 sm:-translate-y-1/2"
             >

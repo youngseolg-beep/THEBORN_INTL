@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { homeV2Content } from "../../data/homeV2Content";
-
-const { partnership } = homeV2Content;
+import type { HomeV2Partnership } from "../../data/homeV2Content";
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -18,11 +17,19 @@ function sampleTimeline(value: number, times: number[], values: number[]) {
   return values[values.length - 1];
 }
 
-function OpeningTitle() {
+function OpeningTitle({
+  partnership,
+  isKorean,
+}: {
+  partnership: HomeV2Partnership;
+  isKorean: boolean;
+}) {
   return (
     <h2
       id="home-v2-partnership-title"
-      className="text-[clamp(2rem,3.15vw,3.5rem)] font-medium uppercase leading-[1.06] tracking-[-0.055em]"
+      className={`text-[clamp(2rem,3.15vw,3.5rem)] font-medium leading-[1.06] ${
+        isKorean ? "tracking-[-0.035em]" : "uppercase tracking-[-0.055em]"
+      }`}
     >
       {partnership.model}
       <br />
@@ -32,6 +39,9 @@ function OpeningTitle() {
 }
 
 export default function Partnership() {
+  const { content, locale } = useHomeV2Locale();
+  const { partnership } = content;
+  const isKorean = locale === "ko";
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
   const [immersiveViewport, setImmersiveViewport] = useState(false);
@@ -113,8 +123,10 @@ export default function Partnership() {
             className="absolute inset-y-0 right-[4%] flex w-[30%] flex-col justify-center"
             style={{ opacity: openingOpacity, y: openingY }}
           >
-            <OpeningTitle />
-            <p className="mt-7 max-w-sm text-base leading-relaxed text-zinc-300 xl:text-lg">
+            <OpeningTitle partnership={partnership} isKorean={isKorean} />
+            <p className={`mt-7 max-w-sm whitespace-pre-line text-base leading-relaxed text-zinc-300 xl:text-lg ${
+              isKorean ? "tracking-[-0.015em]" : ""
+            }`}>
               {partnership.description}
             </p>
           </motion.div>
@@ -138,7 +150,9 @@ export default function Partnership() {
             className="absolute inset-0 flex flex-col items-center justify-center px-[8%] text-center"
             style={{ opacity: modelOpacity, y: modelY }}
           >
-            <h3 className="text-[clamp(3.5rem,6.7vw,7rem)] font-medium uppercase leading-none tracking-[-0.06em]">
+            <h3 className={`text-[clamp(3.5rem,6.7vw,7rem)] font-medium leading-none ${
+              isKorean ? "tracking-[-0.04em]" : "uppercase tracking-[-0.06em]"
+            }`}>
               {partnership.model}
             </h3>
             <motion.div aria-hidden="true" className="my-9 h-px w-24 bg-[#ed2028]" style={{ scaleX: finalLineScale }} />
@@ -166,8 +180,10 @@ export default function Partnership() {
               decoding="async"
             />
             <div>
-              <OpeningTitle />
-              <p className="mt-6 max-w-lg text-base leading-relaxed text-zinc-300 sm:text-lg">
+              <OpeningTitle partnership={partnership} isKorean={isKorean} />
+              <p className={`mt-6 max-w-lg whitespace-pre-line text-base leading-relaxed text-zinc-300 sm:text-lg ${
+                isKorean ? "tracking-[-0.015em]" : ""
+              }`}>
                 {partnership.description}
               </p>
             </div>
@@ -178,7 +194,9 @@ export default function Partnership() {
             <p className="text-[#ed2028]">{partnership.relationship.partner}</p>
           </div>
           <div className="max-w-3xl pb-6">
-            <h3 className="text-[clamp(1.75rem,4vw,3.5rem)] font-medium uppercase leading-tight tracking-[-0.05em]">
+            <h3 className={`text-[clamp(1.75rem,4vw,3.5rem)] font-medium leading-tight ${
+              isKorean ? "tracking-[-0.035em]" : "uppercase tracking-[-0.05em]"
+            }`}>
               {partnership.model}
             </h3>
             <p className="mt-7 max-w-2xl text-base leading-relaxed text-[#f7f3ec] sm:text-xl">

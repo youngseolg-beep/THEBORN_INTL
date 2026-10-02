@@ -6,7 +6,7 @@ import {
   useScroll,
   useTransform,
 } from "motion/react";
-import { homeV2Content } from "../../data/homeV2Content";
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -30,7 +30,8 @@ export default function HeroStory() {
   const [viewport, setViewport] = useState({ width: 1440, height: 900 });
   const [copySize, setCopySize] = useState({ width: 768, height: 280 });
   const [heroProgress, setHeroProgress] = useState(0);
-  const { corporate, hero } = homeV2Content;
+  const { content, locale } = useHomeV2Locale();
+  const { corporate, hero } = content;
 
   useEffect(() => {
     const updateViewport = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
@@ -140,17 +141,23 @@ export default function HeroStory() {
             transformOrigin: "left bottom",
           }}
         >
-          <p className="text-base font-medium tracking-[0.08em] text-white/85 sm:text-lg md:text-xl">
+          <p className={`text-base font-medium text-white/85 sm:text-lg md:text-xl ${
+            locale === "ko" ? "tracking-[-0.015em]" : "tracking-[0.08em]"
+          }`}>
             {hero.eyebrow}
           </p>
           <motion.h1
             id="home-v2-hero-title"
-            className="mt-5 text-[clamp(4.5rem,18vw,6rem)] font-semibold leading-[0.9] tracking-[-0.065em] sm:mt-6 md:text-[clamp(5.5rem,9vw,9rem)]"
+            className={`mt-5 text-[clamp(4.5rem,18vw,6rem)] font-semibold leading-[0.9] sm:mt-6 md:text-[clamp(5.5rem,9vw,9rem)] ${
+              locale === "ko" ? "tracking-[-0.04em]" : "tracking-[-0.065em]"
+            }`}
             style={{ color: heroTitleColor }}
           >
             {hero.title}
           </motion.h1>
-          <p className="mt-7 text-lg leading-relaxed text-white/85 sm:text-xl md:mt-8 md:text-[1.375rem]">
+          <p className={`mt-7 text-lg leading-relaxed text-white/85 sm:text-xl md:mt-8 md:text-[1.375rem] ${
+            locale === "ko" ? "tracking-[-0.015em]" : ""
+          }`}>
             {hero.description}
           </p>
         </motion.div>

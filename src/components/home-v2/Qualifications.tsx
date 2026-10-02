@@ -7,11 +7,10 @@ import {
   type MotionValue,
 } from "motion/react";
 import {
-  homeV2Content,
   type HomeV2QualificationRequirement,
+  type HomeV2Qualifications,
 } from "../../data/homeV2Content";
-
-const { qualifications } = homeV2Content;
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -26,40 +25,16 @@ type RequirementRowProps = {
   dimStart?: number;
   dimEnd?: number;
   animate: boolean;
+  isKorean: boolean;
 };
 
-const requirementBreaks = [
-  ["at least 3 years", "of F&B or related"],
-  ["Sufficient capital for"],
-  ["Franchise business experience"],
-] as const;
-
-function splitAfterPhrases(text: string, phrases: readonly string[]) {
-  const lines: Array<{ text: string; start: number }> = [];
-  let lineStart = 0;
-
-  phrases.forEach((phrase) => {
-    const phraseStart = text.indexOf(phrase, lineStart);
-    if (phraseStart === -1) return;
-    const lineEnd = phraseStart + phrase.length;
-    const rawLine = text.slice(lineStart, lineEnd);
-    const leadingSpaceCount = rawLine.length - rawLine.trimStart().length;
-    lines.push({
-      text: rawLine.trim(),
-      start: lineStart + leadingSpaceCount,
-    });
-    lineStart = lineEnd;
+function getLineSegments(requirement: HomeV2QualificationRequirement) {
+  let searchStart = 0;
+  return requirement.lineGroups.map((text) => {
+    const start = requirement.text.indexOf(text, searchStart);
+    searchStart = Math.max(searchStart, start + text.length);
+    return { text, start: Math.max(0, start) };
   });
-
-  const rawRemainder = text.slice(lineStart);
-  const remainder = rawRemainder.trim();
-  if (remainder) {
-    lines.push({
-      text: remainder,
-      start: lineStart + rawRemainder.length - rawRemainder.trimStart().length,
-    });
-  }
-  return lines;
 }
 
 function RequirementLine({
@@ -102,12 +77,9 @@ function RequirementRow({
   dimStart,
   dimEnd,
   animate,
+  isKorean,
 }: RequirementRowProps) {
-  const requirementIndex = Number(number) - 1;
-  const lines = splitAfterPhrases(
-    requirement.text,
-    requirementBreaks[requirementIndex] ?? [],
-  );
+  const lines = getLineSegments(requirement);
   const opacity = useTransform(progress, (value) => {
     const entered = 0.34 + 0.66 * ramp(value, enterStart, enterEnd);
     if (dimStart === undefined || dimEnd === undefined) return entered;
@@ -129,7 +101,9 @@ function RequirementRow({
       <span aria-hidden="true" className="self-start pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base">
         {number}
       </span>
-      <p className="max-w-5xl text-[clamp(1.75rem,3.35vw,4rem)] font-medium uppercase leading-[1.04] tracking-[-0.05em] text-[#f7f3ec]">
+      <p className={`max-w-5xl text-[clamp(1.75rem,3.35vw,4rem)] font-medium leading-[1.04] text-[#f7f3ec] ${
+        isKorean ? "tracking-[-0.035em]" : "uppercase tracking-[-0.05em]"
+      }`}>
         <span className="sr-only">{requirement.text}</span>
         <span aria-hidden="true">
           {lines.map((line) => (
@@ -147,13 +121,15 @@ function RequirementRow({
   );
 }
 
-function Documents({ animatedStyle }: {
+function Documents({ qualifications, isKorean, animatedStyle }: {
+  qualifications: HomeV2Qualifications;
+  isKorean: boolean;
   animatedStyle?: { opacity: MotionValue<number>; y: MotionValue<number> };
 }) {
   const content = (
     <div className="grid gap-5 md:grid-cols-[0.24fr_0.76fr] md:gap-10">
       <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-[#ed2028]">
-        Required Documents
+        {qualifications.requiredDocumentsTitle}
       </h3>
       <ol className="grid gap-5 sm:grid-cols-3 sm:gap-6">
         {qualifications.requiredDocuments.map((document, index) => (
@@ -161,7 +137,9 @@ function Documents({ animatedStyle }: {
             <span aria-hidden="true" className="text-[10px] font-semibold tracking-[0.2em] text-zinc-500">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <p className="mt-2 max-w-xs text-sm uppercase leading-relaxed text-zinc-300 sm:text-base">
+            <p className={`mt-2 max-w-xs text-sm leading-relaxed text-zinc-300 sm:text-base ${
+              isKorean ? "tracking-[-0.015em]" : "uppercase"
+            }`}>
               {document}
             </p>
           </li>
@@ -180,6 +158,9 @@ function Documents({ animatedStyle }: {
 }
 
 export default function Qualifications() {
+  const { content, locale } = useHomeV2Locale();
+  const { qualifications } = content;
+  const isKorean = locale === "ko";
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
   const [immersiveViewport, setImmersiveViewport] = useState(false);
@@ -236,6 +217,7 @@ export default function Qualifications() {
                 dimStart={0.25}
                 dimEnd={0.38}
                 animate
+                isKorean={isKorean}
               />
               <RequirementRow
                 number="02"
@@ -246,6 +228,7 @@ export default function Qualifications() {
                 dimStart={0.5}
                 dimEnd={0.64}
                 animate
+                isKorean={isKorean}
               />
               <RequirementRow
                 number="03"
@@ -254,10 +237,15 @@ export default function Qualifications() {
                 enterStart={0.46}
                 enterEnd={0.6}
                 animate
+                isKorean={isKorean}
               />
             </ol>
             <div className="shrink-0 pt-[clamp(1rem,2.5vh,1.75rem)]">
-              <Documents animatedStyle={{ opacity: documentsOpacity, y: documentsY }} />
+              <Documents
+                qualifications={qualifications}
+                isKorean={isKorean}
+                animatedStyle={{ opacity: documentsOpacity, y: documentsY }}
+              />
             </div>
           </div>
         </div>
@@ -272,6 +260,7 @@ export default function Qualifications() {
               enterStart={0}
               enterEnd={0.12}
               animate={false}
+              isKorean={isKorean}
             />
             <RequirementRow
               number="02"
@@ -280,6 +269,7 @@ export default function Qualifications() {
               enterStart={0.2}
               enterEnd={0.34}
               animate={false}
+              isKorean={isKorean}
             />
             <RequirementRow
               number="03"
@@ -288,10 +278,11 @@ export default function Qualifications() {
               enterStart={0.46}
               enterEnd={0.6}
               animate={false}
+              isKorean={isKorean}
             />
           </ol>
           <div className="mt-14 sm:mt-20">
-            <Documents />
+            <Documents qualifications={qualifications} isKorean={isKorean} />
           </div>
         </div>
       )}

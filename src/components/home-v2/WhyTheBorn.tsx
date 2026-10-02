@@ -1,17 +1,10 @@
-import { homeV2Content } from "../../data/homeV2Content";
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
-const { whyTheBorn } = homeV2Content;
-const titleWords = whyTheBorn.title.split(" ");
-const titleLines = [
-  titleWords.slice(0, 3).join(" "),
-  titleWords.slice(3).join(" "),
-];
-
-function ClosingMessage() {
-  const hasFinalPeriod = whyTheBorn.closingMessage.endsWith(".");
+function ClosingMessage({ closingMessage }: { closingMessage: string }) {
+  const hasFinalPeriod = closingMessage.endsWith(".");
   const message = hasFinalPeriod
-    ? whyTheBorn.closingMessage.slice(0, -1)
-    : whyTheBorn.closingMessage;
+    ? closingMessage.slice(0, -1)
+    : closingMessage;
 
   return (
     <p className="text-center text-[clamp(1.125rem,1.5vw,1.5rem)] font-semibold uppercase leading-snug tracking-[0.12em] text-[#f7f3ec]">
@@ -22,6 +15,10 @@ function ClosingMessage() {
 }
 
 export default function WhyTheBorn() {
+  const { content, locale } = useHomeV2Locale();
+  const { whyTheBorn } = content;
+  const isKorean = locale === "ko";
+
   return (
     <section
       aria-labelledby="home-v2-why-the-born-title"
@@ -34,17 +31,24 @@ export default function WhyTheBorn() {
 
         <h2
           id="home-v2-why-the-born-title"
-          className="mx-auto mt-5 max-w-5xl text-[clamp(2.35rem,8vw,6.5rem)] font-medium uppercase leading-[0.98] tracking-[-0.055em] text-[#f7f3ec] md:text-[clamp(3.5rem,6vw,6.5rem)]"
+          className={`mx-auto mt-5 max-w-5xl text-[clamp(2.35rem,8vw,6.5rem)] font-medium leading-[0.98] text-[#f7f3ec] md:text-[clamp(3.5rem,6vw,6.5rem)] ${
+            isKorean ? "tracking-[-0.04em]" : "uppercase tracking-[-0.055em]"
+          }`}
         >
-          {titleLines.map((line, index) => (
-            <span key={line} className="block whitespace-nowrap">
+          {whyTheBorn.titleLines.map((line, index) => (
+            <span
+              key={line}
+              className={`block ${isKorean ? "sm:whitespace-nowrap" : "whitespace-nowrap"}`}
+            >
               {line}
               {index === 0 ? " " : null}
             </span>
           ))}
         </h2>
 
-        <div className="mx-auto mt-[clamp(2.5rem,5vw,4.5rem)] max-w-4xl space-y-5 text-[clamp(1rem,1.25vw,1.25rem)] leading-[1.75] text-zinc-300 sm:space-y-6">
+        <div className={`mx-auto mt-[clamp(2.5rem,5vw,4.5rem)] max-w-4xl space-y-5 text-[clamp(1rem,1.25vw,1.25rem)] leading-[1.75] text-zinc-300 sm:space-y-6 ${
+          isKorean ? "tracking-[-0.015em]" : ""
+        }`}>
           {whyTheBorn.paragraphs.map((paragraph) => (
             <p key={paragraph} className="text-pretty">
               {paragraph}
@@ -53,7 +57,7 @@ export default function WhyTheBorn() {
         </div>
 
         <div className="mx-auto mt-[clamp(5rem,8vw,8rem)] max-w-4xl border-t border-white/10 pt-[clamp(3rem,5vw,4.5rem)]">
-          <ClosingMessage />
+          <ClosingMessage closingMessage={whyTheBorn.closingMessage} />
         </div>
       </div>
     </section>

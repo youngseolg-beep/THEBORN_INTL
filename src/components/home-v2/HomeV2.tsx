@@ -3,6 +3,8 @@ import ContactCTA from "./ContactCTA";
 import Gallery from "./Gallery";
 import GlobalPresence from "./GlobalPresence";
 import HeroStory from "./HeroStory";
+import HomeV2LanguageToggle from "./HomeV2LanguageToggle";
+import { HomeV2LocaleProvider } from "./HomeV2LocaleContext";
 import Partnership from "./Partnership";
 import ProcessStory from "./ProcessStory";
 import Qualifications from "./Qualifications";
@@ -12,7 +14,8 @@ import WhyTheBorn from "./WhyTheBorn";
 
 export default function HomeV2() {
   return (
-    <>
+    <HomeV2LocaleProvider>
+      <HomeV2LanguageToggle />
       <SectionRailNav />
       <main aria-label="Home V2">
         <div id="home" data-home-v2-nav-section="home">
@@ -51,6 +54,6 @@ export default function HomeV2() {
           <WhyTheBorn />
         </div>
       </main>
-    </>
+    </HomeV2LocaleProvider>
   );
 }

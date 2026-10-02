@@ -12,10 +12,13 @@ import {
   type MotionValue,
 } from "motion/react";
 import {
-  homeV2Content,
   type HomeV2Brand,
+  type HomeV2BrandKey,
+  type HomeV2BrandLabels,
   type HomeV2Image,
+  type HomeV2Locale,
 } from "../../data/homeV2Content";
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
 type BrandPresentation = {
   brand: HomeV2Brand;
@@ -23,6 +26,11 @@ type BrandPresentation = {
   exteriorObjectPosition: string;
   logoClassName: string;
   logoFilterClassName?: string;
+};
+
+type BrandPresentationConfig = Omit<BrandPresentation, "brand" | "exterior"> & {
+  brandKey: HomeV2BrandKey;
+  exteriorIndex: number | "primary";
 };
 
 type RevealWindow = [number, number];
@@ -36,29 +44,42 @@ type RevealWindows = readonly [
   RevealWindow,
 ];
 
-const { BORNGA, SAEMAEUL, PAIKS_NOODLE } = homeV2Content.brands;
-
-const brandPresentations: readonly BrandPresentation[] = [
+const brandPresentationConfigs: readonly BrandPresentationConfig[] = [
   {
-    brand: BORNGA,
-    exterior: BORNGA.media.secondary[0],
+    brandKey: "BORNGA",
+    exteriorIndex: 0,
     exteriorObjectPosition: "50% 44%",
     logoClassName: "max-w-[17rem] sm:max-w-[18rem] lg:max-w-full",
     logoFilterClassName: "invert grayscale",
   },
   {
-    brand: SAEMAEUL,
-    exterior: SAEMAEUL.media.secondary[2],
+    brandKey: "SAEMAEUL",
+    exteriorIndex: 2,
     exteriorObjectPosition: "50% 50%",
     logoClassName: "max-w-[14rem] sm:max-w-[15rem] lg:max-w-[13rem] xl:max-w-[15rem]",
   },
   {
-    brand: PAIKS_NOODLE,
-    exterior: PAIKS_NOODLE.media.primary,
+    brandKey: "PAIKS_NOODLE",
+    exteriorIndex: "primary",
     exteriorObjectPosition: "50% 52%",
     logoClassName: "max-w-[13rem] scale-[1.55] sm:max-w-[14rem] lg:max-w-[12rem] xl:max-w-[14rem]",
   },
 ];
+
+function createBrandPresentations(
+  brands: Record<HomeV2BrandKey, HomeV2Brand>,
+): readonly BrandPresentation[] {
+  return brandPresentationConfigs.map(({ brandKey, exteriorIndex, ...config }) => {
+    const brand = brands[brandKey];
+    return {
+      ...config,
+      brand,
+      exterior: exteriorIndex === "primary"
+        ? brand.media.primary
+        : brand.media.secondary[exteriorIndex],
+    };
+  });
+}
 
 const desktopRevealWindows: readonly RevealWindows[] = [
   [
@@ -163,11 +184,19 @@ function VMark() {
   );
 }
 
-function StepLabel({ children }: { children: ReactNode }) {
+function StepLabel({
+  children,
+  isKorean,
+}: {
+  children: ReactNode;
+  isKorean: boolean;
+}) {
   return (
     <div className="flex items-center gap-2.5">
       <VMark />
-      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ed2028] sm:text-[11px]">
+      <span className={`text-[10px] font-semibold text-[#ed2028] sm:text-[11px] ${
+        isKorean ? "tracking-[-0.01em]" : "uppercase tracking-[0.18em]"
+      }`}>
         {children}
       </span>
     </div>
@@ -228,22 +257,32 @@ function BrandIdentity({ presentation }: { presentation: BrandPresentation }) {
   return (
     <>
       <h3 id={`brand-story-${brand.key}`} className="sr-only">
-        {brand.englishName}
+        {brand.displayName}
       </h3>
       <BrandLogo presentation={presentation} />
     </>
   );
 }
 
-function SignatureMenu({ brand }: { brand: HomeV2Brand }) {
+function SignatureMenu({
+  brand,
+  label,
+  isKorean,
+}: {
+  brand: HomeV2Brand;
+  label: string;
+  isKorean: boolean;
+}) {
   return (
     <div className="border-b border-white/[0.09] pb-7 sm:pb-8">
-      <StepLabel>SIGNATURE MENU</StepLabel>
+      <StepLabel isKorean={isKorean}>{label}</StepLabel>
       <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
         {brand.signatureMenu.map((menuItem) => (
           <p
             key={menuItem}
-            className={`text-[14px] font-medium uppercase leading-[1.45] tracking-[0.025em] text-[#f7f3ec] sm:text-[15px] ${
+            className={`text-[14px] font-medium leading-[1.45] text-[#f7f3ec] sm:text-[15px] ${
+              isKorean ? "tracking-[-0.015em]" : "uppercase tracking-[0.025em]"
+            } ${
               menuItem.length > 28 ? "sm:col-span-2" : ""
             }`}
           >
@@ -258,20 +297,24 @@ function SignatureMenu({ brand }: { brand: HomeV2Brand }) {
 function InformationStep({
   label,
   value,
+  experienceHeading,
   description,
   featured = false,
+  isKorean,
 }: {
   label: string;
   value: string;
+  experienceHeading?: string;
   description?: string;
   featured?: boolean;
+  isKorean: boolean;
 }) {
   return (
     <>
       <dt>
-        <StepLabel>{label}</StepLabel>
+        <StepLabel isKorean={isKorean}>{label}</StepLabel>
       </dt>
-      <dd className="mt-3 uppercase">
+      <dd className={`mt-3 ${isKorean ? "tracking-[-0.015em]" : "uppercase"}`}>
         <p
           className={
             featured
@@ -281,8 +324,15 @@ function InformationStep({
         >
           {value}
         </p>
+        {experienceHeading ? (
+          <p className="mt-4 max-w-[34rem] text-[15px] font-semibold leading-[1.5] text-zinc-100 sm:text-base">
+            {experienceHeading}
+          </p>
+        ) : null}
         {description ? (
-          <p className="mt-4 max-w-[36rem] text-pretty text-[13px] leading-[1.65] tracking-[0.025em] text-zinc-400 sm:text-sm">
+          <p className={`${experienceHeading ? "mt-2.5" : "mt-4"} max-w-[36rem] text-pretty text-[13px] leading-[1.65] text-zinc-400 sm:text-sm ${
+            isKorean ? "tracking-[-0.01em]" : "tracking-[0.025em]"
+          }`}>
             {description}
           </p>
         ) : null}
@@ -297,6 +347,8 @@ function BrandColumn({
   revealWindows,
   reduceMotion,
   columnY,
+  labels,
+  locale,
 }: {
   key?: string;
   presentation: BrandPresentation;
@@ -304,17 +356,26 @@ function BrandColumn({
   revealWindows: RevealWindows;
   reduceMotion: boolean;
   columnY?: MotionValue<string>;
+  labels: HomeV2BrandLabels;
+  locale: HomeV2Locale;
 }) {
   const { brand, exterior, exteriorObjectPosition } = presentation;
+  const isKorean = locale === "ko";
   const information: readonly {
     label: string;
     value: string;
+    experienceHeading?: string;
     description?: string;
   }[] = [
-    { label: "CONCEPT", value: brand.concept, description: brand.experience },
-    { label: "TARGET", value: brand.target },
-    { label: "OPERATION", value: brand.operations },
-    { label: "SCALE", value: brand.recommendedStoreSize.join(" · ") },
+    {
+      label: labels.concept,
+      value: brand.concept,
+      experienceHeading: brand.experienceHeading,
+      description: brand.experience,
+    },
+    { label: labels.target, value: brand.target },
+    { label: labels.operation, value: brand.operations },
+    { label: labels.scale, value: brand.recommendedStoreSize.join(" · ") },
   ] as const;
 
   return (
@@ -349,7 +410,7 @@ function BrandColumn({
         >
           <iframe
             src={brand.media.videoEmbedUrl}
-            title={`${brand.englishName} brand film`}
+            title={`${brand.displayName} brand film`}
             className="aspect-video w-full border-0"
             loading="lazy"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -364,11 +425,15 @@ function BrandColumn({
         reduceMotion={reduceMotion}
         className="mt-9 sm:mt-10"
       >
-        <SignatureMenu brand={brand} />
+        <SignatureMenu
+          brand={brand}
+          label={labels.signatureMenu}
+          isKorean={isKorean}
+        />
       </ScrollReveal>
 
       <dl className="mt-8 sm:mt-9">
-        {information.map(({ label, value, description }, index) => (
+        {information.map(({ label, value, experienceHeading, description }, index) => (
           <ScrollReveal
             key={label}
             progress={progress}
@@ -379,8 +444,10 @@ function BrandColumn({
             <InformationStep
               label={label}
               value={value}
+              experienceHeading={experienceHeading}
               description={description}
               featured={index === 0}
+              isKorean={isKorean}
             />
           </ScrollReveal>
         ))}
@@ -394,12 +461,16 @@ function DesktopBrandColumn({
   progress,
   revealWindows,
   reduceMotion,
+  labels,
+  locale,
 }: {
   key?: string;
   presentation: BrandPresentation;
   progress: MotionValue<number>;
   revealWindows: RevealWindows;
   reduceMotion: boolean;
+  labels: HomeV2BrandLabels;
+  locale: HomeV2Locale;
 }) {
   const columnProgress = useTransform(progress, (value) =>
     revealProgress(value, [revealWindows[2][0], revealWindows[6][1]]),
@@ -413,6 +484,8 @@ function DesktopBrandColumn({
       revealWindows={revealWindows}
       reduceMotion={reduceMotion}
       columnY={columnY}
+      labels={labels}
+      locale={locale}
     />
   );
 }
@@ -422,12 +495,16 @@ function FlowBrandColumn({
   revealWindows,
   reduceMotion,
   className,
+  labels,
+  locale,
 }: {
   key?: string;
   presentation: BrandPresentation;
   revealWindows: RevealWindows;
   reduceMotion: boolean;
   className?: string;
+  labels: HomeV2BrandLabels;
+  locale: HomeV2Locale;
 }) {
   const articleRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -442,6 +519,8 @@ function FlowBrandColumn({
         progress={scrollYProgress}
         revealWindows={revealWindows}
         reduceMotion={reduceMotion}
+        labels={labels}
+        locale={locale}
       />
     </div>
   );
@@ -457,7 +536,17 @@ function SectionHeader() {
   );
 }
 
-function NaturalFlowBrands({ reduceMotion }: { reduceMotion: boolean }) {
+function NaturalFlowBrands({
+  presentations,
+  labels,
+  locale,
+  reduceMotion,
+}: {
+  presentations: readonly BrandPresentation[];
+  labels: HomeV2BrandLabels;
+  locale: HomeV2Locale;
+  reduceMotion: boolean;
+}) {
   const tabletLayout = useTabletLayout();
 
   return (
@@ -465,7 +554,7 @@ function NaturalFlowBrands({ reduceMotion }: { reduceMotion: boolean }) {
       <div className="mx-auto max-w-[1600px]">
         <SectionHeader />
         <div className="mt-12 grid grid-cols-1 items-start gap-x-6 gap-y-24 sm:mt-16 sm:grid-cols-2 sm:gap-y-28 lg:grid-cols-3 lg:gap-x-8 xl:gap-x-10">
-          {brandPresentations.map((presentation, index) => {
+          {presentations.map((presentation, index) => {
             const revealWindows = tabletLayout && index === 0
               ? tabletBorngaWindows
               : tabletLayout && index === 1
@@ -478,6 +567,8 @@ function NaturalFlowBrands({ reduceMotion }: { reduceMotion: boolean }) {
                 presentation={presentation}
                 revealWindows={revealWindows}
                 reduceMotion={reduceMotion}
+                labels={labels}
+                locale={locale}
                 className={index === 2 ? "sm:col-span-2 lg:col-span-1" : undefined}
               />
             );
@@ -489,6 +580,9 @@ function NaturalFlowBrands({ reduceMotion }: { reduceMotion: boolean }) {
 }
 
 export default function BrandStory() {
+  const { content, locale } = useHomeV2Locale();
+  const { brands, brandLabels } = content;
+  const brandPresentations = createBrandPresentations(brands);
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
   const desktopLayout = useImmersiveDesktopLayout();
@@ -516,13 +610,20 @@ export default function BrandStory() {
                   progress={scrollYProgress}
                   revealWindows={desktopRevealWindows[index]}
                   reduceMotion={false}
+                  labels={brandLabels}
+                  locale={locale}
                 />
               ))}
             </div>
           </div>
         </div>
       ) : (
-        <NaturalFlowBrands reduceMotion={reduceMotion} />
+        <NaturalFlowBrands
+          presentations={brandPresentations}
+          labels={brandLabels}
+          locale={locale}
+          reduceMotion={reduceMotion}
+        />
       )}
     </section>
   );

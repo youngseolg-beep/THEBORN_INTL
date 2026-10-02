@@ -1,14 +1,14 @@
 import { motion, useReducedMotion } from "motion/react";
-import { homeV2Content } from "../../data/homeV2Content";
-
-const { contact } = homeV2Content;
-const primaryContact = contact.entries[0];
-const regionalContacts = contact.entries.slice(1);
-const [primaryLocalPart, primaryDomainPart] = primaryContact.email.split("@");
-const [guidanceBeforeEmail, guidanceAfterEmail] =
-  contact.internationalInquiryGuidance.split(primaryContact.email);
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
 export default function ContactCTA() {
+  const { content, locale } = useHomeV2Locale();
+  const { contact } = content;
+  const primaryContact = contact.entries[0];
+  const regionalContacts = contact.entries.slice(1);
+  const [guidanceBeforeEmail, guidanceAfterEmail] =
+    contact.internationalInquiryGuidance.split(primaryContact.email);
+  const isKorean = locale === "ko";
   const reduceMotion = Boolean(useReducedMotion());
 
   return (
@@ -31,17 +31,18 @@ export default function ContactCTA() {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#ed2028] sm:text-sm">
+          <p className={`text-xs font-semibold text-[#ed2028] sm:text-sm ${
+            isKorean ? "tracking-[-0.01em]" : "uppercase tracking-[0.22em]"
+          }`}>
             {primaryContact.category}
           </p>
           <a
             href={`mailto:${primaryContact.email}`}
-            aria-label={`Email ${primaryContact.category}: ${primaryContact.email}`}
+            aria-label={`${contact.emailActionLabel} ${primaryContact.category}: ${primaryContact.email}`}
             className="group mt-5 inline-flex max-w-full items-start gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-4 focus-visible:ring-offset-[#090a0c] sm:mt-7 sm:gap-5"
           >
-            <span className="inline-flex min-w-0 flex-col text-[clamp(2.5rem,5.2vw,5.25rem)] font-medium leading-[1.02] tracking-[-0.055em] text-[#f7f3ec] transition-transform duration-300 ease-out group-hover:translate-x-2 group-focus-visible:translate-x-2 sm:flex-row">
-              <span>{primaryLocalPart}@</span>
-              <span>{primaryDomainPart}</span>
+            <span className="inline-flex min-w-0 whitespace-nowrap text-[clamp(1.05rem,5.2vw,5.25rem)] font-medium leading-[1.02] tracking-[-0.055em] text-[#f7f3ec] transition-transform duration-300 ease-out group-hover:translate-x-2 group-focus-visible:translate-x-2">
+              {primaryContact.email}
             </span>
             <span
               aria-hidden="true"
@@ -68,12 +69,14 @@ export default function ContactCTA() {
             >
               <a
                 href={`mailto:${email}`}
-                aria-label={`Email ${category}: ${email}`}
+                aria-label={`${contact.emailActionLabel} ${category}: ${email}`}
                 className={`group flex min-h-40 flex-col justify-between gap-8 px-1 py-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#ed2028] sm:min-h-44 sm:py-10 xl:px-8 ${
                   index === 0 ? "xl:pl-0" : ""
                 } ${index === regionalContacts.length - 1 ? "xl:pr-0" : ""}`}
               >
-                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+                <span className={`text-xs font-semibold text-zinc-500 ${
+                  isKorean ? "tracking-[-0.01em]" : "uppercase tracking-[0.22em]"
+                }`}>
                   {category}
                 </span>
                 <span className="flex min-w-0 items-start justify-between gap-3">
@@ -103,7 +106,7 @@ export default function ContactCTA() {
           {guidanceBeforeEmail}
           <a
             href={`mailto:${primaryContact.email}`}
-            className="text-zinc-200 underline decoration-white/30 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-[#ed2028] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-2 focus-visible:ring-offset-[#090a0c]"
+            className="inline-block whitespace-nowrap text-zinc-200 underline decoration-white/30 underline-offset-4 transition-colors duration-300 hover:text-white hover:decoration-[#ed2028] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-2 focus-visible:ring-offset-[#090a0c]"
           >
             {primaryContact.email}
           </a>

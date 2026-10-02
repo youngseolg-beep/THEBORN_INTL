@@ -20,7 +20,11 @@ import { feature } from "topojson-client";
 import type { LineString, Polygon, Position } from "geojson";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import countriesData from "world-atlas/countries-110m.json";
-import { homeV2Content } from "../../data/homeV2Content";
+import type {
+  HomeV2CountryKey,
+  HomeV2GlobalPresence,
+} from "../../data/homeV2Content";
+import { useHomeV2Locale } from "./HomeV2LocaleContext";
 
 // Natural Earth 1:110m country geometry, bundled by Vite; no runtime request.
 const topology = countriesData as unknown as Topology<{ countries: GeometryCollection }>;
@@ -110,7 +114,7 @@ const destinations: Destination[] = [
   { key: "North America", countryIds: ["840", "124"], point: westernNorthAmericaPoint, start: 0.76, arrival: 0.86, activationStart: 0.842, activationEnd: 0.86, fadeEnd: 0.885 },
 ];
 
-const operatingCountries = [
+const operatingCountries: readonly HomeV2CountryKey[] = [
   "United States",
   "Canada",
   "Japan",
@@ -470,10 +474,13 @@ function NorthAmericaRoute({
   );
 }
 
-function AnimatedCountryName({ country, index, progress }: {
-  country: string;
+function AnimatedCountryName({ country, label, index, progress, isKorean }: {
+  key?: HomeV2CountryKey;
+  country: HomeV2CountryKey;
+  label: string;
   index: number;
   progress: MotionValue<number>;
+  isKorean: boolean;
 }) {
   const revealStart = 0.85 + index * 0.005;
   const revealEnd = revealStart + 0.035;
@@ -483,35 +490,58 @@ function AnimatedCountryName({ country, index, progress }: {
 
   return (
     <motion.li
-      className="text-center text-[15px] font-medium uppercase tracking-[0.07em] text-zinc-200 md:text-base"
+      className={`text-center text-[15px] font-medium text-zinc-200 md:text-base ${
+        isKorean ? "tracking-[-0.015em]" : "uppercase tracking-[0.07em]"
+      }`}
       style={{ opacity, y }}
     >
-      {country}
+      {label}
     </motion.li>
   );
 }
 
-function StaticCountryList() {
+function StaticCountryList({
+  countryNames,
+  isKorean,
+}: {
+  countryNames: HomeV2GlobalPresence["countryNames"];
+  isKorean: boolean;
+}) {
   return (
     <ul className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
       {operatingCountries.map((country) => (
-        <li key={country} className="text-center text-[15px] font-medium uppercase tracking-[0.07em] text-zinc-200 md:text-base">
-          {country}
+        <li
+          key={country}
+          className={`text-center text-[15px] font-medium text-zinc-200 md:text-base ${
+            isKorean ? "tracking-[-0.015em]" : "uppercase tracking-[0.07em]"
+          }`}
+        >
+          {countryNames[country]}
         </li>
       ))}
     </ul>
   );
 }
 
-function OverseasSummaryCopy() {
+function OverseasSummaryCopy({
+  summary,
+}: {
+  summary: HomeV2GlobalPresence["overseasSummary"];
+}) {
   return (
     <>
-      <span className="md:block">Overseas operations currently span</span>{" "}
-      <span className="md:block">
-        <strong className="font-bold text-[#ed2028]">15</strong> countries with
-      </span>{" "}
-      <span className="md:block">
-        approximately <strong className="font-bold text-[#ed2028]">160</strong> stores.
+      <span className="sr-only">{summary.accessibleText}</span>
+      <span aria-hidden="true">
+        {summary.lines.map((line, index) => (
+          <span key={`${line.before}-${line.number ?? index}`} className="md:block">
+            {line.before}
+            {line.number ? (
+              <strong className="font-bold text-[#ed2028]">{line.number}</strong>
+            ) : null}
+            {line.after}
+            {index < summary.lines.length - 1 ? " " : null}
+          </span>
+        ))}
       </span>
     </>
   );
@@ -527,6 +557,7 @@ function SummaryAccent() {
 }
 
 type WorldMapProps = {
+  ariaLabel: string;
   progress?: MotionValue<number>;
   cameraTransform?: string | MotionValue<string>;
   originOpacity: number | MotionValue<number>;
@@ -535,6 +566,7 @@ type WorldMapProps = {
 };
 
 function WorldMap({
+  ariaLabel,
   progress,
   cameraTransform = "translate(0 0) scale(1)",
   originOpacity,
@@ -585,7 +617,7 @@ function WorldMap({
       preserveAspectRatio="xMidYMid meet"
     >
       <title id={titleId}>
-        World map showing THEBORN expansion from South Korea to its overseas destinations.
+        {ariaLabel}
       </title>
       <defs aria-hidden="true">
         <radialGradient id={`${routeGlowId}-light`}>
@@ -701,7 +733,8 @@ export default function GlobalPresence() {
   const titleId = useId();
   const reduceMotion = Boolean(useReducedMotion());
   const desktopStory = useDesktopStory();
-  const { corporate, globalPresence } = homeV2Content;
+  const { content, locale } = useHomeV2Locale();
+  const { corporate, globalPresence } = content;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
@@ -789,17 +822,25 @@ export default function GlobalPresence() {
             {heading}
           </div>
           <div className="mx-auto my-8 aspect-[1000/524] w-[calc(100vw-3rem)] sm:w-[calc(100vw-5rem)] md:w-[min(96vw,150svh)]">
-            <WorldMap staticActive originOpacity={0} originRadius={3.8} />
+            <WorldMap
+              ariaLabel={globalPresence.mapAriaLabel}
+              staticActive
+              originOpacity={0}
+              originRadius={3.8}
+            />
           </div>
           <div className="mx-auto max-w-7xl px-6 sm:px-10 md:px-16">
             <div className="mx-auto max-w-5xl text-center">
               <SummaryAccent />
               <p className="text-3xl font-semibold leading-[1.08] tracking-[-0.04em] text-[#f7f3ec] [text-shadow:0_2px_16px_rgba(0,0,0,0.42)] sm:text-4xl md:text-5xl lg:text-6xl">
-                <OverseasSummaryCopy />
+                <OverseasSummaryCopy summary={globalPresence.overseasSummary} />
               </p>
             </div>
             <div className="mt-10 md:mt-14">
-              <StaticCountryList />
+              <StaticCountryList
+                countryNames={globalPresence.countryNames}
+                isKorean={locale === "ko"}
+              />
             </div>
           </div>
         </div>
@@ -821,6 +862,7 @@ export default function GlobalPresence() {
                 style={{ opacity: mapOpacity }}
               >
                 <WorldMap
+                  ariaLabel={globalPresence.mapAriaLabel}
                   progress={mapProgress}
                   cameraTransform={cameraTransform}
                   originOpacity={originOpacity}
@@ -839,7 +881,7 @@ export default function GlobalPresence() {
                   />
                   <SummaryAccent />
                   <p className="text-[clamp(3rem,4vw,4rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#f7f3ec] [text-shadow:0_2px_18px_rgba(0,0,0,0.58)]">
-                    <OverseasSummaryCopy />
+                    <OverseasSummaryCopy summary={globalPresence.overseasSummary} />
                   </p>
                 </motion.div>
               </div>
@@ -850,8 +892,10 @@ export default function GlobalPresence() {
                   <AnimatedCountryName
                     key={country}
                     country={country}
+                    label={globalPresence.countryNames[country]}
                     index={index}
                     progress={scrollYProgress}
+                    isKorean={locale === "ko"}
                   />
                 ))}
                 </ul>
