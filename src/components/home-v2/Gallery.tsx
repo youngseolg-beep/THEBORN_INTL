@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { HomeV2BrandKey } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import ChapterHeader from "./ChapterHeader";
 
 type GalleryBrand = "bornga" | "saemaeul" | "paiks-noodle";
 
 type GalleryImage = {
   src: string;
   alt: string;
+  width: number;
+  height: number;
 };
 
 type GalleryCollection = {
@@ -24,38 +27,38 @@ const galleryCollections: GalleryCollection[] = [
   {
     id: "bornga",
     images: [
-      { src: "/assets/home-v2-assets/bornga/image-01.png", alt: "BORNGA gallery image 1" },
-      { src: "/assets/home-v2-assets/bornga/image-06.png", alt: "BORNGA gallery image 2" },
-      { src: "/assets/home-v2-assets/bornga/image-09.png", alt: "BORNGA gallery image 3" },
-      { src: "/assets/home-v2-assets/bornga/image-03.png", alt: "BORNGA gallery image 4" },
-      { src: "/assets/home-v2-assets/bornga/image-12.jpg", alt: "BORNGA gallery image 5" },
-      { src: "/assets/home-v2-assets/bornga/image-14.png", alt: "BORNGA gallery image 6" },
-      { src: "/assets/home-v2-assets/bornga/image-18.png", alt: "BORNGA gallery image 7" },
+      { src: "/assets/home-v2-assets/bornga/image-01.png", alt: "BORNGA gallery image 1", width: 846, height: 837 },
+      { src: "/assets/home-v2-assets/bornga/image-06.png", alt: "BORNGA gallery image 2", width: 835, height: 802 },
+      { src: "/assets/home-v2-assets/bornga/image-09.png", alt: "BORNGA gallery image 3", width: 936, height: 763 },
+      { src: "/assets/home-v2-assets/bornga/image-03.png", alt: "BORNGA gallery image 4", width: 844, height: 842 },
+      { src: "/assets/home-v2-assets/bornga/image-12.jpg", alt: "BORNGA gallery image 5", width: 526, height: 351 },
+      { src: "/assets/home-v2-assets/bornga/image-14.png", alt: "BORNGA gallery image 6", width: 667, height: 759 },
+      { src: "/assets/home-v2-assets/bornga/image-18.png", alt: "BORNGA gallery image 7", width: 844, height: 832 },
     ],
   },
   {
     id: "saemaeul",
     images: [
-      { src: "/assets/home-v2-assets/saemaeul/image-01.webp", alt: "SAEMAEUL gallery image 1" },
-      { src: "/assets/home-v2-assets/saemaeul/image-05.png", alt: "SAEMAEUL gallery image 2" },
-      { src: "/assets/home-v2-assets/saemaeul/image-10.jpg", alt: "SAEMAEUL gallery image 3" },
-      { src: "/assets/home-v2-assets/saemaeul/image-03.jpg", alt: "SAEMAEUL gallery image 4" },
-      { src: "/assets/home-v2-assets/saemaeul/image-06.jpg", alt: "SAEMAEUL gallery image 5" },
-      { src: "/assets/home-v2-assets/saemaeul/image-11.png", alt: "SAEMAEUL gallery image 6" },
-      { src: "/assets/home-v2-assets/saemaeul/image-12.png", alt: "SAEMAEUL gallery image 7" },
-      { src: "/assets/home-v2-assets/saemaeul/image-02.png", alt: "SAEMAEUL gallery image 8" },
+      { src: "/assets/home-v2-assets/saemaeul/image-01.webp", alt: "SAEMAEUL gallery image 1", width: 640, height: 427 },
+      { src: "/assets/home-v2-assets/saemaeul/image-05.png", alt: "SAEMAEUL gallery image 2", width: 1203, height: 720 },
+      { src: "/assets/home-v2-assets/saemaeul/image-10.jpg", alt: "SAEMAEUL gallery image 3", width: 2048, height: 1536 },
+      { src: "/assets/home-v2-assets/saemaeul/image-03.jpg", alt: "SAEMAEUL gallery image 4", width: 640, height: 427 },
+      { src: "/assets/home-v2-assets/saemaeul/image-06.jpg", alt: "SAEMAEUL gallery image 5", width: 640, height: 360 },
+      { src: "/assets/home-v2-assets/saemaeul/image-11.png", alt: "SAEMAEUL gallery image 6", width: 672, height: 495 },
+      { src: "/assets/home-v2-assets/saemaeul/image-12.png", alt: "SAEMAEUL gallery image 7", width: 678, height: 696 },
+      { src: "/assets/home-v2-assets/saemaeul/image-02.png", alt: "SAEMAEUL gallery image 8", width: 675, height: 652 },
     ],
   },
   {
     id: "paiks-noodle",
     images: [
-      { src: "/assets/home-v2-assets/paiks-noodle/image-02.png", alt: "PAIK'S NOODLE gallery image 1" },
-      { src: "/assets/home-v2-assets/paiks-noodle/image-06.png", alt: "PAIK'S NOODLE gallery image 2" },
-      { src: "/assets/home-v2-assets/paiks-noodle/image-10.png", alt: "PAIK'S NOODLE gallery image 3" },
-      { src: "/assets/home-v2-assets/paiks-noodle/image-04.png", alt: "PAIK'S NOODLE gallery image 4" },
-      { src: "/assets/home-v2-assets/paiks-noodle/image-14.png", alt: "PAIK'S NOODLE gallery image 5" },
-      { src: "/assets/home-v2-assets/paiks-noodle/image-15.png", alt: "PAIK'S NOODLE gallery image 6" },
-      { src: "/assets/home-v2-assets/paiks-noodle/image-16.png", alt: "PAIK'S NOODLE gallery image 7" },
+      { src: "/assets/home-v2-assets/paiks-noodle/image-02.png", alt: "PAIK'S NOODLE gallery image 1", width: 591, height: 777 },
+      { src: "/assets/home-v2-assets/paiks-noodle/image-06.png", alt: "PAIK'S NOODLE gallery image 2", width: 834, height: 656 },
+      { src: "/assets/home-v2-assets/paiks-noodle/image-10.png", alt: "PAIK'S NOODLE gallery image 3", width: 640, height: 423 },
+      { src: "/assets/home-v2-assets/paiks-noodle/image-04.png", alt: "PAIK'S NOODLE gallery image 4", width: 842, height: 547 },
+      { src: "/assets/home-v2-assets/paiks-noodle/image-14.png", alt: "PAIK'S NOODLE gallery image 5", width: 806, height: 468 },
+      { src: "/assets/home-v2-assets/paiks-noodle/image-15.png", alt: "PAIK'S NOODLE gallery image 6", width: 632, height: 821 },
+      { src: "/assets/home-v2-assets/paiks-noodle/image-16.png", alt: "PAIK'S NOODLE gallery image 7", width: 667, height: 825 },
     ],
   },
 ];
@@ -180,9 +183,7 @@ export default function Gallery() {
       className="relative overflow-hidden bg-[#08090b] px-5 py-20 text-[#f7f3ec] sm:px-10 sm:py-28 lg:px-[7%] lg:py-36"
     >
       <div className="mx-auto max-w-[1600px]">
-        <h2 id="home-v2-gallery-title" className="sr-only">
-          {gallery.title}
-        </h2>
+        <ChapterHeader chapter="gallery" id="home-v2-gallery-title" className="gallery-chapter-header" />
 
         <div className="grid grid-cols-1 items-start gap-y-16 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-20 lg:grid-cols-3 lg:gap-x-5 xl:gap-x-6">
           {galleryCollections.map((collection, brandIndex) => (
@@ -227,6 +228,8 @@ export default function Gallery() {
                     <img
                       src={image.src}
                       alt={image.alt}
+                      width={image.width}
+                      height={image.height}
                       className="h-auto w-full transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
                       loading="lazy"
                       decoding="async"

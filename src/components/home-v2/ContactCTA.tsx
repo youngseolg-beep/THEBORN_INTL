@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import ChapterHeader from "./ChapterHeader";
 
 export default function ContactCTA() {
   const { content, locale } = useHomeV2Locale();
@@ -17,12 +18,7 @@ export default function ContactCTA() {
       className="min-h-svh bg-[#090a0c] text-[#f7f3ec]"
     >
       <div className="mx-auto max-w-[96rem] px-[5%] pb-[clamp(8rem,20svh,14rem)] pt-[clamp(5rem,12svh,9rem)]">
-        <h2
-          id="home-v2-contact-title"
-          className="text-xs font-medium uppercase tracking-[0.26em] text-zinc-300 sm:text-sm"
-        >
-          {contact.title}
-        </h2>
+        <ChapterHeader chapter="contact" id="home-v2-contact-title" />
 
         <motion.div
           className="mt-[clamp(4.5rem,12svh,8rem)] border-b border-white/15 pb-[clamp(3rem,8svh,5.5rem)]"

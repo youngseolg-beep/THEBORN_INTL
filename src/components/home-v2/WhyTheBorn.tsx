@@ -1,4 +1,5 @@
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import ChapterHeader from "./ChapterHeader";
 
 function ClosingMessage({ closingMessage }: { closingMessage: string }) {
   const hasFinalPeriod = closingMessage.endsWith(".");
@@ -25,9 +26,7 @@ export default function WhyTheBorn() {
       className="bg-[#090a0c] px-[5%] py-[clamp(6rem,16svh,11rem)] text-[#f7f3ec]"
     >
       <div className="mx-auto max-w-6xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#ed2028] sm:text-sm">
-          {whyTheBorn.eyebrow}
-        </p>
+        <ChapterHeader chapter="why-the-born" as="p" />
 
         <h2
           id="home-v2-why-the-born-title"

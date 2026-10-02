@@ -11,6 +11,7 @@ import {
   type HomeV2Qualifications,
 } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import ChapterHeader from "./ChapterHeader";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -191,12 +192,7 @@ export default function Qualifications() {
   );
 
   const heading = (
-    <h2
-      id="home-v2-qualifications-title"
-      className="text-xs font-medium uppercase tracking-[0.26em] text-zinc-300 sm:text-sm"
-    >
-      {qualifications.title}
-    </h2>
+    <ChapterHeader chapter="qualifications" id="home-v2-qualifications-title" />
   );
 
   return (

@@ -20,6 +20,7 @@ import {
 } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import { useMobileLayout } from "./useMobileLayout";
+import ChapterHeader from "./ChapterHeader";
 
 type BrandPresentation = {
   brand: HomeV2Brand;
@@ -530,9 +531,7 @@ function FlowBrandColumn({
 function SectionHeader() {
   return (
     <header className="border-b border-white/10 pb-7 sm:pb-9">
-      <h2 className="text-xs font-medium uppercase tracking-[0.24em] text-zinc-300 sm:text-sm">
-        Our Brands
-      </h2>
+      <ChapterHeader chapter="brand-story" />
     </header>
   );
 }

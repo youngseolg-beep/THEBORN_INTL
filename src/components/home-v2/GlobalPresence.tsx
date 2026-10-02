@@ -26,6 +26,7 @@ import type {
 } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import { useMobileLayout } from "./useMobileLayout";
+import ChapterHeader from "./ChapterHeader";
 
 // Natural Earth 1:110m country geometry, bundled by Vite; no runtime request.
 const topology = countriesData as unknown as Topology<{ countries: GeometryCollection }>;
@@ -731,7 +732,7 @@ function WorldMap({
 
 function MobileGlobalPresence({ storyFits }: { storyFits: boolean }) {
   const { content, locale } = useHomeV2Locale();
-  const { globalPresence, corporate } = content;
+  const { globalPresence } = content;
   const reduceMotion = Boolean(useReducedMotion());
   const animate = storyFits && !reduceMotion;
   const trackRef = useRef<HTMLDivElement>(null);
@@ -755,8 +756,7 @@ function MobileGlobalPresence({ storyFits }: { storyFits: boolean }) {
       <div ref={trackRef} className={animate ? "mobile-global-track" : ""} data-mobile-story={animate ? "global" : "static-global"}>
         <div className={animate ? "mobile-global-scene" : "mobile-global-static"}>
           <header className="mobile-story-heading">
-            <p className="mobile-eyebrow text-[#ed2028]">{corporate.name}</p>
-            <h2 id="mobile-global-title">GLOBAL</h2>
+            <ChapterHeader chapter="global-presence" id="mobile-global-title" />
           </header>
           <div className="mobile-global-map">
             <WorldMap
@@ -797,7 +797,7 @@ function DesktopGlobalPresence() {
   const reduceMotion = Boolean(useReducedMotion());
   const desktopStory = useDesktopStory();
   const { content, locale } = useHomeV2Locale();
-  const { corporate, globalPresence } = content;
+  const { globalPresence } = content;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
@@ -864,14 +864,7 @@ function DesktopGlobalPresence() {
   });
 
   const heading = (
-    <header>
-      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#e31b23] sm:text-xs">
-        {corporate.name}
-      </p>
-      <h2 id={titleId} className="text-3xl font-medium tracking-[-0.045em] sm:text-4xl md:text-5xl">
-        {globalPresence.title}
-      </h2>
-    </header>
+    <header><ChapterHeader chapter="global-presence" id={titleId} /></header>
   );
 
   if (reduceMotion || !desktopStory) {

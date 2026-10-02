@@ -1,10 +1,9 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { useMobileLayout } from "./useMobileLayout";
+import { getHomeV2Chapter, type HomeV2ChapterId } from "./homeV2Chapters";
 
 type SectionTransitionProps = {
-  number: string;
-  title: string;
+  chapter: HomeV2ChapterId;
 };
 
 function ramp(value: number, start: number, end: number) {
@@ -22,22 +21,8 @@ function sampleTimeline(value: number, times: number[], values: number[]) {
   return values[values.length - 1];
 }
 
-export default function SectionTransition({ number, title }: SectionTransitionProps) {
-  const { mobile } = useMobileLayout();
-  if (mobile) {
-    return (
-      <div role="separator" aria-label={`Chapter ${number}: ${title}`} className="bg-[#08090b] text-[#f7f3ec]">
-        <div className="flex flex-col items-center justify-center px-5 text-center" aria-hidden="true">
-          <p className="text-xs font-semibold tracking-[0.32em] text-[#ed2028]">{number}</p>
-          <p className="font-medium uppercase leading-none tracking-[-0.06em]">{title}</p>
-        </div>
-      </div>
-    );
-  }
-  return <DesktopSectionTransition number={number} title={title} />;
-}
-
-function DesktopSectionTransition({ number, title }: SectionTransitionProps) {
+export default function SectionTransition({ chapter }: SectionTransitionProps) {
+  const { number, title } = getHomeV2Chapter(chapter);
   const transitionRef = useRef<HTMLDivElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
   const { scrollYProgress } = useScroll({
@@ -62,6 +47,8 @@ function DesktopSectionTransition({ number, title }: SectionTransitionProps) {
     <div
       ref={transitionRef}
       role="separator"
+      data-chapter-intro={chapter}
+      data-reduced-motion={reduceMotion || undefined}
       aria-label={`Chapter ${number}: ${title}`}
       className={reduceMotion
         ? "h-[82svh] bg-[#08090b] sm:h-[88svh] lg:h-svh"

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import ChapterHeader from "./ChapterHeader";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -26,7 +27,7 @@ export default function MobilePartnership({ storyFits }: { storyFits: boolean })
   return (
     <section className="mobile-partnership" aria-labelledby="mobile-partnership-title">
       <div className="mobile-partnership-intro">
-        <p className="mobile-eyebrow text-zinc-300"><span className="mr-3 text-[#ed2028]">04 /</span>PARTNERSHIP</p>
+        <ChapterHeader chapter="partnership" as="p" />
         <img src={partnership.media.src} alt={partnership.media.alt} width={1420} height={918} loading="lazy" />
         <h2 id="mobile-partnership-title" className={locale === "en" ? "uppercase" : ""}>{partnership.title}</h2>
         <p className="mobile-body text-zinc-300">{partnership.description}</p>

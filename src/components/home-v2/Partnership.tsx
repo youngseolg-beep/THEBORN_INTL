@@ -4,6 +4,7 @@ import type { HomeV2Partnership } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import { useMobileLayout } from "./useMobileLayout";
 import MobilePartnership from "./MobilePartnership";
+import ChapterHeader from "./ChapterHeader";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -90,9 +91,7 @@ function DesktopPartnership() {
   const finalLineScale = useTransform(scrollYProgress, (value) => 0.35 + 0.65 * ramp(value, 0.62, 1));
 
   const eyebrow = (
-    <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-zinc-300 sm:text-xs">
-      <span className="mr-3 text-[#ed2028]">04 /</span> PARTNERSHIP
-    </p>
+    <ChapterHeader chapter="partnership" as="p" />
   );
 
   return (

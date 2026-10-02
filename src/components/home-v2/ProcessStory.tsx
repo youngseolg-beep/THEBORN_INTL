@@ -8,6 +8,7 @@ import {
 } from "motion/react";
 import type { HomeV2Process } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import ChapterHeader from "./ChapterHeader";
 
 const stepBoundaries = [0, 0.1, 0.21, 0.32, 0.43, 0.54, 0.65, 0.76, 0.87, 1] as const;
 const transitionWidth = 0.018;
@@ -174,12 +175,7 @@ function StaticProcess({ process, isKorean }: {
 }) {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24 lg:px-16">
-      <h2
-        id="home-v2-process-story-title"
-        className="text-xs font-medium uppercase tracking-[0.26em] text-zinc-300 sm:text-sm"
-      >
-        {process.title}
-      </h2>
+      <ChapterHeader chapter="process" id="home-v2-process-story-title" />
       <ol className="mt-10 border-b border-white/12 sm:mt-14">
         {process.steps.map(({ step, title }) => {
           const number = String(step).padStart(2, "0");
@@ -302,12 +298,7 @@ export default function ProcessStory() {
           <div className="sticky top-0 h-svh overflow-hidden">
             <div className="mx-auto flex h-full max-w-[96rem] flex-col pt-[clamp(2rem,5vh,3.5rem)] pb-[max(1.25rem,5vh,env(safe-area-inset-bottom))] pl-[5%] pr-[5%] lg:pr-[clamp(7rem,10vw,11rem)]">
               <header className="shrink-0">
-                <h2
-                  id="home-v2-process-story-title"
-                  className="text-xs font-medium uppercase tracking-[0.26em] text-zinc-300 sm:text-sm"
-                >
-                  {process.title}
-                </h2>
+                <ChapterHeader chapter="process" id="home-v2-process-story-title" />
               </header>
 
               <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] gap-[clamp(1.5rem,4vw,5rem)]">
