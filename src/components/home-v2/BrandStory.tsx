@@ -21,6 +21,7 @@ import {
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import { useMobileLayout } from "./useMobileLayout";
 import ChapterHeader from "./ChapterHeader";
+import { getMobileImageSource } from "./responsiveImages";
 
 type BrandPresentation = {
   brand: HomeV2Brand;
@@ -394,14 +395,21 @@ function BrandColumn({
           reduceMotion={reduceMotion}
           className="mx-auto aspect-[3/2] w-full max-w-[26rem] overflow-hidden bg-zinc-900"
         >
-          <img
-            src={exterior.src}
-            alt={exterior.alt}
-            className="h-full w-full object-cover"
-            style={{ objectPosition: exteriorObjectPosition }}
-            loading="lazy"
-            decoding="async"
-          />
+          <picture className="block h-full w-full">
+            <source
+              media="(max-width: 767px)"
+              srcSet={getMobileImageSource(exterior.src)}
+              type="image/webp"
+            />
+            <img
+              src={exterior.src}
+              alt={exterior.alt}
+              className="h-full w-full object-cover"
+              style={{ objectPosition: exteriorObjectPosition }}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
         </ScrollReveal>
 
         <ScrollReveal

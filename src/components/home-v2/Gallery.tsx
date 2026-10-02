@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { HomeV2BrandKey } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import ChapterHeader from "./ChapterHeader";
+import { getMobileImageSource } from "./responsiveImages";
 
 type GalleryBrand = "bornga" | "saemaeul" | "paiks-noodle";
 
@@ -225,15 +226,22 @@ export default function Gallery() {
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      width={image.width}
-                      height={image.height}
-                      className="h-auto w-full transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <picture className="block w-full">
+                      <source
+                        media="(max-width: 767px)"
+                        srcSet={getMobileImageSource(image.src)}
+                        type="image/webp"
+                      />
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        width={image.width}
+                        height={image.height}
+                        className="h-auto w-full transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
                     <span
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/10"

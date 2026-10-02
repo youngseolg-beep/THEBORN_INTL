@@ -33,7 +33,7 @@
   .mobile-story-progress { height: 1px; background: #ffffff18; margin: auto var(--mobile-inset) 0; }
   .mobile-story-progress > div { height: 100%; background: #ed2028; transform-origin: left; }
   .mobile-global-countries { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); column-gap: 20px; padding: 24px var(--mobile-inset) 64px; }
-  .mobile-global-countries li { padding-block: 14px; border-top: 1px solid #ffffff18; font-size: 14px; line-height: 1.5; letter-spacing: 0.015em; }
+  .mobile-global-countries li { padding-block: 14px; border-top: 1px solid #ffffff18; font-size: 14px; line-height: 1.5; letter-spacing: 0.015em; text-align: center; }
   .mobile-global-static { padding-top: 32px; }
   .mobile-global-static .mobile-global-map { height: auto; padding-block: 32px; }
   .mobile-global-static .mobile-global-summary { padding-bottom: 24px; }
@@ -43,6 +43,8 @@
   #brand-story > section > div:not(.sticky) > div > .grid { margin-top: 24px; gap: 64px; }
   #brand-story article > div:first-of-type { height: 120px; overflow: visible; }
   #brand-story article > div:first-of-type img { max-width: 100%; }
+  .home-v2-page #brand-story article img[src*="bornga/logo"],
+  .home-v2-page #brand-story article img[src*="saemaeul/logo"] { max-width: 180px; }
   .home-v2-page #brand-story article img[src*="paiks-noodle/logo"] { max-width: 180px; transform: none; scale: 1.2; }
   #brand-story article .space-y-5 { margin-top: 16px; }
   #brand-story article dt span { font-size: 11px; }
@@ -85,13 +87,13 @@
   #qualifications > section > div:not(.sticky) { padding: 40px var(--mobile-inset) 72px; }
   #qualifications li.relative { grid-template-columns: minmax(0,1fr); gap: 16px; padding-block: 28px; }
   #qualifications li.relative > span { font-size: 12px; padding-top: 0; }
-  #qualifications li.relative > p { font-size: var(--mobile-feature); line-height: 1.27; letter-spacing: -0.03em; max-width: 100%; }
+  #qualifications li.relative > p { font-size: clamp(18px, 5.4vw, 22px); line-height: 1.26; letter-spacing: -0.025em; max-width: 100%; overflow-wrap: normal; }
   #qualifications h3 { font-size: 11px; }
   #qualifications:lang(ko) h3 { letter-spacing: -0.01em; }
   #qualifications li:not(.relative) p { font-size: 16px; line-height: 1.6; }
   #process > section > div > div:not(.sticky) { padding: 40px var(--mobile-inset) 32px; }
   #process ol > li { grid-template-columns: 36px minmax(0,1fr); gap: 8px; padding-block: 22px; }
-  #process ol h3 { font-size: clamp(21px, 5.7vw, 25px); line-height: 1.3; letter-spacing: -0.025em; }
+  #process ol h3 { font-size: clamp(17px, 5.1vw, 21px); line-height: 1.3; letter-spacing: -0.02em; overflow-wrap: normal; }
   #process ol > li > span { font-size: 12px; padding-top: 4px; }
   #process section[aria-labelledby="home-v2-process-downloads-title"] { padding: 24px var(--mobile-inset) 64px; }
   #process a[download] { margin-top: 24px; padding-block: 24px; gap: 24px; min-height: 0; }
@@ -99,11 +101,13 @@
 
   #contact > section { min-height: 0; }
   #contact > section > div { padding: 48px var(--mobile-inset) 72px; }
-  #contact > section > div > div { margin-top: 40px; padding-bottom: 32px; }
-  #contact ul a { min-height: 0; gap: 18px; padding-block: 24px; }
+  #contact > section > div > div { margin-top: 40px; padding-bottom: 32px; text-align: center; }
+  #contact > section > div > div > a { justify-content: center; gap: 8px; }
+  #contact ul a { min-height: 0; align-items: center; gap: 18px; padding-block: 24px; text-align: center; }
+  #contact ul a > span:last-child { justify-content: center; gap: 8px; }
   #contact a[href^="mailto:"] { min-height: 44px; align-items: center; }
   #contact a[href^="mailto:"] span.whitespace-nowrap { white-space: nowrap; }
-  #home-v2-international-guidance { padding-top: 32px; font-size: 15px; line-height: 1.7; }
+  #home-v2-international-guidance { margin-inline: auto; padding-top: 32px; font-size: 15px; line-height: 1.7; text-align: center; }
   #home-v2-international-guidance a { min-height: 44px; line-height: 44px; }
   #why-the-born > section { padding: 64px var(--mobile-inset) 72px; }
   #why-the-born h2 { font-size: clamp(29px, 8.6vw, 39px); line-height: 1.15; }

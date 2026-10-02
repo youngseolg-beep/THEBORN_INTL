@@ -7,6 +7,7 @@ import {
   useTransform,
 } from "motion/react";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
+import { getMobileImageSource } from "./responsiveImages";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -113,14 +114,22 @@ export default function HeroStory() {
         className="sticky top-0 h-svh overflow-hidden bg-black"
         style={{ opacity: sceneOpacity }}
       >
-        <motion.img
-          src={corporate.media.heroImage.src}
-          alt={corporate.media.heroImage.alt}
-          className="absolute inset-0 h-full w-full object-cover object-[52%_center] md:object-center"
-          style={{ scale: imageScale, y: imageY }}
-          loading="eager"
-          fetchPriority="high"
-        />
+        <picture className="absolute inset-0 block h-full w-full">
+          <source
+            media="(max-width: 767px)"
+            srcSet={getMobileImageSource(corporate.media.heroImage.src)}
+            type="image/webp"
+          />
+          <motion.img
+            src={corporate.media.heroImage.src}
+            alt={corporate.media.heroImage.alt}
+            className="h-full w-full object-cover object-[52%_center] md:object-center"
+            style={{ scale: imageScale, y: imageY }}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+        </picture>
 
         <div
           aria-hidden="true"

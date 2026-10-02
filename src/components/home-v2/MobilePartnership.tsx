@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import ChapterHeader from "./ChapterHeader";
+import { getMobileImageSource } from "./responsiveImages";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -28,7 +29,21 @@ export default function MobilePartnership({ storyFits }: { storyFits: boolean })
     <section className="mobile-partnership" aria-labelledby="mobile-partnership-title">
       <div className="mobile-partnership-intro">
         <ChapterHeader chapter="partnership" as="p" />
-        <img src={partnership.media.src} alt={partnership.media.alt} width={1420} height={918} loading="lazy" />
+        <picture className="block w-full">
+          <source
+            media="(max-width: 767px)"
+            srcSet={getMobileImageSource(partnership.media.src)}
+            type="image/webp"
+          />
+          <img
+            src={partnership.media.src}
+            alt={partnership.media.alt}
+            width={1420}
+            height={918}
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
         <h2 id="mobile-partnership-title" className={locale === "en" ? "uppercase" : ""}>{partnership.title}</h2>
         <p className="mobile-body text-zinc-300">{partnership.description}</p>
       </div>
