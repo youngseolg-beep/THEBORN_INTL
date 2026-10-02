@@ -157,10 +157,10 @@ export default function Partnership() {
             </h3>
             <motion.div aria-hidden="true" className="my-9 h-px w-24 bg-[#ed2028]" style={{ scaleX: finalLineScale }} />
             <div className="grid w-full max-w-2xl text-xl leading-relaxed tracking-[-0.015em] text-[#f7f3ec] xl:text-2xl">
-              <motion.p className="col-start-1 row-start-1" style={{ opacity: policyOpacity, y: policyY }}>
+              <motion.p className="col-start-1 row-start-1 whitespace-pre-line" style={{ opacity: policyOpacity, y: policyY }}>
                 {partnership.managementPolicy}
               </motion.p>
-              <motion.p className="col-start-1 row-start-1" style={{ opacity: selectionOpacity, y: selectionY }}>
+              <motion.p className="col-start-1 row-start-1 whitespace-pre-line" style={{ opacity: selectionOpacity, y: selectionY }}>
                 {partnership.partnerSelection}
               </motion.p>
             </div>
@@ -199,10 +199,10 @@ export default function Partnership() {
             }`}>
               {partnership.model}
             </h3>
-            <p className="mt-7 max-w-2xl text-base leading-relaxed text-[#f7f3ec] sm:text-xl">
+            <p className="mt-7 max-w-2xl whitespace-pre-line text-base leading-relaxed text-[#f7f3ec] sm:text-xl">
               {partnership.managementPolicy}
             </p>
-            <p className="mt-8 max-w-2xl text-base leading-relaxed text-zinc-100 sm:text-xl">
+            <p className="mt-8 max-w-2xl whitespace-pre-line text-base leading-relaxed text-zinc-100 sm:text-xl">
               {partnership.partnerSelection}
             </p>
           </div>

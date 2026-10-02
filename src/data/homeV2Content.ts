@@ -209,7 +209,7 @@ const sharedContent = {
     name: "THEBORN",
     media: {
       heroImage: {
-        src: "/assets/home-v2-assets/corporate/ceo-cooking.jpg",
+        src: "/assets/home-v2-assets/corporate/ceo-cooking-final.jpg",
         alt: "THEBORN chef cooking in a professional kitchen",
       },
       partnershipImage: {
@@ -428,15 +428,15 @@ const localizedContent = {
   ko: {
     hero: {
       eyebrow: "대한민국 대표 외식 프랜차이즈 그룹", title: "더본코리아",
-      description: "30년 이상의 외식 운영 노하우를 바탕으로 한국 외식 브랜드의 에너지를 세계 시장에 전합니다.",
+      description: "30년 이상의 외식 운영 노하우를 바탕으로 한국 외식 브랜드의 에너지를 세계 시장에\n전합니다.",
     },
     globalPresence: {
       overseasSummary: {
-        accessibleText: "현재 해외 사업은 15개국, 약 160개 매장으로 운영되고 있습니다.",
+        accessibleText: "해외 15개의 국가에서 약 160개의 매장이 운영되고 있습니다.",
         lines: [
-          { before: "현재 해외 사업은", after: "" },
-          { before: "", number: 15, after: "개국, 약" },
-          { before: "", number: 160, after: "개 매장으로 운영되고 있습니다." },
+          { before: "해외 ", number: 15, after: "개의 국가에서" },
+          { before: "약 ", number: 160, after: "개의 매장이" },
+          { before: "운영되고 있습니다.", after: "" },
         ],
       },
       countryNames: {
@@ -446,7 +446,7 @@ const localizedContent = {
         Netherlands: "네덜란드", Australia: "호주",
       },
       mapAriaLabel: "대한민국에서 해외 시장으로 확장하는 더본의 여정을 보여주는 세계 지도.",
-      partnerSelection: "마스터 프랜차이즈 파트너는 당사의 내부 적격성 심사를 거쳐 선정됩니다.",
+      partnerSelection: "마스터 프랜차이즈 파트너는 당사의 내부 적격성 심사를 거쳐\n선정됩니다.",
     },
     brandLabels: { signatureMenu: "대표 메뉴", concept: "콘셉트", target: "타깃 고객", operation: "운영 특징", scale: "매장 규모" },
     brands: {
@@ -476,8 +476,8 @@ const localizedContent = {
     partnership: {
       title: "마스터 프랜차이즈 파트너십", model: "마스터 프랜차이즈",
       description: "더본의 검증된 브랜드와 운영 시스템,\n파트너의 현지 시장 전문성과 실행력이 만나\n함께 지속 가능한 성장을 만들어갑니다.",
-      managementPolicy: "2023년부터 미국, 중국, 일본을 제외한 해외 시장은 마스터 프랜차이즈 방식을 중심으로 운영하고 있습니다.",
-      partnerSelection: "마스터 프랜차이즈 파트너는 당사의 내부 적격성 심사를 거쳐 선정됩니다.",
+      managementPolicy: "2023년부터 미국, 중국, 일본을 제외한 해외 시장은\n마스터 프랜차이즈 형태로 운영하고 있습니다.",
+      partnerSelection: "마스터 프랜차이즈 파트너는 당사의 내부 적격성 심사를 거쳐\n선정됩니다.",
       relationship: { brand: "더본", partner: "파트너" },
     },
     qualifications: {

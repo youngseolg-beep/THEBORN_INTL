@@ -155,7 +155,7 @@ export default function HeroStory() {
           >
             {hero.title}
           </motion.h1>
-          <p className={`mt-7 text-lg leading-relaxed text-white/85 sm:text-xl md:mt-8 md:text-[1.375rem] ${
+          <p className={`mt-7 whitespace-pre-line text-lg leading-relaxed text-white/85 sm:text-xl md:mt-8 md:text-[1.375rem] ${
             locale === "ko" ? "tracking-[-0.015em]" : ""
           }`}>
             {hero.description}
