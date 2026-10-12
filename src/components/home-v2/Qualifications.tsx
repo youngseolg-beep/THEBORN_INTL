@@ -28,26 +28,7 @@ type RequirementRowProps = {
   dimEnd?: number;
   animate: boolean;
   isKorean: boolean;
-  index: number;
-  mobileProgress: MotionValue<number>;
-  mobileStory: boolean;
 };
-
-function getMobileRequirementState(index: number, value: number) {
-  const centers = [0.12, 0.43, 0.72];
-  const center = centers[index];
-  const enter = ramp(value, center - 0.13, center);
-  const exit = ramp(value, center + 0.11, center + 0.2);
-  const finalHold = ramp(value, 0.88, 0.97);
-  const active = enter * (1 - exit);
-  const baseOpacity = value < center ? 0.58 : 0.76;
-
-  return {
-    opacity: baseOpacity + (1 - baseOpacity) * active + (0.94 - baseOpacity) * finalHold,
-    y: 6 * (1 - enter) * (1 - finalHold),
-    numberColor: finalHold > 0.5 || active > 0.35 ? "#ed2028" : value > center ? "#a61a20" : "#71717a",
-  };
-}
 
 const mobileLineGroups = {
   en: {
@@ -115,9 +96,6 @@ function RequirementRow({
   dimEnd,
   animate,
   isKorean,
-  index,
-  mobileProgress,
-  mobileStory,
 }: RequirementRowProps) {
   const lines = getLineSegments(requirement);
   const mobileLines = getLineSegments(
@@ -131,19 +109,13 @@ function RequirementRow({
   });
   const y = useTransform(progress, (value) => 34 * (1 - ramp(value, enterStart, enterEnd)));
   const dividerScale = useTransform(progress, (value) => ramp(value, enterStart, enterEnd + 0.04));
-  const mobileOpacity = useTransform(mobileProgress, (value) => getMobileRequirementState(index, value).opacity);
-  const mobileY = useTransform(mobileProgress, (value) => getMobileRequirementState(index, value).y);
-  const mobileNumberColor = useTransform(
-    mobileProgress,
-    (value) => getMobileRequirementState(index, value).numberColor,
-  );
 
   return (
     <motion.li
       className="relative grid grid-cols-[3.25rem_1fr] items-center border-t border-white/12 py-[clamp(1rem,2.25vh,1.75rem)] sm:grid-cols-[4.5rem_1fr] lg:grid-cols-[6rem_1fr]"
       style={{
-        opacity: animate ? opacity : mobileStory ? mobileOpacity : 1,
-        y: animate ? y : mobileStory ? mobileY : 0,
+        opacity: animate ? opacity : 1,
+        y: animate ? y : 0,
       }}
     >
       <motion.div
@@ -152,10 +124,9 @@ function RequirementRow({
         style={{ scaleX: animate ? dividerScale : 0 }}
       />
       <motion.span
-        aria-hidden="true"
-        className="self-start pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base"
-        style={{ color: mobileStory ? mobileNumberColor : undefined }}
-      >
+      aria-hidden="true"
+      className="self-start pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base"
+    >
         {number}
       </motion.span>
       <p className={`max-w-5xl text-[clamp(1.75rem,3.35vw,4rem)] font-medium leading-[1.04] text-[#f7f3ec] ${
@@ -189,6 +160,73 @@ function RequirementRow({
   );
 }
 
+function getMobileSceneState(index: number, value: number) {
+  const boundaries = [0, 0.33, 0.66, 1];
+  const transitionWidth = 0.045;
+  const start = boundaries[index];
+  const end = boundaries[index + 1];
+  const entering = index === 0
+    ? 1
+    : ramp(value, start - transitionWidth, start + transitionWidth);
+  const exiting = index === 2
+    ? 0
+    : ramp(value, end - transitionWidth, end + transitionWidth);
+
+  return {
+    opacity: entering * (1 - exiting),
+    y: 18 * (1 - entering) - 18 * exiting,
+  };
+}
+
+function MobileRequirementScene({
+  index,
+  number,
+  requirement,
+  progress,
+  isKorean,
+}: {
+  key?: string;
+  index: number;
+  number: "01" | "02" | "03";
+  requirement: HomeV2QualificationRequirement;
+  progress: MotionValue<number>;
+  isKorean: boolean;
+}) {
+  const lines = getLineSegments(
+    requirement,
+    mobileLineGroups[isKorean ? "ko" : "en"][number],
+  );
+  const opacity = useTransform(progress, (value) => getMobileSceneState(index, value).opacity);
+  const y = useTransform(progress, (value) => getMobileSceneState(index, value).y);
+
+  return (
+    <motion.li
+      className="mobile-qualification-scene"
+      style={{ opacity, y }}
+    >
+      <span aria-hidden="true" className="mobile-qualification-number">
+        {number}
+      </span>
+      <p className={`mobile-qualification-statement ${
+        isKorean ? "tracking-[-0.025em]" : "uppercase tracking-[-0.025em]"
+      }`}>
+        <span className="sr-only">{requirement.text}</span>
+        <span aria-hidden="true">
+          {lines.map((line) => (
+            <span key={line.text} className="block">
+              <RequirementLine
+                text={line.text}
+                lineStart={line.start}
+                requirement={requirement}
+              />
+            </span>
+          ))}
+        </span>
+      </p>
+    </motion.li>
+  );
+}
+
 function Documents({ qualifications, isKorean, animatedStyle }: {
   qualifications: HomeV2Qualifications;
   isKorean: boolean;
@@ -199,7 +237,7 @@ function Documents({ qualifications, isKorean, animatedStyle }: {
       <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-[#ed2028]">
         {qualifications.requiredDocumentsTitle}
       </h3>
-      <ol className="grid gap-5 sm:grid-cols-3 sm:gap-6">
+      <ol className="qualification-documents-list grid gap-5 sm:grid-cols-3 sm:gap-6">
         {qualifications.requiredDocuments.map((document, index) => (
           <li key={document} className="border-t border-white/15 pt-3">
             <span aria-hidden="true" className="text-[10px] font-semibold tracking-[0.2em] text-zinc-500">
@@ -230,7 +268,7 @@ export default function Qualifications() {
   const { qualifications } = content;
   const isKorean = locale === "ko";
   const sectionRef = useRef<HTMLElement>(null);
-  const mobileListRef = useRef<HTMLOListElement>(null);
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
   const { mobile, storyFits } = useMobileLayout();
   const [immersiveViewport, setImmersiveViewport] = useState(false);
@@ -249,8 +287,8 @@ export default function Qualifications() {
     offset: ["start start", "end end"],
   });
   const { scrollYProgress: mobileScrollProgress } = useScroll({
-    target: mobileListRef,
-    offset: ["start 78%", "end 52%"],
+    target: mobileTrackRef,
+    offset: ["start start", "end end"],
   });
   const mobileStory = mobile && storyFits && !reduceMotion;
   const documentsOpacity = useTransform(
@@ -288,9 +326,6 @@ export default function Qualifications() {
                 dimEnd={0.38}
                 animate
                 isKorean={isKorean}
-                index={0}
-                mobileProgress={mobileScrollProgress}
-                mobileStory={false}
               />
               <RequirementRow
                 number="02"
@@ -302,9 +337,6 @@ export default function Qualifications() {
                 dimEnd={0.64}
                 animate
                 isKorean={isKorean}
-                index={1}
-                mobileProgress={mobileScrollProgress}
-                mobileStory={false}
               />
               <RequirementRow
                 number="03"
@@ -314,9 +346,6 @@ export default function Qualifications() {
                 enterEnd={0.6}
                 animate
                 isKorean={isKorean}
-                index={2}
-                mobileProgress={mobileScrollProgress}
-                mobileStory={false}
               />
             </ol>
             <div className="shrink-0 pt-[clamp(1rem,2.5vh,1.75rem)]">
@@ -329,50 +358,74 @@ export default function Qualifications() {
           </div>
         </div>
       ) : (
-        <div className="mx-auto max-w-6xl px-6 py-14 sm:px-10 sm:py-20 lg:px-16">
-          <header>{heading}</header>
-          <ol ref={mobileListRef} className="mobile-qualification-list mt-10 border-b border-white/12 sm:mt-14">
-            <RequirementRow
-              number="01"
-              requirement={qualifications.requirements[0]}
-              progress={scrollYProgress}
-              enterStart={0}
-              enterEnd={0.12}
-              animate={false}
-              isKorean={isKorean}
-              index={0}
-              mobileProgress={mobileScrollProgress}
-              mobileStory={mobileStory}
-            />
-            <RequirementRow
-              number="02"
-              requirement={qualifications.requirements[1]}
-              progress={scrollYProgress}
-              enterStart={0.2}
-              enterEnd={0.34}
-              animate={false}
-              isKorean={isKorean}
-              index={1}
-              mobileProgress={mobileScrollProgress}
-              mobileStory={mobileStory}
-            />
-            <RequirementRow
-              number="03"
-              requirement={qualifications.requirements[2]}
-              progress={scrollYProgress}
-              enterStart={0.46}
-              enterEnd={0.6}
-              animate={false}
-              isKorean={isKorean}
-              index={2}
-              mobileProgress={mobileScrollProgress}
-              mobileStory={mobileStory}
-            />
-          </ol>
-          <div className="mt-14 sm:mt-20">
-            <Documents qualifications={qualifications} isKorean={isKorean} />
+        <>
+          <div
+            ref={mobileTrackRef}
+            className={mobileStory ? "mobile-qualifications-track" : "hidden"}
+          >
+            {mobileStory ? (
+              <div className="mobile-qualifications-sticky">
+                <header className="mobile-qualifications-header">{heading}</header>
+                <ol className="mobile-qualification-scenes">
+                  {qualifications.requirements.map((requirement, index) => (
+                    <MobileRequirementScene
+                      key={requirement.text}
+                      index={index}
+                      number={String(index + 1).padStart(2, "0") as "01" | "02" | "03"}
+                      requirement={requirement}
+                      progress={mobileScrollProgress}
+                      isKorean={isKorean}
+                    />
+                  ))}
+                </ol>
+                <div aria-hidden="true" className="mobile-qualification-progress">
+                  <motion.div style={{ scaleX: mobileScrollProgress }} />
+                </div>
+              </div>
+            ) : null}
           </div>
-        </div>
+          {mobileStory ? (
+            <div className="mobile-qualification-documents">
+              <Documents qualifications={qualifications} isKorean={isKorean} />
+            </div>
+          ) : (
+            <div className="mx-auto max-w-6xl px-6 py-14 sm:px-10 sm:py-20 lg:px-16">
+              <header>{heading}</header>
+              <ol className="mobile-qualification-list mt-10 border-b border-white/12 sm:mt-14">
+                <RequirementRow
+                  number="01"
+                  requirement={qualifications.requirements[0]}
+                  progress={scrollYProgress}
+                  enterStart={0}
+                  enterEnd={0.12}
+                  animate={false}
+                  isKorean={isKorean}
+                />
+                <RequirementRow
+                  number="02"
+                  requirement={qualifications.requirements[1]}
+                  progress={scrollYProgress}
+                  enterStart={0.2}
+                  enterEnd={0.34}
+                  animate={false}
+                  isKorean={isKorean}
+                />
+                <RequirementRow
+                  number="03"
+                  requirement={qualifications.requirements[2]}
+                  progress={scrollYProgress}
+                  enterStart={0.46}
+                  enterEnd={0.6}
+                  animate={false}
+                  isKorean={isKorean}
+                />
+              </ol>
+              <div className="mt-14 sm:mt-20">
+                <Documents qualifications={qualifications} isKorean={isKorean} />
+              </div>
+            </div>
+          )}
+        </>
       )}
     </section>
   );

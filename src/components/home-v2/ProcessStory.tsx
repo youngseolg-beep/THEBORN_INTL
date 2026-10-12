@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useReducedMotion,
@@ -75,22 +75,7 @@ function ProcessStepTitle({
   );
 }
 
-function getMobileProcessState(index: number, value: number) {
-  const center = 0.05 + index * 0.108;
-  const enter = interpolate(value, center - 0.055, center);
-  const exit = interpolate(value, center + 0.05, center + 0.1);
-  const finalHold = interpolate(value, 0.96, 1);
-  const active = enter * (1 - exit);
-  const baseOpacity = value < center ? 0.5 : 0.7;
-
-  return {
-    opacity: baseOpacity + (1 - baseOpacity) * active + (0.86 - baseOpacity) * finalHold,
-    y: 4 * (1 - enter) * (1 - finalHold),
-    numberColor: finalHold > 0.5 || active > 0.35 ? "#ed2028" : value > center ? "#a61a20" : "#71717a",
-  };
-}
-
-function MobileProcessStep({
+function MobileProcessScene({
   index,
   number,
   title,
@@ -98,7 +83,6 @@ function MobileProcessStep({
   screenReaderLabel,
   isKorean,
   progress,
-  animate,
 }: {
   key?: number;
   index: number;
@@ -108,25 +92,19 @@ function MobileProcessStep({
   screenReaderLabel: string;
   isKorean: boolean;
   progress: MotionValue<number>;
-  animate: boolean;
 }) {
-  const opacity = useTransform(progress, (value) => getMobileProcessState(index, value).opacity);
-  const y = useTransform(progress, (value) => getMobileProcessState(index, value).y);
-  const numberColor = useTransform(progress, (value) => getMobileProcessState(index, value).numberColor);
+  const opacity = useTransform(progress, (value) => getStepState(index, value).opacity);
+  const y = useTransform(progress, (value) => getStepState(index, value).y * 0.5);
 
   return (
     <motion.li
-      className="grid grid-cols-[3.25rem_1fr] border-t border-white/12 py-6 sm:grid-cols-[4.5rem_1fr] sm:py-8"
-      style={{ opacity: animate ? opacity : 1, y: animate ? y : 0 }}
+      className="mobile-process-scene"
+      style={{ opacity, y }}
     >
-      <motion.span
-        aria-hidden="true"
-        className="pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base"
-        style={{ color: animate ? numberColor : undefined }}
-      >
+      <span aria-hidden="true" className="mobile-process-number">
         {number}
-      </motion.span>
-      <h3 className={`max-w-4xl text-[clamp(1.6rem,5vw,3.25rem)] font-medium leading-[1.1] text-[#f7f3ec] ${
+      </span>
+      <h3 className={`mobile-process-title font-medium text-[#f7f3ec] ${
         isKorean ? "tracking-[-0.03em]" : "uppercase tracking-[-0.04em]"
       }`}>
         <span className="sr-only">{screenReaderLabel} {number} / 09: </span>
@@ -231,39 +209,33 @@ function ProgressCount({ process, progress }: {
   );
 }
 
-function StaticProcess({ process, isKorean, progress, mobileStory, listRef }: {
+function StaticProcess({ process, isKorean }: {
   process: HomeV2Process;
   isKorean: boolean;
-  progress: MotionValue<number>;
-  mobileStory: boolean;
-  listRef: RefObject<HTMLOListElement | null>;
 }) {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24 lg:px-16">
       <ChapterHeader chapter="process" id="home-v2-process-story-title" />
-      <div className="mobile-process-list mt-10">
-        <div aria-hidden="true" className="mobile-process-progress-track">
-          <motion.div
-            className="mobile-process-progress-fill"
-            style={{ scaleY: mobileStory ? progress : 1 }}
-          />
-        </div>
-        <ol ref={listRef} className="border-b border-white/12">
-          {process.steps.map(({ step, title, lineGroups }, index) => {
+      <div className="mt-10">
+        <ol className="mobile-process-static-list border-b border-white/12">
+          {process.steps.map(({ step, title, lineGroups }) => {
             const number = String(step).padStart(2, "0");
 
             return (
-              <MobileProcessStep
+              <li
                 key={step}
-                index={index}
-                number={number}
-                title={title}
-                lineGroups={lineGroups}
-                screenReaderLabel={process.stepScreenReaderLabel}
-                isKorean={isKorean}
-                progress={progress}
-                animate={mobileStory}
-              />
+                className="grid grid-cols-[3.25rem_1fr] border-t border-white/12 py-6 sm:grid-cols-[4.5rem_1fr] sm:py-8"
+              >
+                <span aria-hidden="true" className="pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base">
+                  {number}
+                </span>
+                <h3 className={`max-w-4xl text-[clamp(1.6rem,5vw,3.25rem)] font-medium leading-[1.1] text-[#f7f3ec] ${
+                  isKorean ? "tracking-[-0.03em]" : "uppercase tracking-[-0.04em]"
+                }`}>
+                  <span className="sr-only">{process.stepScreenReaderLabel} {number} / 09: </span>
+                  <ProcessStepTitle title={title} lineGroups={lineGroups} />
+                </h3>
+              </li>
             );
           })}
         </ol>
@@ -331,7 +303,7 @@ export default function ProcessStory() {
   const { process } = content;
   const isKorean = locale === "ko";
   const journeyRef = useRef<HTMLDivElement>(null);
-  const mobileListRef = useRef<HTMLOListElement>(null);
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
   const { mobile, storyFits } = useMobileLayout();
   const [immersiveViewport, setImmersiveViewport] = useState(false);
@@ -350,11 +322,12 @@ export default function ProcessStory() {
     offset: ["start start", "end end"],
   });
   const { scrollYProgress: mobileScrollProgress } = useScroll({
-    target: mobileListRef,
-    offset: ["start 76%", "end 52%"],
+    target: mobileTrackRef,
+    offset: ["start start", "end end"],
   });
   const mobileStory = mobile && storyFits && !reduceMotion;
   const progressScale = useTransform(scrollYProgress, [0, 1], [1 / 9, 1]);
+  const mobileProgressScale = useTransform(mobileScrollProgress, [0, 1], [1 / 9, 1]);
 
   return (
     <section
@@ -413,13 +386,41 @@ export default function ProcessStory() {
             </div>
           </div>
         ) : (
-          <StaticProcess
-            process={process}
-            isKorean={isKorean}
-            progress={mobileScrollProgress}
-            mobileStory={mobileStory}
-            listRef={mobileListRef}
-          />
+          <>
+            <div
+              ref={mobileTrackRef}
+              className={mobileStory ? "mobile-process-story-track" : "hidden"}
+            >
+              {mobileStory ? (
+                <div className="mobile-process-story-sticky">
+                  <header className="mobile-process-story-header">
+                    <ChapterHeader chapter="process" id="home-v2-process-story-title" />
+                  </header>
+                  <ol className="mobile-process-scenes">
+                    {process.steps.map(({ step, title, lineGroups }, index) => (
+                      <MobileProcessScene
+                        key={step}
+                        index={index}
+                        number={String(step).padStart(2, "0")}
+                        title={title}
+                        lineGroups={lineGroups}
+                        screenReaderLabel={process.stepScreenReaderLabel}
+                        isKorean={isKorean}
+                        progress={mobileScrollProgress}
+                      />
+                    ))}
+                  </ol>
+                  <div className="mobile-process-story-progress">
+                    <ProgressCount process={process} progress={mobileScrollProgress} />
+                    <div aria-hidden="true" className="mobile-process-story-progress-track">
+                      <motion.div style={{ scaleX: mobileProgressScale }} />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+            {mobileStory ? null : <StaticProcess process={process} isKorean={isKorean} />}
+          </>
         )}
       </div>
 
