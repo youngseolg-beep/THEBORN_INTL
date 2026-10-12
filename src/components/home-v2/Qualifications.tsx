@@ -29,9 +29,25 @@ type RequirementRowProps = {
   isKorean: boolean;
 };
 
-function getLineSegments(requirement: HomeV2QualificationRequirement) {
+const mobileLineGroups = {
+  en: {
+    "01": ["Local company with", "at least 3 years", "of F&B or related", "business experience"],
+    "02": ["Sufficient capital for", "direct-store expansion"],
+    "03": ["Franchise business", "experience preferred"],
+  },
+  ko: {
+    "01": ["최소 3년 이상의 F&B 혹은 유사업종", "사업 경력의 현지 기업"],
+    "02": ["사업 확장을 위한 충분한 자본력", "(직영점 확장을 위함)"],
+    "03": ["프랜차이즈 사업 경험자 우대"],
+  },
+} as const;
+
+function getLineSegments(
+  requirement: HomeV2QualificationRequirement,
+  lineGroups: readonly string[] = requirement.lineGroups,
+) {
   let searchStart = 0;
-  return requirement.lineGroups.map((text) => {
+  return lineGroups.map((text) => {
     const start = requirement.text.indexOf(text, searchStart);
     searchStart = Math.max(searchStart, start + text.length);
     return { text, start: Math.max(0, start) };
@@ -81,6 +97,10 @@ function RequirementRow({
   isKorean,
 }: RequirementRowProps) {
   const lines = getLineSegments(requirement);
+  const mobileLines = getLineSegments(
+    requirement,
+    mobileLineGroups[isKorean ? "ko" : "en"][number as "01" | "02" | "03"],
+  );
   const opacity = useTransform(progress, (value) => {
     const entered = 0.34 + 0.66 * ramp(value, enterStart, enterEnd);
     if (dimStart === undefined || dimEnd === undefined) return entered;
@@ -107,7 +127,15 @@ function RequirementRow({
       }`}>
         <span className="sr-only">{requirement.text}</span>
         <span aria-hidden="true" className="md:hidden">
-          <RequirementLine text={requirement.text} lineStart={0} requirement={requirement} />
+          {mobileLines.map((line) => (
+            <span key={line.text} className="block">
+              <RequirementLine
+                text={line.text}
+                lineStart={line.start}
+                requirement={requirement}
+              />
+            </span>
+          ))}
         </span>
         <span aria-hidden="true" className="hidden md:inline">
           {lines.map((line) => (
