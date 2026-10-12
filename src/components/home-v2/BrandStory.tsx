@@ -267,6 +267,75 @@ function BrandIdentity({ presentation }: { presentation: BrandPresentation }) {
   );
 }
 
+function getAutoplayEmbedUrl(url: string) {
+  const autoplayUrl = new URL(url);
+  autoplayUrl.searchParams.set("autoplay", "1");
+  return autoplayUrl.toString();
+}
+
+function BrandVideoEmbed({
+  brand,
+  poster,
+  posterObjectPosition,
+}: {
+  brand: HomeV2Brand;
+  poster: HomeV2Image;
+  posterObjectPosition: string;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const title = `${brand.displayName} brand film`;
+
+  if (loaded) {
+    return (
+      <iframe
+        src={getAutoplayEmbedUrl(brand.media.videoEmbedUrl)}
+        title={title}
+        className="aspect-video w-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  }
+
+  return (
+    <div className="relative aspect-video w-full overflow-hidden bg-zinc-950">
+      <picture className="block h-full w-full" aria-hidden="true">
+        <source
+          media="(max-width: 767px)"
+          srcSet={getMobileImageSource(poster.src)}
+          type="image/webp"
+        />
+        <img
+          src={poster.src}
+          alt=""
+          className="h-full w-full object-cover"
+          style={{ objectPosition: posterObjectPosition }}
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/35 to-black/55"
+      />
+      <button
+        type="button"
+        aria-label={`Play ${title}`}
+        onClick={() => setLoaded(true)}
+        className="group absolute left-1/2 top-1/2 flex min-h-12 min-w-12 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 rounded-full text-[#f7f3ec] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2028] focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+      >
+        <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/70 bg-black/35 transition-colors duration-200 group-hover:border-[#ed2028] group-hover:bg-[#ed2028]/15">
+          <span
+            aria-hidden="true"
+            className="ml-0.5 h-0 w-0 border-y-[7px] border-l-[11px] border-y-transparent border-l-[#f7f3ec]"
+          />
+        </span>
+        <span className="text-[10px] font-semibold tracking-[0.2em]">PLAY</span>
+      </button>
+    </div>
+  );
+}
+
 function SignatureMenu({
   brand,
   label,
@@ -418,13 +487,10 @@ function BrandColumn({
           reduceMotion={reduceMotion}
           className="mx-auto w-full max-w-[26rem]"
         >
-          <iframe
-            src={brand.media.videoEmbedUrl}
-            title={`${brand.displayName} brand film`}
-            className="aspect-video w-full border-0"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
+          <BrandVideoEmbed
+            brand={brand}
+            poster={exterior}
+            posterObjectPosition={exteriorObjectPosition}
           />
         </ScrollReveal>
       </div>
