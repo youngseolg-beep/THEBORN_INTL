@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import {
   motion,
   useReducedMotion,
@@ -9,6 +9,7 @@ import {
 import type { HomeV2Process } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import ChapterHeader from "./ChapterHeader";
+import { useMobileLayout } from "./useMobileLayout";
 
 const stepBoundaries = [0, 0.1, 0.21, 0.32, 0.43, 0.54, 0.65, 0.76, 0.87, 1] as const;
 const transitionWidth = 0.018;
@@ -71,6 +72,67 @@ function ProcessStepTitle({
         ))}
       </span>
     </>
+  );
+}
+
+function getMobileProcessState(index: number, value: number) {
+  const center = 0.05 + index * 0.108;
+  const enter = interpolate(value, center - 0.055, center);
+  const exit = interpolate(value, center + 0.05, center + 0.1);
+  const finalHold = interpolate(value, 0.96, 1);
+  const active = enter * (1 - exit);
+  const baseOpacity = value < center ? 0.5 : 0.7;
+
+  return {
+    opacity: baseOpacity + (1 - baseOpacity) * active + (0.86 - baseOpacity) * finalHold,
+    y: 4 * (1 - enter) * (1 - finalHold),
+    numberColor: finalHold > 0.5 || active > 0.35 ? "#ed2028" : value > center ? "#a61a20" : "#71717a",
+  };
+}
+
+function MobileProcessStep({
+  index,
+  number,
+  title,
+  lineGroups,
+  screenReaderLabel,
+  isKorean,
+  progress,
+  animate,
+}: {
+  key?: number;
+  index: number;
+  number: string;
+  title: string;
+  lineGroups: readonly string[];
+  screenReaderLabel: string;
+  isKorean: boolean;
+  progress: MotionValue<number>;
+  animate: boolean;
+}) {
+  const opacity = useTransform(progress, (value) => getMobileProcessState(index, value).opacity);
+  const y = useTransform(progress, (value) => getMobileProcessState(index, value).y);
+  const numberColor = useTransform(progress, (value) => getMobileProcessState(index, value).numberColor);
+
+  return (
+    <motion.li
+      className="grid grid-cols-[3.25rem_1fr] border-t border-white/12 py-6 sm:grid-cols-[4.5rem_1fr] sm:py-8"
+      style={{ opacity: animate ? opacity : 1, y: animate ? y : 0 }}
+    >
+      <motion.span
+        aria-hidden="true"
+        className="pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base"
+        style={{ color: animate ? numberColor : undefined }}
+      >
+        {number}
+      </motion.span>
+      <h3 className={`max-w-4xl text-[clamp(1.6rem,5vw,3.25rem)] font-medium leading-[1.1] text-[#f7f3ec] ${
+        isKorean ? "tracking-[-0.03em]" : "uppercase tracking-[-0.04em]"
+      }`}>
+        <span className="sr-only">{screenReaderLabel} {number} / 09: </span>
+        <ProcessStepTitle title={title} lineGroups={lineGroups} />
+      </h3>
+    </motion.li>
   );
 }
 
@@ -169,41 +231,43 @@ function ProgressCount({ process, progress }: {
   );
 }
 
-function StaticProcess({ process, isKorean }: {
+function StaticProcess({ process, isKorean, progress, mobileStory, listRef }: {
   process: HomeV2Process;
   isKorean: boolean;
+  progress: MotionValue<number>;
+  mobileStory: boolean;
+  listRef: RefObject<HTMLOListElement | null>;
 }) {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-24 lg:px-16">
       <ChapterHeader chapter="process" id="home-v2-process-story-title" />
-      <ol className="mt-10 border-b border-white/12 sm:mt-14">
-        {process.steps.map(({ step, title }) => {
-          const number = String(step).padStart(2, "0");
+      <div className="mobile-process-list mt-10">
+        <div aria-hidden="true" className="mobile-process-progress-track">
+          <motion.div
+            className="mobile-process-progress-fill"
+            style={{ scaleY: mobileStory ? progress : 1 }}
+          />
+        </div>
+        <ol ref={listRef} className="border-b border-white/12">
+          {process.steps.map(({ step, title, lineGroups }, index) => {
+            const number = String(step).padStart(2, "0");
 
-          return (
-            <li
-              key={step}
-              className="grid grid-cols-[3.25rem_1fr] border-t border-white/12 py-6 sm:grid-cols-[4.5rem_1fr] sm:py-8"
-            >
-              <span
-                aria-hidden="true"
-                className="pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base"
-              >
-                {number}
-              </span>
-              <h3 className={`max-w-4xl text-[clamp(1.6rem,5vw,3.25rem)] font-medium leading-[1.1] text-[#f7f3ec] ${
-                isKorean ? "tracking-[-0.03em]" : "uppercase tracking-[-0.04em]"
-              }`}>
-                <span className="sr-only">{process.stepScreenReaderLabel} {number} / 09: </span>
-                <ProcessStepTitle
-                  title={title}
-                  lineGroups={process.steps[step - 1].lineGroups}
-                />
-              </h3>
-            </li>
-          );
-        })}
-      </ol>
+            return (
+              <MobileProcessStep
+                key={step}
+                index={index}
+                number={number}
+                title={title}
+                lineGroups={lineGroups}
+                screenReaderLabel={process.stepScreenReaderLabel}
+                isKorean={isKorean}
+                progress={progress}
+                animate={mobileStory}
+              />
+            );
+          })}
+        </ol>
+      </div>
     </div>
   );
 }
@@ -267,7 +331,9 @@ export default function ProcessStory() {
   const { process } = content;
   const isKorean = locale === "ko";
   const journeyRef = useRef<HTMLDivElement>(null);
+  const mobileListRef = useRef<HTMLOListElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
+  const { mobile, storyFits } = useMobileLayout();
   const [immersiveViewport, setImmersiveViewport] = useState(false);
 
   useEffect(() => {
@@ -283,6 +349,11 @@ export default function ProcessStory() {
     target: journeyRef,
     offset: ["start start", "end end"],
   });
+  const { scrollYProgress: mobileScrollProgress } = useScroll({
+    target: mobileListRef,
+    offset: ["start 76%", "end 52%"],
+  });
+  const mobileStory = mobile && storyFits && !reduceMotion;
   const progressScale = useTransform(scrollYProgress, [0, 1], [1 / 9, 1]);
 
   return (
@@ -342,7 +413,13 @@ export default function ProcessStory() {
             </div>
           </div>
         ) : (
-          <StaticProcess process={process} isKorean={isKorean} />
+          <StaticProcess
+            process={process}
+            isKorean={isKorean}
+            progress={mobileScrollProgress}
+            mobileStory={mobileStory}
+            listRef={mobileListRef}
+          />
         )}
       </div>
 

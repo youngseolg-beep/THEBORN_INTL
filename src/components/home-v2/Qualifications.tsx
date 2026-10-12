@@ -12,6 +12,7 @@ import {
 } from "../../data/homeV2Content";
 import { useHomeV2Locale } from "./HomeV2LocaleContext";
 import ChapterHeader from "./ChapterHeader";
+import { useMobileLayout } from "./useMobileLayout";
 
 function ramp(value: number, start: number, end: number) {
   return Math.min(1, Math.max(0, (value - start) / (end - start)));
@@ -27,7 +28,26 @@ type RequirementRowProps = {
   dimEnd?: number;
   animate: boolean;
   isKorean: boolean;
+  index: number;
+  mobileProgress: MotionValue<number>;
+  mobileStory: boolean;
 };
+
+function getMobileRequirementState(index: number, value: number) {
+  const centers = [0.12, 0.43, 0.72];
+  const center = centers[index];
+  const enter = ramp(value, center - 0.13, center);
+  const exit = ramp(value, center + 0.11, center + 0.2);
+  const finalHold = ramp(value, 0.88, 0.97);
+  const active = enter * (1 - exit);
+  const baseOpacity = value < center ? 0.58 : 0.76;
+
+  return {
+    opacity: baseOpacity + (1 - baseOpacity) * active + (0.94 - baseOpacity) * finalHold,
+    y: 6 * (1 - enter) * (1 - finalHold),
+    numberColor: finalHold > 0.5 || active > 0.35 ? "#ed2028" : value > center ? "#a61a20" : "#71717a",
+  };
+}
 
 const mobileLineGroups = {
   en: {
@@ -95,6 +115,9 @@ function RequirementRow({
   dimEnd,
   animate,
   isKorean,
+  index,
+  mobileProgress,
+  mobileStory,
 }: RequirementRowProps) {
   const lines = getLineSegments(requirement);
   const mobileLines = getLineSegments(
@@ -108,20 +131,33 @@ function RequirementRow({
   });
   const y = useTransform(progress, (value) => 34 * (1 - ramp(value, enterStart, enterEnd)));
   const dividerScale = useTransform(progress, (value) => ramp(value, enterStart, enterEnd + 0.04));
+  const mobileOpacity = useTransform(mobileProgress, (value) => getMobileRequirementState(index, value).opacity);
+  const mobileY = useTransform(mobileProgress, (value) => getMobileRequirementState(index, value).y);
+  const mobileNumberColor = useTransform(
+    mobileProgress,
+    (value) => getMobileRequirementState(index, value).numberColor,
+  );
 
   return (
     <motion.li
       className="relative grid grid-cols-[3.25rem_1fr] items-center border-t border-white/12 py-[clamp(1rem,2.25vh,1.75rem)] sm:grid-cols-[4.5rem_1fr] lg:grid-cols-[6rem_1fr]"
-      style={{ opacity: animate ? opacity : 1, y: animate ? y : 0 }}
+      style={{
+        opacity: animate ? opacity : mobileStory ? mobileOpacity : 1,
+        y: animate ? y : mobileStory ? mobileY : 0,
+      }}
     >
       <motion.div
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-px origin-left bg-[#ed2028]"
         style={{ scaleX: animate ? dividerScale : 0 }}
       />
-      <span aria-hidden="true" className="self-start pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base">
+      <motion.span
+        aria-hidden="true"
+        className="self-start pt-1 text-sm font-semibold tracking-[0.2em] text-[#ed2028] sm:text-base"
+        style={{ color: mobileStory ? mobileNumberColor : undefined }}
+      >
         {number}
-      </span>
+      </motion.span>
       <p className={`max-w-5xl text-[clamp(1.75rem,3.35vw,4rem)] font-medium leading-[1.04] text-[#f7f3ec] ${
         isKorean ? "tracking-[-0.035em]" : "uppercase tracking-[-0.05em]"
       }`}>
@@ -194,7 +230,9 @@ export default function Qualifications() {
   const { qualifications } = content;
   const isKorean = locale === "ko";
   const sectionRef = useRef<HTMLElement>(null);
+  const mobileListRef = useRef<HTMLOListElement>(null);
   const reduceMotion = Boolean(useReducedMotion());
+  const { mobile, storyFits } = useMobileLayout();
   const [immersiveViewport, setImmersiveViewport] = useState(false);
 
   useEffect(() => {
@@ -210,6 +248,11 @@ export default function Qualifications() {
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+  const { scrollYProgress: mobileScrollProgress } = useScroll({
+    target: mobileListRef,
+    offset: ["start 78%", "end 52%"],
+  });
+  const mobileStory = mobile && storyFits && !reduceMotion;
   const documentsOpacity = useTransform(
     scrollYProgress,
     (value) => 0.16 + 0.84 * ramp(value, 0.68, 0.9),
@@ -245,6 +288,9 @@ export default function Qualifications() {
                 dimEnd={0.38}
                 animate
                 isKorean={isKorean}
+                index={0}
+                mobileProgress={mobileScrollProgress}
+                mobileStory={false}
               />
               <RequirementRow
                 number="02"
@@ -256,6 +302,9 @@ export default function Qualifications() {
                 dimEnd={0.64}
                 animate
                 isKorean={isKorean}
+                index={1}
+                mobileProgress={mobileScrollProgress}
+                mobileStory={false}
               />
               <RequirementRow
                 number="03"
@@ -265,6 +314,9 @@ export default function Qualifications() {
                 enterEnd={0.6}
                 animate
                 isKorean={isKorean}
+                index={2}
+                mobileProgress={mobileScrollProgress}
+                mobileStory={false}
               />
             </ol>
             <div className="shrink-0 pt-[clamp(1rem,2.5vh,1.75rem)]">
@@ -279,7 +331,7 @@ export default function Qualifications() {
       ) : (
         <div className="mx-auto max-w-6xl px-6 py-14 sm:px-10 sm:py-20 lg:px-16">
           <header>{heading}</header>
-          <ol className="mt-10 border-b border-white/12 sm:mt-14">
+          <ol ref={mobileListRef} className="mobile-qualification-list mt-10 border-b border-white/12 sm:mt-14">
             <RequirementRow
               number="01"
               requirement={qualifications.requirements[0]}
@@ -288,6 +340,9 @@ export default function Qualifications() {
               enterEnd={0.12}
               animate={false}
               isKorean={isKorean}
+              index={0}
+              mobileProgress={mobileScrollProgress}
+              mobileStory={mobileStory}
             />
             <RequirementRow
               number="02"
@@ -297,6 +352,9 @@ export default function Qualifications() {
               enterEnd={0.34}
               animate={false}
               isKorean={isKorean}
+              index={1}
+              mobileProgress={mobileScrollProgress}
+              mobileStory={mobileStory}
             />
             <RequirementRow
               number="03"
@@ -306,6 +364,9 @@ export default function Qualifications() {
               enterEnd={0.6}
               animate={false}
               isKorean={isKorean}
+              index={2}
+              mobileProgress={mobileScrollProgress}
+              mobileStory={mobileStory}
             />
           </ol>
           <div className="mt-14 sm:mt-20">
