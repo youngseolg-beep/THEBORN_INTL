@@ -609,20 +609,22 @@ export default function BrandStory() {
     >
       {useDesktopStory ? (
         <div className="sticky top-0 h-svh overflow-hidden px-[6%] py-7">
-          <div className="mx-auto max-w-[1600px]">
+          <div className="mx-auto flex h-full max-w-[1600px] flex-col">
             <SectionHeader />
-            <div className="mt-7 grid grid-cols-3 items-start gap-x-8 xl:gap-x-10">
-              {brandPresentations.map((presentation, index) => (
-                <DesktopBrandColumn
-                  key={presentation.brand.key}
-                  presentation={presentation}
-                  progress={scrollYProgress}
-                  revealWindows={desktopRevealWindows[index]}
-                  reduceMotion={false}
-                  labels={brandLabels}
-                  locale={locale}
-                />
-              ))}
+            <div className="relative mt-7 min-h-0 flex-1 overflow-hidden">
+              <div className="grid grid-cols-3 items-start gap-x-8 xl:gap-x-10">
+                {brandPresentations.map((presentation, index) => (
+                  <DesktopBrandColumn
+                    key={presentation.brand.key}
+                    presentation={presentation}
+                    progress={scrollYProgress}
+                    revealWindows={desktopRevealWindows[index]}
+                    reduceMotion={false}
+                    labels={brandLabels}
+                    locale={locale}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
