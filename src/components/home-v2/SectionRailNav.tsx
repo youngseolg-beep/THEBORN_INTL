@@ -2,21 +2,26 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { useReducedMotion } from "motion/react";
 import { homeV2Chapters, type HomeV2ChapterId } from "./homeV2Chapters";
 
-function findActiveSection(elements: readonly HTMLElement[], referencePoint: number) {
-  let closest = elements[0];
+type SectionBoundary = {
+  id: HomeV2ChapterId;
+  top: number;
+  bottom: number;
+};
+
+function findActiveSection(boundaries: readonly SectionBoundary[], referencePoint: number) {
+  let closest = boundaries[0];
   let closestDistance = Number.POSITIVE_INFINITY;
-  for (const element of elements) {
-    const rect = element.getBoundingClientRect();
-    if (rect.top <= referencePoint && rect.bottom > referencePoint) {
-      return element.dataset.homeV2NavSection as HomeV2ChapterId;
+  for (const boundary of boundaries) {
+    if (boundary.top <= referencePoint && boundary.bottom > referencePoint) {
+      return boundary.id;
     }
-    const distance = referencePoint < rect.top ? rect.top - referencePoint : referencePoint - rect.bottom;
+    const distance = referencePoint < boundary.top ? boundary.top - referencePoint : referencePoint - boundary.bottom;
     if (distance < closestDistance) {
-      closest = element;
+      closest = boundary;
       closestDistance = distance;
     }
   }
-  return closest?.dataset.homeV2NavSection as HomeV2ChapterId | undefined;
+  return closest?.id;
 }
 
 export default function SectionRailNav() {
@@ -32,26 +37,52 @@ export default function SectionRailNav() {
     const elements = homeV2Chapters
       .map(({ id }) => document.getElementById(id))
       .filter((element): element is HTMLElement => element !== null);
+    let boundaries: SectionBoundary[] = [];
+    let referenceOffset = 0;
     let frameId: number | null = null;
-    const update = () => {
-      frameId = null;
-      const nextId = findActiveSection(elements, window.innerHeight * 0.45);
+    let measurementFrameId: number | null = null;
+    const updateActiveSection = () => {
+      const nextId = findActiveSection(boundaries, window.scrollY + referenceOffset);
       if (nextId && nextId !== activeIdRef.current) {
         activeIdRef.current = nextId;
         setActiveId(nextId);
       }
     };
     const requestUpdate = () => {
-      if (frameId === null) frameId = window.requestAnimationFrame(update);
+      if (frameId === null) {
+        frameId = window.requestAnimationFrame(() => {
+          frameId = null;
+          updateActiveSection();
+        });
+      }
+    };
+    const measureBoundaries = () => {
+      measurementFrameId = null;
+      const scrollY = window.scrollY;
+      referenceOffset = window.innerHeight * 0.45;
+      boundaries = elements.map(element => {
+        const rect = element.getBoundingClientRect();
+        return {
+          id: element.dataset.homeV2NavSection as HomeV2ChapterId,
+          top: rect.top + scrollY,
+          bottom: rect.bottom + scrollY,
+        };
+      });
+      updateActiveSection();
+    };
+    const requestMeasurement = () => {
+      if (measurementFrameId === null) {
+        measurementFrameId = window.requestAnimationFrame(measureBoundaries);
+      }
     };
     const onResize = () => {
       if (window.innerWidth >= 1024) setOpen(false);
-      requestUpdate();
+      requestMeasurement();
     };
     // Locale changes and lazy image loading can move chapter boundaries without a scroll event.
-    const observer = new ResizeObserver(requestUpdate);
+    const observer = new ResizeObserver(requestMeasurement);
     elements.forEach(element => observer.observe(element));
-    update();
+    requestMeasurement();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", onResize);
     return () => {
@@ -59,6 +90,7 @@ export default function SectionRailNav() {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", onResize);
       if (frameId !== null) window.cancelAnimationFrame(frameId);
+      if (measurementFrameId !== null) window.cancelAnimationFrame(measurementFrameId);
     };
   }, []);
 
