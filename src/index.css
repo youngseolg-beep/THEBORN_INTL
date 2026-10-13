@@ -124,6 +124,7 @@
 
   html {
     @apply font-sans;
+    position: relative;
     background: #0F0F10;
     scroll-behavior: smooth;
   }
