@@ -736,7 +736,68 @@ function MobileGlobalPresence({ storyFits }: { storyFits: boolean }) {
   const reduceMotion = Boolean(useReducedMotion());
   const animate = storyFits && !reduceMotion;
   const trackRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] });
+  const scrollYProgress = useMotionValue(0);
+
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    let startY = 0;
+    let endY = 0;
+    let scrollFrameId: number | null = null;
+    let measurementFrameId: number | null = null;
+
+    const updateProgress = () => {
+      const distance = endY - startY;
+      scrollYProgress.set(distance > 0
+        ? Math.min(1, Math.max(0, (window.scrollY - startY) / distance))
+        : 0);
+    };
+    const requestUpdate = () => {
+      if (scrollFrameId === null) {
+        scrollFrameId = window.requestAnimationFrame(() => {
+          scrollFrameId = null;
+          updateProgress();
+        });
+      }
+    };
+    const measure = () => {
+      measurementFrameId = null;
+      const rect = track.getBoundingClientRect();
+      const container = document.scrollingElement ?? document.documentElement;
+      // Match Motion's target clientHeight and scroll-container clientHeight.
+      startY = rect.top + window.scrollY;
+      endY = startY + track.clientHeight - container.clientHeight;
+      updateProgress();
+    };
+    const requestMeasurement = () => {
+      if (measurementFrameId === null) {
+        measurementFrameId = window.requestAnimationFrame(measure);
+      }
+    };
+    const observer = new ResizeObserver(requestMeasurement);
+    observer.observe(track);
+    // Earlier chapters can move this track without changing its own dimensions.
+    const chapter = track.closest("[data-home-v2-nav-section]");
+    if (chapter) {
+      observer.observe(chapter);
+      let precedingChapter = chapter.previousElementSibling;
+      while (precedingChapter) {
+        observer.observe(precedingChapter);
+        precedingChapter = precedingChapter.previousElementSibling;
+      }
+    }
+    requestMeasurement();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestMeasurement);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestMeasurement);
+      if (scrollFrameId !== null) window.cancelAnimationFrame(scrollFrameId);
+      if (measurementFrameId !== null) window.cancelAnimationFrame(measurementFrameId);
+    };
+  }, [scrollYProgress]);
+
   // All existing routes complete before the summary enters. The list follows outside sticky.
   const progress = useTransform(scrollYProgress, [0, 0.78, 1], [0, 1, 1]);
   const camera = useTransform(progress, [0, 0.12, 0.48, 0.76, 1], [
