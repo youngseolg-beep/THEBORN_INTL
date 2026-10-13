@@ -423,7 +423,7 @@ function BrandColumn({
             title={`${brand.displayName} brand film`}
             className="aspect-video w-full border-0"
             loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; compute-pressure"
             allowFullScreen
           />
         </ScrollReveal>
