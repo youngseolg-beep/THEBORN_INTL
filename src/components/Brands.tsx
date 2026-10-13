@@ -126,7 +126,7 @@ export default function Brands({ lang }: { lang: "ko" | "en" }) {
           {lang === "ko" ? "브랜드 소개" : "Our Brands"}
         </h2>
 
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion className="w-full">
           {brands.map((brand, index) => (
             <AccordionItem key={index} value={`item-${index}`} className="border-white/10">
               <AccordionTrigger className="text-lg md:text-xl font-bold tracking-tight text-zinc-100 hover:text-orange-400">
